@@ -16,9 +16,6 @@
                         Finca
                     </span>
                     <select id="form_finca" style="width: 100%" class="form-control input-yura_default">
-                        @if (count($fincas) > 1)
-                            <option value="T">Todas mis fincas</option>
-                        @endif
                         @foreach ($fincas as $f)
                             <option value="{{ $f->id_empresa }}">
                                 {{ $f->nombre }}
