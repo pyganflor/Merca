@@ -636,7 +636,7 @@ class UsuarioController extends Controller
         }
         return [
             'success' => true,
-            'mensaje' => '<div class="alert alert-success text-center">Se ha guardado la información satisfactoriamente</div>'
+            'mensaje' => 'Se ha guardado la información satisfactoriamente'
         ];
     }
 }

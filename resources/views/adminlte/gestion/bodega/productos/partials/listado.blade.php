@@ -1,10 +1,10 @@
-<div style="overflow-y: scroll; overflow-x: scroll; height: 500px;">
+<div style="overflow-y: scroll; overflow-x: scroll; height: 700px;">
     <table class="table-striped table-bordered" style="width: 100%; border: 1px solid #9d9d9d">
         <tr id="tr_fija_top_0">
-            <th class="text-center th_yura_green" style="width: 120px">
+            <th class="text-center th_yura_green" style="width: 130px">
                 IMAGEN
             </th>
-            <th class="text-center th_yura_green">
+            <th class="text-center th_yura_green" style="width: 110px">
                 CODIGO
             </th>
             <th class="text-center th_yura_green">
@@ -75,7 +75,7 @@
             @endphp
             <tr id="tr_producto_{{ $item->id_producto }}" class="{{ $item->estado == 0 ? 'error' : '' }}">
                 <th class="text-center" style="border-color: #9d9d9d">
-                    <img src="{{ url($url_imagen) }}" alt="..." width="60px"
+                    <img src="{{ url($url_imagen) }}" alt="..." 
                         class="img-fluid img-thumbnail mouse-hand imagen_{{ $item->id_producto }}"
                         style="border-radius: 16px"
                         onclick="$('.imagen_{{ $item->id_producto }}').toggleClass('hidden')">
@@ -88,31 +88,31 @@
                             placeholder="Codigo" accept="image/png, image/jpeg">
                     </form>
                 </th>
-                <th class="text-center" style="border-color: #9d9d9d">
+                <th class="text-center" style="border-color: #9d9d9d; vertical-align: top">
                     <input type="text" style="width: 100%" class="text-center"
                         id="codigo_{{ $item->id_producto }}" value="{{ $item->codigo }}" required>
                 </th>
-                <th class="text-center" style="border-color: #9d9d9d">
+                <th class="text-center" style="border-color: #9d9d9d; vertical-align: top">
                     <input type="text" style="width: 100%" class="text-center"
                         id="nombre_{{ $item->id_producto }}" value="{{ $item->nombre }}" required>
                 </th>
-                <th class="text-center" style="border-color: #9d9d9d">
+                <th class="text-center" style="border-color: #9d9d9d; vertical-align: top">
                     <input type="text" style="width: 100%" class="text-center"
                         id="unidad_medida_{{ $item->id_producto }}" value="{{ $item->unidad_medida }}" required>
                 </th>
-                <th class="text-center" style="border-color: #9d9d9d">
+                <th class="text-center" style="border-color: #9d9d9d; vertical-align: top">
                     <input type="number" style="width: 100%" class="text-center" required min="0"
                         id="stock_minimo_{{ $item->id_producto }}" value="{{ $item->stock_minimo }}">
                 </th>
-                <th class="text-center" style="border-color: #9d9d9d">
+                <th class="text-center" style="border-color: #9d9d9d; vertical-align: top">
                     <input type="number" style="width: 100%" class="text-center" required min="0"
                         id="conversion_{{ $item->id_producto }}" value="{{ $item->conversion }}">
                 </th>
-                <th class="text-center" style="border-color: #9d9d9d">
+                <th class="text-center" style="border-color: #9d9d9d; vertical-align: top">
                     <input type="number" style="width: 100%" class="text-center" required min="0"
                         id="precio_{{ $item->id_producto }}" value="{{ $item->precio }}">
                 </th>
-                <th class="text-center" style="border-color: #9d9d9d">
+                <th class="text-center" style="border-color: #9d9d9d; vertical-align: top">
                     <div class="btn-group">
                         <button type="button" class="btn btn-xs btn-yura_warning"
                             onclick="update_producto('{{ $item->id_producto }}')">

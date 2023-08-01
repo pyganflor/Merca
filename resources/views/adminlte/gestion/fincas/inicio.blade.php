@@ -5,8 +5,7 @@
 @endsection
 
 @section('script_inicio')
-    <script>
-    </script>
+    <script></script>
 @endsection
 
 @section('contenido')
@@ -17,16 +16,17 @@
             <small class="text-color_yura">administración</small>
         </h1>
         <ol class="breadcrumb">
-            <li><a href="javascript:void(0)" class="text-color_yura" onclick="cargar_url('')"><i class="fa fa-home"></i> Inicio</a></li>
+            <li><a href="javascript:void(0)" class="text-color_yura" onclick="cargar_url('')"><i class="fa fa-home"></i>
+                    Inicio</a></li>
             <li class="text-color_yura">
-                {{$submenu->menu->grupo_menu->nombre}}
+                {{ $submenu->menu->grupo_menu->nombre }}
             </li>
             <li class="text-color_yura">
-                {{$submenu->menu->nombre}}
+                {{ $submenu->menu->nombre }}
             </li>
 
             <li class="active">
-                <a href="javascript:void(0)" class="text-color_yura" onclick="cargar_url('{{$submenu->url}}')">
+                <a href="javascript:void(0)" class="text-color_yura" onclick="cargar_url('{{ $submenu->url }}')">
                     <i class="fa fa-fw fa-refresh"></i> {!! $submenu->nombre !!}
                 </a>
             </li>
@@ -36,10 +36,10 @@
     <section class="content">
         <div class="row">
             <div class="col-md-4">
-                <div id="div_listado_super_fincas"></div>
+                <div id="div_listado_super_fincas" style="overflow-y: scroll; max-height: 600px"></div>
             </div>
             <div class="col-md-8">
-                <div id="div_listado_fincas"></div>
+                <div id="div_listado_fincas" style="overflow-y: scroll; max-height: 600px"></div>
             </div>
         </div>
     </section>

@@ -52,10 +52,55 @@ class FincasController extends Controller
             if ($model->save()) {
                 $model = SuperFinca::All()->last();
                 $success = true;
-                $msg = '<div class="alert alert-success text-center">' .
-                    '<p> Se ha guardado la empresa satisfactoriamente</p>'
-                    . '</div>';
+                $msg = 'Se ha guardado la empresa satisfactoriamente';
                 bitacora('super_finca', $model->id_super_finca, 'I', 'Inserción satisfactoria de una nueva super_finca');
+            } else {
+                $success = false;
+                $msg = '<div class="alert alert-warning text-center">' .
+                    '<p> Ha ocurrido un problema al guardar la información al sistema</p>'
+                    . '</div>';
+            }
+        } else {
+            $success = false;
+            $errores = '';
+            foreach ($valida->errors()->all() as $mi_error) {
+                if ($errores == '') {
+                    $errores = '<li>' . $mi_error . '</li>';
+                } else {
+                    $errores .= '<li>' . $mi_error . '</li>';
+                }
+            }
+            $msg = '<div class="alert alert-danger">' .
+                '<p class="text-center">¡Por favor corrija los siguientes errores!</p>' .
+                '<ul>' .
+                $errores .
+                '</ul>' .
+                '</div>';
+        }
+        return [
+            'mensaje' => $msg,
+            'success' => $success
+        ];
+    }
+
+    public function store_finca(Request $request)
+    {
+        $valida = Validator::make($request->all(), [
+            'nombre' => 'required|max:300|unique:configuracion_empresa',
+        ], [
+            'nombre.unique' => 'El nombre ya existe',
+            'nombre.required' => 'El nombre es obligatorio',
+            'nombre.max' => 'El nombre es muy grande',
+        ]);
+        if (!$valida->fails()) {
+            $model = new ConfiguracionEmpresa();
+            $model->nombre = str_limit(espacios($request->nombre), 300);
+
+            if ($model->save()) {
+                $model = ConfiguracionEmpresa::All()->last();
+                $success = true;
+                $msg = 'Se ha guardado la empresa satisfactoriamente';
+                bitacora('configuracion_empresa', $model->id_configuracion_empresa, 'I', 'Inserción satisfactoria de una nueva finca');
             } else {
                 $success = false;
                 $msg = '<div class="alert alert-warning text-center">' .
@@ -87,12 +132,13 @@ class FincasController extends Controller
 
     public function update_finca(Request $request)
     {
-        $finca = ConfiguracionEmpresa::find($request->finca);
+        $finca = ConfiguracionEmpresa::find($request->id);
+        $finca->nombre = $request->nombre;
         $finca->id_super_finca = $request->super_finca;
         $finca->save();
         return [
             'success' => true,
-            'mensaje' => '<div class="alert alert-success text-center">Se ha modificado la finca satisfactoriamente</div>',
+            'mensaje' => 'Se ha modificado la finca satisfactoriamente',
         ];
     }
 
@@ -108,7 +154,7 @@ class FincasController extends Controller
             $sf->save();
 
             $success = true;
-            $msg = '<div class="alert alert-success text-center">Se ha modificado la finca satisfactoriamente</div>';
+            $msg = 'Se ha modificado la finca satisfactoriamente';
         } else {
             $success = false;
             $msg = '<div class="alert alert-danger text-center">El nombre ya existe</div>';
@@ -117,6 +163,17 @@ class FincasController extends Controller
         return [
             'success' => $success,
             'mensaje' => $msg,
+        ];
+    }
+
+    public function cambiar_estado_finca(Request $request)
+    {
+        $finca = ConfiguracionEmpresa::find($request->id);
+        $finca->estado = !$request->estado;
+        $finca->save();
+        return [
+            'success' => true,
+            'mensaje' => 'Se ha modificado la finca satisfactoriamente',
         ];
     }
 }
