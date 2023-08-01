@@ -75,7 +75,7 @@
             @endphp
             <tr id="tr_producto_{{ $item->id_producto }}" class="{{ $item->estado == 0 ? 'error' : '' }}">
                 <th class="text-center" style="border-color: #9d9d9d">
-                    <img src="{{ url($url_imagen) }}" alt="..." 
+                    <img src="{{ url($url_imagen) }}" alt="..."
                         class="img-fluid img-thumbnail mouse-hand imagen_{{ $item->id_producto }}"
                         style="border-radius: 16px"
                         onclick="$('.imagen_{{ $item->id_producto }}').toggleClass('hidden')">
@@ -201,7 +201,8 @@
                     if (retorno2.success) {
                         mini_alerta('success', retorno2.mensaje, 5000);
                         cerrar_modals();
-                        listar_reporte();
+                        location.reload(true);
+                        //listar_reporte();
                     } else {
                         alerta(retorno2.mensaje);
                     }
