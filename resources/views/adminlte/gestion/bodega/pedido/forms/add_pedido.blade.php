@@ -15,13 +15,28 @@
                     <span class="input-group-addon bg-yura_dark">
                         Finca
                     </span>
-                    <select id="form_finca" style="width: 100%" class="form-control input-yura_default">
+                    <select id="form_finca" style="width: 100%" class="form-control" onchange="seleccionar_finca()">
                         @foreach ($fincas as $f)
                             <option value="{{ $f->id_empresa }}">
                                 {{ $f->nombre }}
                             </option>
                         @endforeach
                     </select>
+                </div>
+            </td>
+            <td class="text-center" style="border-color: #9d9d9d; min-width: 260px">
+                <div class="input-group">
+                    <span class="input-group-addon bg-yura_dark">
+                        Usuario
+                    </span>
+                    @if (in_array(session('id_usuario'), [1, 2]))
+                        <select id="form_usuario" style="width: 100%" class="form-control input-yura_default">
+                        </select>
+                    @else
+                        <input type="text" style="width: 100%" class="form-control input-yura_default" readonly
+                            value="{{ getUsuario(session('id_usuario'))->nombre_completo }}">
+                        <input type="hidden" id="form_usuario" value="{{ session('id_usuario') }}">
+                    @endif
                 </div>
             </td>
         </tr>
@@ -72,6 +87,16 @@
 
 <script>
     listar_catalogo();
+    @if (in_array(session('id_usuario'), [1, 2]))
+        seleccionar_finca();
+        setTimeout(() => {
+            $('#form_usuario').select2({
+                dropdownParent: $('#div_modal-modal_add_pedido')
+            })
+            $('.select2-selection').css('height', '34px');
+            $('.select2-selection').css('border-radius', '0');
+        }, 500);
+    @endif
 
     function listar_catalogo() {
         datos = {
@@ -80,5 +105,21 @@
         get_jquery('{{ url('pedido_bodega/listar_catalogo') }}', datos, function(retorno) {
             $('#div_catalogo').html(retorno)
         }, 'div_catalogo')
+    }
+
+    function seleccionar_finca() {
+        datos = {
+            _token: '{{ csrf_token() }}',
+            finca: $('#form_finca').val()
+        }
+        $('#form_usuario').LoadingOverlay('show');
+        $.post('{{ url('pedido_bodega/seleccionar_finca') }}', datos, function(retorno) {
+            $('#form_usuario').html(retorno.options_usuarios);
+        }, 'json').fail(function(retorno) {
+            console.log(retorno);
+            alerta_errores(retorno.responseText);
+        }).always(function() {
+            $('#form_usuario').LoadingOverlay('hide');
+        });
     }
 </script>

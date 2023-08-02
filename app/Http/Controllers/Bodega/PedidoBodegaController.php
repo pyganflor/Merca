@@ -65,4 +65,23 @@ class PedidoBodegaController extends Controller
             'listado' => $listado
         ]);
     }
+
+    public function seleccionar_finca(Request $request)
+    {
+        $listado = DB::table('usuario_finca as uf')
+            ->join('usuario as u', 'u.id_usuario', '=', 'uf.id_usuario')
+            ->select('uf.id_usuario', 'u.nombre_completo')->distinct()
+            ->where('uf.id_empresa', $request->finca)
+            ->orderBy('u.nombre_completo')
+            ->get();
+
+        $options_usuarios = '<option value="">Seleccione</option>';
+        foreach ($listado as $item) {
+            $options_usuarios .= '<option value="' . $item->id_usuario . '">' . $item->nombre_completo . '</option>';
+        }
+
+        return [
+            'options_usuarios' => $options_usuarios
+        ];
+    }
 }
