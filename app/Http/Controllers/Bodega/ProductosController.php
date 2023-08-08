@@ -7,6 +7,7 @@ use yura\Http\Controllers\Controller;
 use yura\Modelos\Producto;
 use yura\Modelos\Submenu;
 use Validator;
+use yura\Modelos\CategoriaProducto;
 
 class ProductosController extends Controller
 {
@@ -26,8 +27,12 @@ class ProductosController extends Controller
         })->orderBy('nombre')
             ->get();
 
+        $categorias = CategoriaProducto::where('estado', 1)
+            ->orderBy('nombre')
+            ->get();
         return view('adminlte.gestion.bodega.productos.partials.listado', [
             'listado' => $listado,
+            'categorias' => $categorias,
         ]);
     }
 
@@ -56,6 +61,7 @@ class ProductosController extends Controller
         ]);
         if (!$valida->fails()) {
             $model = new Producto();
+            $model->id_categoria_producto = $request->categoria;
             $model->codigo = espacios(mb_strtoupper($request->codigo));
             $model->nombre = espacios(mb_strtoupper($request->nombre));
             $model->unidad_medida = mb_strtoupper($request->unidad_medida);
@@ -177,6 +183,7 @@ class ProductosController extends Controller
                         . '</div>';
                 } else {
                     $model = Producto::find($request->id);
+                    $model->id_categoria_producto = $request->categoria;
                     $model->codigo = $request->codigo;
                     $model->nombre = espacios(mb_strtoupper($request->nombre));
                     $model->stock_minimo = $request->stock_minimo;
@@ -271,6 +278,47 @@ class ProductosController extends Controller
 
         $success = true;
         $msg = 'Se ha <strong>MODIFICADO</strong> el producto satisfactoriamente';
+        return [
+            'mensaje' => $msg,
+            'success' => $success
+        ];
+    }
+
+    public function store_categoria(Request $request)
+    {
+        $valida = Validator::make($request->all(), [
+            'nombre' => 'required|max:500|unique:categoria_producto',
+        ], [
+            'nombre.required' => 'La categoria es obligatorio',
+            'nombre.unique' => 'La categoria ya existe',
+            'nombre.max' => 'El nombre es muy grande',
+        ]);
+        if (!$valida->fails()) {
+            $model = new CategoriaProducto();
+            $model->nombre = espacios(mb_strtoupper($request->nombre));
+            $model->save();
+            $model = CategoriaProducto::All()->last();
+
+            bitacora('categoria_producto', $model->id_categoria_producto, 'I', 'Creacion de la categoria');
+            $success = true;
+            $msg = 'Se ha <strong>CREADO</strong> la categoria satisfactoriamente';
+        } else {
+            $success = false;
+            $errores = '';
+            foreach ($valida->errors()->all() as $mi_error) {
+                if ($errores == '') {
+                    $errores = '<li>' . $mi_error . '</li>';
+                } else {
+                    $errores .= '<li>' . $mi_error . '</li>';
+                }
+            }
+            $msg = '<div class="alert alert-danger">' .
+                '<p class="text-center">¡Por favor corrija los siguientes errores!</p>' .
+                '<ul>' .
+                $errores .
+                '</ul>' .
+                '</div>';
+        }
         return [
             'mensaje' => $msg,
             'success' => $success

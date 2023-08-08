@@ -5,3 +5,4 @@ Route::get('bodega_productos/listar_reporte', 'Bodega\ProductosController@listar
 Route::post('bodega_productos/update_producto', 'Bodega\ProductosController@update_producto');
 Route::post('bodega_productos/cambiar_estado_producto', 'Bodega\ProductosController@cambiar_estado_producto');
 Route::post('bodega_productos/store_producto', 'Bodega\ProductosController@store_producto');
+Route::post('bodega_productos/store_categoria', 'Bodega\ProductosController@store_categoria');

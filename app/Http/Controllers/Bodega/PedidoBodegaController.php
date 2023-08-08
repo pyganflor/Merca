@@ -5,6 +5,7 @@ namespace yura\Http\Controllers\Bodega;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use yura\Http\Controllers\Controller;
+use yura\Modelos\CategoriaProducto;
 use yura\Modelos\Producto;
 use yura\Modelos\Submenu;
 
@@ -47,9 +48,13 @@ class PedidoBodegaController extends Controller
             ->where('uf.id_usuario', session('id_usuario'))
             ->orderBy('emp.nombre')
             ->get();
+        $categorias = CategoriaProducto::where('estado', 1)
+            ->orderBy('nombre')
+            ->get();
 
         return view('adminlte.gestion.bodega.pedido.forms.add_pedido', [
-            'fincas' => $fincas
+            'fincas' => $fincas,
+            'categorias' => $categorias,
         ]);
     }
 
@@ -58,11 +63,33 @@ class PedidoBodegaController extends Controller
         $listado = Producto::Where(function ($q) use ($request) {
             $q->Where('nombre', 'like', '%' . mb_strtoupper($request->busqueda) . '%')
                 ->orWhere('codigo', 'like', '%' . mb_strtoupper($request->busqueda) . '%');
-        })->orderBy('nombre')
+        });
+        if ($request->categoria != 'T')
+            $listado = $listado->where('id_categoria_producto', $request->categoria);
+        $listado = $listado->orderBy('nombre')
             ->get();
 
         return view('adminlte.gestion.bodega.pedido.forms._listar_catalogo', [
             'listado' => $listado
         ]);
+    }
+
+    public function seleccionar_finca(Request $request)
+    {
+        $listado = DB::table('usuario_finca as uf')
+            ->join('usuario as u', 'u.id_usuario', '=', 'uf.id_usuario')
+            ->select('uf.id_usuario', 'u.nombre_completo')->distinct()
+            ->where('uf.id_empresa', $request->finca)
+            ->orderBy('u.nombre_completo')
+            ->get();
+
+        $options_usuarios = '<option value="">Seleccione</option>';
+        foreach ($listado as $item) {
+            $options_usuarios .= '<option value="' . $item->id_usuario . '">' . $item->nombre_completo . '</option>';
+        }
+
+        return [
+            'options_usuarios' => $options_usuarios
+        ];
     }
 }
