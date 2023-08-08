@@ -1,4 +1,4 @@
-<div class="container">
+<div style="padding-left: 15px; padding-right: 15px">
     <div class="row">
         @foreach ($listado as $item)
             @php

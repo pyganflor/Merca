@@ -15,7 +15,7 @@
                     <span class="input-group-addon bg-yura_dark">
                         Finca
                     </span>
-                    <select id="form_finca" style="width: 100%" class="form-control">
+                    <select id="form_finca" style="width: 100%" class="form-control" onchange="seleccionar_finca()">
                         @foreach ($fincas as $f)
                             <option value="{{ $f->id_empresa }}">
                                 {{ $f->nombre }}
@@ -119,6 +119,22 @@
         get_jquery('{{ url('pedido_bodega/listar_catalogo') }}', datos, function(retorno) {
             $('#div_catalogo').html(retorno)
         }, 'div_catalogo');
+    }
+
+    function seleccionar_finca() {
+        datos = {
+            _token: '{{ csrf_token() }}',
+            finca: $('#form_finca').val()
+        }
+        $('#form_usuario').LoadingOverlay('show');
+        $.post('{{ url('pedido_bodega/seleccionar_finca') }}', datos, function(retorno) {
+            $('#form_usuario').html(retorno.options_usuarios);
+        }, 'json').fail(function(retorno) {
+            console.log(retorno);
+            alerta_errores(retorno.responseText);
+        }).always(function() {
+            $('#form_usuario').LoadingOverlay('hide');
+        });
     }
 
     function seleccionar_finca() {
