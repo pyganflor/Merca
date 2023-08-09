@@ -4,7 +4,8 @@
 
     function listar_reporte() {
         datos = {
-            fecha: $('#filtro_fecha').val(),
+            desde: $('#filtro_desde').val(),
+            hasta: $('#filtro_hasta').val(),
             finca: $('#filtro_finca').val(),
         };
         get_jquery('{{ url('pedido_bodega/listar_reporte') }}', datos, function(retorno) {

@@ -28,6 +28,9 @@
                         id="table_listado_add_ingresos">
                         <thead>
                             <tr class="tr_fija_top_0">
+                                <th class="text-center th_yura_green" style="width: 60px">
+                                    IMAGEN
+                                </th>
                                 <th class="text-center th_yura_green">
                                     CODIGO
                                 </th>
@@ -44,7 +47,17 @@
                         </thead>
                         <tbody>
                             @foreach ($listado as $item)
+                                @php
+                                    $url_imagen = 'images\productos\*' . $item->imagen;
+                                    $url_imagen = str_replace('*', '', $url_imagen);
+                                @endphp
                                 <tr>
+                                    <th class="padding_lateral_5" style="border-color: #9d9d9d">
+                                        <img src="{{ url($url_imagen) }}" alt="..."
+                                            class="img-fluid img-thumbnail mouse-hand imagen_{{ $item->id_producto }}"
+                                            style="border-radius: 16px; width: 60px"
+                                            onclick="$('.imagen_{{ $item->id_producto }}').toggleClass('hidden')">
+                                    </th>
                                     <th class="padding_lateral_5" style="border-color: #9d9d9d">
                                         {{ $item->codigo }}
                                         <input type="hidden" id="codigo_{{ $item->id_producto }}"

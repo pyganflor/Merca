@@ -45,7 +45,8 @@ class ProductosController extends Controller
             'stock_minimo' => 'required',
             'disponibles' => 'required',
             'conversion' => 'required',
-            'precio' => 'required',
+            'precio_compra' => 'required',
+            'precio_venta' => 'required',
         ], [
             'nombre.required' => 'El nombre es obligatorio',
             'nombre.unique' => 'El nombre ya existe',
@@ -57,7 +58,8 @@ class ProductosController extends Controller
             'stock_minimo.required' => 'El stock minimo es obligatorio',
             'disponibles.required' => 'Los disponibles son obligatorios',
             'conversion.required' => 'La conversion es obligatoria',
-            'precio.required' => 'El precio es obligatorio',
+            'precio_compra.required' => 'El precio de compra es obligatorio',
+            'precio_venta.required' => 'El precio de venta es obligatorio',
         ]);
         if (!$valida->fails()) {
             $model = new Producto();
@@ -68,7 +70,8 @@ class ProductosController extends Controller
             $model->stock_minimo = $request->stock_minimo;
             $model->disponibles = 0;
             $model->conversion = $request->conversion;
-            $model->precio = $request->precio;
+            $model->precio = $request->precio_compra;
+            $model->precio_venta = $request->precio_venta;
             $model->save();
             $model = Producto::All()->last();
 
@@ -150,7 +153,8 @@ class ProductosController extends Controller
             'unidad_medida' => 'required',
             'stock_minimo' => 'required',
             'conversion' => 'required',
-            'precio' => 'required',
+            'precio_compra' => 'required',
+            'precio_venta' => 'required',
         ], [
             'nombre.required' => 'El nombre es obligatorio',
             'nombre.max' => 'El nombre es muy grande',
@@ -159,7 +163,8 @@ class ProductosController extends Controller
             'unidad_medida.required' => 'La unidad de medida es obligatoria',
             'stock_minimo.required' => 'El stock minimo es obligatorio',
             'conversion.required' => 'La conversion es obligatoria',
-            'precio.required' => 'El precio es obligatorio',
+            'precio_compra.required' => 'El precio de compra es obligatorio',
+            'precio_venta.required' => 'El precio de venta es obligatorio',
         ]);
         if (!$valida->fails()) {
             $existe_nombre = Producto::All()
@@ -189,7 +194,9 @@ class ProductosController extends Controller
                     $model->stock_minimo = $request->stock_minimo;
                     $model->unidad_medida = $request->unidad_medida;
                     $model->conversion = $request->conversion;
-                    $model->precio = $request->precio;
+                    $model->precio = $request->precio_compra;
+                    $model->precio_venta = $request->precio_venta;
+                    $model->tiene_iva = $request->tiene_iva == 'true' ? 1 : 0;
 
                     //------------------------------  GRABAR LA IMAGEN DEL PRODUCTO  -----------------------------------------
                     try {

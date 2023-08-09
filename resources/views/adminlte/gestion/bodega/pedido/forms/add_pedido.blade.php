@@ -152,4 +152,33 @@
             $('#form_usuario').LoadingOverlay('hide');
         });
     }
+
+    function store_pedido() {
+        detalles = [];
+        span_contador_selected = $('.span_contador_selected');
+        for (i = 0; i < span_contador_selected.length; i++) {
+            id_span = span_contador_selected[i].id;
+            prod = $('#' + id_span).attr('data-id_producto');
+            cantidad = parseInt($('#' + id_span).html());
+            detalles.push({
+                producto: prod,
+                cantidad: cantidad,
+            });
+        }
+        datos = {
+            _token: '{{ csrf_token() }}',
+            fecha: $('#form_fecha').val(),
+            finca: $('#form_finca').val(),
+            usuario: $('#form_usuario').val(),
+            detalles: JSON.stringify(detalles),
+        }
+        if (datos['fecha'] != '' && datos['finca'] != '' && datos['usuario'] != '' && detalles.length > 0) {
+            post_jquery_m('{{ url('pedido_bodega/store_pedido') }}', datos, function() {
+                cerrar_modals();
+                listar_reporte();
+            });
+        } else {
+            alerta('<div class="alert alert-warning text-center">Faltan datos necesarios</div>');
+        }
+    }
 </script>

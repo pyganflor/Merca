@@ -37,10 +37,19 @@
                 <td class="text-center" style="border-color: #9d9d9d">
                     <div class="input-group">
                         <span class="input-group-addon bg-yura_dark span-input-group-yura-fixed">
-                            Fecha
+                            Desde
                         </span>
-                        <input type="date" id="filtro_fecha" style="width: 100%" class="text-center form-control"
+                        <input type="date" id="filtro_desde" style="width: 100%" class="text-center form-control"
                             value="{{ hoy() }}">
+                    </div>
+                </td>
+                <td class="text-center" style="border-color: #9d9d9d">
+                    <div class="input-group">
+                        <span class="input-group-addon bg-yura_dark">
+                            Hasta
+                        </span>
+                        <input type="date" id="filtro_hasta" style="width: 100%" class="text-center form-control"
+                            value="{{ opDiasFecha('+', 3, hoy()) }}">
                     </div>
                 </td>
                 <td class="text-center" style="border-color: #9d9d9d">

@@ -25,7 +25,10 @@
                 CONVERSION
             </th>
             <th class="text-center th_yura_green" style="width: 60px">
-                PRECIO
+                PRECIO COMPRA
+            </th>
+            <th class="text-center th_yura_green" style="width: 60px">
+                PRECIO VENTA
             </th>
             <th class="text-center th_yura_green" style="width: 60px">
                 <button type="button" class="btn btn-xs btn-yura_default"
@@ -74,7 +77,11 @@
             </th>
             <th class="text-center" style="border-color: #9d9d9d">
                 <input type="number" style="width: 100%" class="text-center bg-yura_dark" required min="0"
-                    id="precio_new" name="precio_new" placeholder="0">
+                    id="precio_compra_new" name="precio_compra_new" placeholder="0">
+            </th>
+            <th class="text-center" style="border-color: #9d9d9d">
+                <input type="number" style="width: 100%" class="text-center bg-yura_dark" required min="0"
+                    id="precio_venta_new" name="precio_venta_new" placeholder="0">
             </th>
             <th class="text-center" style="border-color: #9d9d9d">
                 <button type="button" class="btn btn-xs btn-yura_primary" onclick="store_producto()">
@@ -134,7 +141,14 @@
                 </th>
                 <th class="text-center" style="border-color: #9d9d9d; vertical-align: top">
                     <input type="number" style="width: 100%" class="text-center" required min="0"
-                        id="precio_{{ $item->id_producto }}" value="{{ $item->precio }}">
+                        id="precio_compra_{{ $item->id_producto }}" value="{{ $item->precio }}">
+                </th>
+                <th class="text-center" style="border-color: #9d9d9d; vertical-align: top">
+                    <input type="number" style="width: 100%" class="text-center" required min="0"
+                        id="precio_venta_{{ $item->id_producto }}" value="{{ $item->precio_venta }}">
+                    <label for="tiene_iva_{{ $item->id_producto }}" class="mouse-hand">IVA</label>
+                    <input type="checkbox" id="tiene_iva_{{ $item->id_producto }}"
+                        {{ $item->tiene_iva == 1 ? 'checked' : '' }}>
                 </th>
                 <th class="text-center" style="border-color: #9d9d9d; vertical-align: top">
                     <div class="btn-group">
@@ -165,7 +179,8 @@
             formData.append('unidad_medida', $('#unidad_medida_new').val());
             formData.append('stock_minimo', $('#stock_minimo_new').val());
             formData.append('conversion', $('#conversion_new').val());
-            formData.append('precio', $('#precio_new').val());
+            formData.append('precio_compra', $('#precio_compra_new').val());
+            formData.append('precio_venta', $('#precio_venta_new').val());
             formData.append('disponibles', 0);
             //hacemos la petición ajax
             $.ajax({
@@ -210,7 +225,9 @@
             formData.append('unidad_medida', $('#unidad_medida_' + id).val());
             formData.append('stock_minimo', $('#stock_minimo_' + id).val());
             formData.append('conversion', $('#conversion_' + id).val());
-            formData.append('precio', $('#precio_' + id).val());
+            formData.append('precio_compra', $('#precio_compra_' + id).val());
+            formData.append('precio_venta', $('#precio_venta_' + id).val());
+            formData.append('tiene_iva', $('#tiene_iva_' + id).prop('checked'));
             formData.append('id', id);
             //hacemos la petición ajax
             $.ajax({

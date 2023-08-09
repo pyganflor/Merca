@@ -21,4 +21,9 @@ class Producto extends Model
     {
         return $this->hasMany('\yura\Modelos\ActividadProducto', 'id_producto');
     }
+
+    public function categoria_producto()
+    {
+        return $this->belongsTo('\yura\Modelos\CategoriaProducto', 'id_categoria_producto');
+    }
 }

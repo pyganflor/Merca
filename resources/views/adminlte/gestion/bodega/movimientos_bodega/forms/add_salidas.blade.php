@@ -28,6 +28,9 @@
                         id="table_listado_add_salidas">
                         <thead>
                             <tr class="tr_fija_top_0">
+                                <th class="text-center th_yura_green" style="width: 60px">
+                                    IMAGEN
+                                </th>
                                 <th class="text-center th_yura_green">
                                     CODIGO
                                 </th>
@@ -44,7 +47,17 @@
                         </thead>
                         <tbody>
                             @foreach ($listado as $item)
+                                @php
+                                    $url_imagen = 'images\productos\*' . $item->imagen;
+                                    $url_imagen = str_replace('*', '', $url_imagen);
+                                @endphp
                                 <tr>
+                                    <th class="padding_lateral_5" style="border-color: #9d9d9d">
+                                        <img src="{{ url($url_imagen) }}" alt="..."
+                                            class="img-fluid img-thumbnail mouse-hand imagen_{{ $item->id_producto }}"
+                                            style="border-radius: 16px; width: 60px"
+                                            onclick="$('.imagen_{{ $item->id_producto }}').toggleClass('hidden')">
+                                    </th>
                                     <th class="padding_lateral_5" style="border-color: #9d9d9d">
                                         {{ $item->codigo }}
                                         <input type="hidden" id="codigo_{{ $item->id_producto }}"
@@ -94,12 +107,6 @@
                         <th class="text-center bg-yura_dark" style="width: 60px !important">
                             UNIDADES
                         </th>
-                        <th class="text-center bg-yura_dark">
-                            FINCA
-                        </th>
-                        <th class="text-center bg-yura_dark">
-                            BLOQUE
-                        </th>
                         <th class="text-center bg-yura_dark" style="width: 60px !important">
                         </th>
                     </tr>
@@ -108,14 +115,6 @@
         </tr>
     </table>
 </div>
-<select class="hidden" id="select_empresas">
-    <option value="">Seleccione</option>
-    @foreach ($empresas as $item)
-        <option value="{{ $item->id_configuracion_empresa }}">
-            {{ $item->nombre }}
-        </option>
-    @endforeach
-</select>
 
 <script>
     estructura_tabla('table_listado_add_salidas');
@@ -143,18 +142,6 @@
                         'id="unidades_seleccionado_' + id_prod + '" min="0" value="' + unidades + '">' +
                         '</td>' +
                         '<td class="text-center" style="border-color: #9d9d9d">' +
-                        '<select style="width: 100%; height: 26px" onchange="seleccionar_finca(' + id_prod + ')"' +
-                        'id="finca_seleccionado_' + id_prod + '" min="0">' +
-                        select_empresas +
-                        '</select>' +
-                        '</td>' +
-                        '<td class="text-center" style="border-color: #9d9d9d">' +
-                        '<select style="width: 100%; height: 26px" ' +
-                        'id="sector_seleccionado_' + id_prod + '" min="0">' +
-                        '<option value="">Seleccione</option' +
-                        '</select>' +
-                        '</td>' +
-                        '<td class="text-center" style="border-color: #9d9d9d">' +
                         '<button type="button" class="btn btn-xs btn-yura_danger" onclick="quitar_fila(' + id_prod +
                         ')">' +
                         '<i class="fa fa-fw fa-trash"></i>' +
@@ -177,11 +164,9 @@
             id_prod = id_producto_seleccionado[i].value;
             unidades = $('#unidades_seleccionado_' + id_prod).val();
             if (unidades > 0) {
-                sector = $('#sector_seleccionado_' + id_prod).val();
                 data.push({
                     id_prod: id_prod,
                     unidades: unidades,
-                    sector: sector,
                 })
             }
         }
@@ -213,21 +198,5 @@
         $('#unidades_' + id_prod).removeClass('error');
         if (unidades > disponibles)
             $('#unidades_' + id_prod).addClass('error');
-    }
-
-    function seleccionar_finca(id_prod) {
-        datos = {
-            _token: '{{ csrf_token() }}',
-            finca: $('#finca_seleccionado_' + id_prod).val(),
-        }
-        $('#tr_add_ingreso_' + id_prod).LoadingOverlay('show');
-        $.post('{{ url('movimientos_bodega/seleccionar_finca') }}', datos, function(retorno) {
-            $('#sector_seleccionado_' + id_prod).html(retorno.sectores);
-        }, 'json').fail(function(retorno) {
-            console.log(retorno);
-            alerta_errores(retorno.responseText);
-        }).always(function() {
-            $('#tr_add_ingreso_' + id_prod).LoadingOverlay('hide');
-        })
     }
 </script>

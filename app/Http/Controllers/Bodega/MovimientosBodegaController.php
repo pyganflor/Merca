@@ -23,12 +23,10 @@ class MovimientosBodegaController extends Controller
 
     public function listar_reporte(Request $request)
     {
-        $finca = getFincaActiva();
         $listado = Producto::Where(function ($q) use ($request) {
             $q->Where('nombre', 'like', '%' . mb_strtoupper($request->busqueda) . '%')
                 ->orWhere('codigo', 'like', '%' . mb_strtoupper($request->busqueda) . '%');
-        })->where('id_empresa', $finca)
-            ->orderBy('nombre')
+        })->orderBy('nombre')
             ->get();
 
         return view('adminlte.gestion.bodega.movimientos_bodega.partials.listado', [
@@ -38,9 +36,7 @@ class MovimientosBodegaController extends Controller
 
     public function add_ingresos(Request $request)
     {
-        $finca = getFincaActiva();
-        $listado = Producto::where('id_empresa', $finca)
-            ->orderBy('nombre')
+        $listado = Producto::orderBy('nombre')
             ->get();
 
         return view('adminlte.gestion.bodega.movimientos_bodega.forms.add_ingresos', [
@@ -90,9 +86,7 @@ class MovimientosBodegaController extends Controller
 
     public function add_salidas(Request $request)
     {
-        $finca = getFincaActiva();
-        $listado = Producto::where('id_empresa', $finca)
-            ->orderBy('nombre')
+        $listado = Producto::orderBy('nombre')
             ->get();
         $empresas = DB::table('configuracion_empresa')
             ->where('proveedor', 0)
@@ -121,8 +115,6 @@ class MovimientosBodegaController extends Controller
                     $ingreso->id_producto = $d->id_prod;
                     $ingreso->fecha = $request->fecha;
                     $ingreso->cantidad = $d->unidades;
-                    $ingreso->id_sector = $d->sector;
-                    $ingreso->id_empresa = getFincaActiva();
                     $ingreso->save();
                     $ingreso = SalidaBodega::All()->last();
                     bitacora('salida_bodega', $ingreso->id_salida_bodega, 'I', 'SALIDA A BODEGA de ' . $d->unidades . ' UNIDADES de ' . $producto->nombre);
