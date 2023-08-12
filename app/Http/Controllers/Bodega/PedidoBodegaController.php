@@ -119,6 +119,8 @@ class PedidoBodegaController extends Controller
                 $detalle->id_pedido_bodega = $pedido->id_pedido_bodega;
                 $detalle->id_producto = $det->producto;
                 $detalle->cantidad = $det->cantidad;
+                $detalle->precio = $det->precio_venta;
+                $detalle->iva = $det->iva;
                 $detalle->save();
             }
 

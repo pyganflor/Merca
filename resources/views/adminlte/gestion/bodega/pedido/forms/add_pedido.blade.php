@@ -160,9 +160,13 @@
             id_span = span_contador_selected[i].id;
             prod = $('#' + id_span).attr('data-id_producto');
             cantidad = parseInt($('#' + id_span).html());
+            precio_venta = $('#' + id_span).attr('data-precio_venta');
+            iva = $('#' + id_span).attr('data-iva');
             detalles.push({
                 producto: prod,
                 cantidad: cantidad,
+                precio_venta: precio_venta,
+                iva: iva,
             });
         }
         datos = {

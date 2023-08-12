@@ -18,6 +18,7 @@
                                 <i class="fa fa-fw fa-minus"></i>
                             </button>
                             <button type="button" class="btn btn-xs btn-yura_dark"
+                                data-precio_venta="{{ $item->precio_venta }}" data-iva="{{ $item->tiene_iva }}"
                                 id="btn_catalogo_{{ $item->id_producto }}">
                                 0
                             </button>
@@ -91,6 +92,8 @@
         if ($('#span_contador_selected_' + prod).length == 0) {
             url_imagen = $('#imagen_catalogo_' + prod).attr('data-url');
             nombre_producto = $('#span_nombre_producto_' + prod).attr('data-nombre');
+            precio_venta = $('#btn_catalogo_' + prod).attr('data-precio_venta');
+            iva = $('#btn_catalogo_' + prod).attr('data-iva');
             $('#row_contenido_pedido').append(
                 '<div class="col-md-1 mouse-hand text-center padding_lateral_5" style="position: relative; margin-top: 10px" id="div_col_selected_' +
                 prod + '">' +
@@ -115,7 +118,7 @@
                 '<img src="' + url_imagen +
                 '" class="img-fluid img-thumbnail" style="border-radius: 16px; width: 100px; height: auto;">' +
                 '<span class="text-right span_contador span_contador_selected" id="span_contador_selected_' + prod +
-                '"' +
+                '" data-precio_venta="' + precio_venta + '" data-iva="' + iva + '"' +
                 'style="background-image: linear-gradient(to right, #00B388 ,#7effdf8a)" data-id_producto="' +
                 prod + '">' +
                 valor +
@@ -147,9 +150,23 @@
             $('#span_contador_selected_' + prod).addClass('hidden');
             $('#div_col_selected_' + prod).remove();
         }
+        calcular_totales_pedido();
     }
 
     function calcular_totales_pedido() {
-
+        monto_total = 0;
+        span_contador_selected = $('.span_contador_selected');
+        for (i = 0; i < span_contador_selected.length; i++) {
+            id_span = span_contador_selected[i].id;
+            cantidad = parseInt($('#' + id_span).html());
+            precio_venta = parseFloat($('#' + id_span).attr('data-precio_venta'));
+            iva = $('#' + id_span).attr('data-iva');
+            precio_prod = cantidad * precio_venta;
+            if (iva == 1) {
+                precio_prod += (12 * precio_prod) / 100;
+            }
+            monto_total += precio_prod;
+        }
+        $('#span_total_monto_pedido').html('$' + monto_total);
     }
 </script>

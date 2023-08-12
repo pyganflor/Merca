@@ -80,7 +80,7 @@ class ProductosController extends Controller
                 if ($request->hasFile('imagen_new')) {
                     $archivo = $request->file('imagen_new');
                     $input = array('image' => $archivo);
-                    $reglas = array('image' => 'required|max:2000');
+                    $reglas = array('image' => 'required|image|mimes:jpeg,png,jpg|max:2000');
                     $validacion = Validator::make($input, $reglas);
 
                     if ($validacion->fails()) {
