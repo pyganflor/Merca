@@ -167,6 +167,7 @@
             }
             monto_total += precio_prod;
         }
+        monto_total = Math.round(monto_total * 100) / 100;
         $('#span_total_monto_pedido').html('$' + monto_total);
     }
 </script>
