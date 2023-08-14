@@ -47,8 +47,12 @@ class PedidoBodega extends Model
     {
         $monto = 0;
         foreach ($this->detalles as $det) {
-            $monto += $det->cantidad * $det->producto->precio_venta;
+            $producto = $det->producto;
+            $monto += $det->cantidad * $producto->precio_venta;
+            if ($producto->tiene_iva == 1) {
+                $monto += (12 * $monto) / 100;
+            }
         }
-        return $monto;
+        return round($monto, 2);
     }
 }

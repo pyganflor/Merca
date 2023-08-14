@@ -88,7 +88,7 @@ class PedidoBodegaController extends Controller
     {
         $listado = DB::table('usuario_finca as uf')
             ->join('usuario as u', 'u.id_usuario', '=', 'uf.id_usuario')
-            ->select('uf.id_usuario', 'u.nombre_completo')->distinct()
+            ->select('uf.id_usuario', 'u.nombre_completo', 'u.username')->distinct()
             ->where('uf.id_empresa', $request->finca)
             ->where('u.estado', 'A')
             ->orderBy('u.nombre_completo')
@@ -96,13 +96,14 @@ class PedidoBodegaController extends Controller
 
         $options_usuarios = '<option value="">Seleccione</option>';
         foreach ($listado as $item) {
-            $options_usuarios .= '<option value="' . $item->id_usuario . '">' . $item->nombre_completo . '</option>';
+            $options_usuarios .= '<option value="' . $item->id_usuario . '">' . $item->nombre_completo . '-' . $item->username . '</option>';
         }
 
         return [
             'options_usuarios' => $options_usuarios
         ];
     }
+
     public function store_pedido(Request $request)
     {
         DB::beginTransaction();
@@ -141,16 +142,106 @@ class PedidoBodegaController extends Controller
             'mensaje' => $msg,
         ];
     }
+
     public function delete_pedido(Request $request)
     {
         DB::beginTransaction();
         try {
             $pedido = PedidoBodega::find($request->ped);
-            dd($pedido);
             $pedido->delete();
 
             $success = true;
             $msg = 'Se ha <b>CANCELADO</b> el pedido correctamente';
+
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            $success = false;
+            $msg = '<div class="alert alert-danger text-center">' .
+                '<p> Ha ocurrido un problema al guardar la informacion al sistema</p>' .
+                '<p>' . $e->getMessage() . ' ' . $e->getFile() . ' ' . $e->getLine() . '</p>'
+                . '</div>';
+        }
+        return [
+            'success' => $success,
+            'mensaje' => $msg,
+        ];
+    }
+
+    public function ver_pedido(Request $request)
+    {
+        $fincas = DB::table('configuracion_empresa as emp')
+            ->join('usuario_finca as uf', 'uf.id_empresa', '=', 'emp.id_configuracion_empresa')
+            ->select('emp.nombre', 'uf.id_empresa')->distinct()
+            ->where('emp.proveedor', 0)
+            ->where('emp.estado', 1)
+            ->where('uf.id_usuario', session('id_usuario'))
+            ->orderBy('emp.nombre')
+            ->get();
+        $categorias = CategoriaProducto::where('estado', 1)
+            ->orderBy('nombre')
+            ->get();
+        $pedido = PedidoBodega::find($request->ped);
+
+        return view('adminlte.gestion.bodega.pedido.forms.ver_pedido', [
+            'fincas' => $fincas,
+            'categorias' => $categorias,
+            'pedido' => $pedido,
+        ]);
+    }
+
+    public function update_pedido(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            $pedido_delete = PedidoBodega::find($request->ped);
+            $pedido_delete->delete();
+
+            $pedido = new PedidoBodega();
+            $pedido->fecha = $request->fecha;
+            $pedido->id_usuario = $request->usuario;
+            $pedido->id_empresa = $request->finca;
+            $pedido->save();
+            $pedido = PedidoBodega::All()->last();
+
+            foreach (json_decode($request->detalles) as $det) {
+                $detalle = new DetallePedidoBodega();
+                $detalle->id_pedido_bodega = $pedido->id_pedido_bodega;
+                $detalle->id_producto = $det->producto;
+                $detalle->cantidad = $det->cantidad;
+                $detalle->precio = $det->precio_venta;
+                $detalle->iva = $det->iva;
+                $detalle->save();
+            }
+
+            $success = true;
+            $msg = 'Se ha <b>MODIFICADO</b> el pedido correctamente';
+
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            $success = false;
+            $msg = '<div class="alert alert-danger text-center">' .
+                '<p> Ha ocurrido un problema al guardar la informacion al sistema</p>' .
+                '<p>' . $e->getMessage() . ' ' . $e->getFile() . ' ' . $e->getLine() . '</p>'
+                . '</div>';
+        }
+        return [
+            'success' => $success,
+            'mensaje' => $msg,
+        ];
+    }
+
+    public function armar_pedido(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            $pedido = PedidoBodega::find($request->ped);
+            $pedido->armado = 1;
+            $pedido->save();
+
+            $success = true;
+            $msg = 'Se ha <b>ARMADO</b> el pedido correctamente';
 
             DB::commit();
         } catch (\Exception $e) {

@@ -1,9 +1,8 @@
 <div style="overflow-y: scroll; max-height: 700px" class="container">
     <div class="row">
         @foreach ($listado as $item)
-            <div class="col-md-2 sombra_pequeña col-md-listado" onmouseover="$(this).addClass('sombra_primary')"
-                onmouseleave="$(this).removeClass('sombra_primary')"
-                style="background-image: linear-gradient(to bottom, #6ce0e4, #7ef6ff8a)">
+            <div class="col-md-2 sombra_pequeña col-md-listado {{ $item->armado == 1 ? 'pedido_armado' : 'pedido_sin_armar' }}"
+                onmouseover="$(this).addClass('sombra_primary')" onmouseleave="$(this).removeClass('sombra_primary')">
                 <span class="span_pedido">
                     <button type="button" class="btn btn-xs btn-yura_dark btn_ver_pedido_listado" title="Ver Pedido"
                         onclick="ver_pedido('{{ $item->id_pedido_bodega }}')">
@@ -20,10 +19,10 @@
                     <small>{{ convertDateToText($item->fecha) }}</small>
                     <br>
                     <small class="span_contador_productos" title="Productos">
-                        {{ $item->getTotalProductos() }} <i class="fa fa-fw fa-gift"></i>
+                        {{ $item->getTotalProductos() }}<i class="fa fa-fw fa-gift"></i>
                     </small>
                     <small class="span_contador_monto" title="Monto Total">
-                        <i class="fa fa-fw fa-dollar"></i> {{ number_format($item->getTotalMonto(), 2) }}
+                        <i class="fa fa-fw fa-dollar"></i>{{ number_format($item->getTotalMonto(), 2) }}
                     </small>
                 </span>
             </div>
@@ -44,10 +43,19 @@
         margin-bottom: 13px;
     }
 
+    .pedido_armado {
+        background-image: linear-gradient(to bottom, #3f3f3f, #41414154);
+        color: #e7e7e7;
+    }
+
+    .pedido_sin_armar {
+        background-image: linear-gradient(to bottom, #6ce0e4, #7ef6ff8a);
+        color: #242424;
+    }
+
     .span_pedido {
         padding: 5px;
         text-align: center;
-        color: #242424;
         font-weight: bold;
     }
 
@@ -72,7 +80,8 @@
         padding: 5px;
         left: 0;
         bottom: 0;
-        background-image: linear-gradient(to right, #72aac4, #c5d9ff62);
+        color: white;
+        background-image: linear-gradient(to right, #3f3f3f, #c5d9ff34);
         border-radius: 0 16px 0 14px;
     }
 
@@ -81,7 +90,8 @@
         padding: 5px;
         right: 0;
         bottom: 0;
-        background-image: linear-gradient(to left, #72aac4, #c5d9ff62);
+        color: white;
+        background-image: linear-gradient(to left, #3f3f3f, #c5d9ff34);
         border-radius: 16px 0 14px 0;
     }
 </style>
@@ -102,5 +112,17 @@
                 listar_reporte();
             });
         })
+    }
+
+    function ver_pedido(ped) {
+        datos = {
+            ped: ped
+        }
+        get_jquery('{{ url('pedido_bodega/ver_pedido') }}', datos, function(retorno) {
+            modal_view('modal_ver_pedido', retorno,
+                '<i class="fa fa-fw fa-shopping-cart"></i> Ver Pedido',
+                true, false, '{{ isPC() ? '98%' : '' }}',
+                function() {});
+        });
     }
 </script>

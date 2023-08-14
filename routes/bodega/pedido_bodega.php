@@ -7,3 +7,6 @@ Route::get('pedido_bodega/listar_catalogo', 'Bodega\PedidoBodegaController@lista
 Route::post('pedido_bodega/seleccionar_finca', 'Bodega\PedidoBodegaController@seleccionar_finca');
 Route::post('pedido_bodega/store_pedido', 'Bodega\PedidoBodegaController@store_pedido');
 Route::post('pedido_bodega/delete_pedido', 'Bodega\PedidoBodegaController@delete_pedido');
+Route::get('pedido_bodega/ver_pedido', 'Bodega\PedidoBodegaController@ver_pedido');
+Route::post('pedido_bodega/update_pedido', 'Bodega\PedidoBodegaController@update_pedido');
+Route::post('pedido_bodega/armar_pedido', 'Bodega\PedidoBodegaController@armar_pedido');
