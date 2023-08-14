@@ -156,18 +156,22 @@
                     <div class="btn-group">
                         <button type="button" class="btn btn-yura_primary"
                             @if ($pedido->armado == 0) onclick="update_pedido('{{ $pedido->id_pedido_bodega }}')"@else disabled @endif>
-                            <i class="fa fa-fw fa-save"></i> ACTUALIZAR Pedido
+                            <i class="fa fa-fw fa-save"></i> ACTUALIZAR
                         </button>
                         <button type="button" class="btn btn-yura_default"
                             onclick="cerrar_modals(); ver_pedido('{{ $pedido->id_pedido_bodega }}')">
-                            <i class="fa fa-fw fa-refresh"></i> Reiniciar Formulario
+                            <i class="fa fa-fw fa-refresh"></i> Reiniciar
                         </button>
                         @if ($pedido->armado == 0)
                             <button type="button" class="btn btn-yura_dark"
                                 onclick="armar_pedido('{{ $pedido->id_pedido_bodega }}')">
-                                <i class="fa fa-fw fa-check"></i> ARMAR Pedido
+                                <i class="fa fa-fw fa-gift"></i> ARMAR
                             </button>
                         @endif
+                        <button type="button" class="btn btn-yura_default"
+                            onclick="imprimir_pedido('{{ $pedido->id_pedido_bodega }}')">
+                            <i class="fa fa-fw fa-print"></i> IMPRIMIR
+                        </button>
                     </div>
                 </td>
                 <th style="width: 25%; text-align: right; min-width: 120px">

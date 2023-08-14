@@ -6,6 +6,9 @@
             <th class="text-center th_yura_green">
                 PRODUCTO
             </th>
+            <th class="text-center th_yura_green" style="width: 60px">
+                PRECIO
+            </th>
             <th class="text-center th_yura_green" style="width: 110px">
                 CANTIDAD
             </th>
@@ -25,6 +28,9 @@
                     <span id="span_nombre_producto_{{ $item->id_producto }}" data-nombre="{{ $item->nombre }}">
                         <b>{{ $item->nombre }}</b>
                     </span>
+                </td>
+                <td class="text-center" style="border-color: #9d9d9d">
+                    <b>${{ number_format($item->precio_venta, 2) }}</b><sup>{{ $item->tiene_iva ? '+IVA' : '' }}</sup>
                 </td>
                 <td class="text-center" style="border-color: #9d9d9d">
                     <span class="text-left span_descriptivo_{{ $item->id_producto }}">
