@@ -25,10 +25,16 @@
                 CONVERSION
             </th>
             <th class="text-center th_yura_green" style="width: 60px">
-                PRECIO COMPRA
+                COSTO
             </th>
             <th class="text-center th_yura_green" style="width: 60px">
-                PRECIO VENTA
+                VENTA
+            </th>
+            <th class="text-center th_yura_green" style="width: 60px">
+                MARGEN
+            </th>
+            <th class="text-center th_yura_green" style="width: 60px">
+                % UTILDIAD
             </th>
             <th class="text-center th_yura_green" style="width: 60px">
                 <button type="button" class="btn btn-xs btn-yura_default"
@@ -83,7 +89,7 @@
                 <input type="number" style="width: 100%" class="text-center bg-yura_dark" required min="0"
                     id="precio_venta_new" name="precio_venta_new" placeholder="0">
             </th>
-            <th class="text-center" style="border-color: #9d9d9d">
+            <th class="text-center" style="border-color: #9d9d9d" colspan="3">
                 <button type="button" class="btn btn-xs btn-yura_primary" onclick="store_producto()">
                     <i class="fa fa-fw fa-save"></i>
                 </button>
@@ -149,6 +155,12 @@
                     <label for="tiene_iva_{{ $item->id_producto }}" class="mouse-hand">IVA</label>
                     <input type="checkbox" id="tiene_iva_{{ $item->id_producto }}"
                         {{ $item->tiene_iva == 1 ? 'checked' : '' }}>
+                </th>
+                <th class="text-center" style="border-color: #9d9d9d; vertical-align: top">
+                    {{ $item->precio_venta - $item->precio }}
+                </th>
+                <th class="text-center" style="border-color: #9d9d9d; vertical-align: top">
+                    {{ porcentaje($item->precio_venta - $item->precio, $item->precio, 1) }}%
                 </th>
                 <th class="text-center" style="border-color: #9d9d9d; vertical-align: top">
                     <div class="btn-group">

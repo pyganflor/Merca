@@ -2,7 +2,7 @@
     <div class="row">
         @foreach ($listado as $item)
             <div class="col-md-2 sombra_pequeña col-md-listado {{ $item->armado == 1 ? 'pedido_armado' : 'pedido_sin_armar' }}"
-                onmouseover="$(this).addClass('sombra_primary')" onmouseleave="$(this).removeClass('sombra_primary')">
+                onmouseover="$(this).addClass('sombra_primary')" onmouseleave="$(this).removeClass('sombra_primary')" title="{{ $item->armado == 1 ? 'Armado' : 'Sin Armar' }}">
                 <span class="span_pedido">
                     <button type="button" class="btn btn-xs btn-yura_dark btn_ver_pedido_listado" title="Ver Pedido"
                         onclick="ver_pedido('{{ $item->id_pedido_bodega }}')">
