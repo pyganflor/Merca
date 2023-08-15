@@ -34,18 +34,37 @@
     <section class="content">
         <table style="width: 100%">
             <tr>
-                <td class="text-center padding_lateral_5" style="border-color: #9d9d9d" id="td_cargar_longitudes">
+                <td>
                     <div class="input-group">
                         <span class="input-group-addon bg-yura_dark span-input-group-yura-fixed">
                             Desde
                         </span>
                         <input type="date" id="filtro_desde" style="width: 100%" class="text-center form-control"
                             value="{{ $desde }}">
+                    </div>
+                </td>
+                <td>
+                    <div class="input-group">
                         <span class="input-group-addon bg-yura_dark">
                             Hasta
                         </span>
                         <input type="date" id="filtro_hasta" style="width: 100%" class="text-center form-control"
                             value="{{ $hasta }}">
+                    </div>
+                </td>
+                <td>
+                    <div class="input-group">
+                        <span class="input-group-addon bg-yura_dark">
+                            Finca
+                        </span>
+                        <select id="filtro_finca" style="width: 100%" class="form-control">
+                            <option value="T">Todas las Fincas</option>
+                            @foreach ($fincas as $f)
+                                <option value="{{ $f->id_configuracion_empresa }}">
+                                    {{ $f->nombre }}
+                                </option>
+                            @endforeach
+                        </select>
                         <span class="input-group-btn">
                             <button type="button" class="btn btn-yura_dark" onclick="listar_reporte()">
                                 <i class="fa fa-fw fa-search"></i> Buscar

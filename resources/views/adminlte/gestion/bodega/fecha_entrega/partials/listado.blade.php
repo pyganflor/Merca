@@ -1,14 +1,17 @@
 <div style="overflow-y: scroll; overflow-x: scroll; height: 700px;">
     <table class="table-striped table-bordered" style="width: 100%; border: 1px solid #9d9d9d">
         <tr id="tr_fija_top_0">
-            <th class="text-center th_yura_green" style="width: 25%">
+            <th class="text-center th_yura_green">
                 DESDE
             </th>
-            <th class="text-center th_yura_green" style="width: 25%">
+            <th class="text-center th_yura_green">
                 HASTA
             </th>
-            <th class="text-center th_yura_green" style="width: 25%">
+            <th class="text-center th_yura_green">
                 ENTREGA
+            </th>
+            <th class="text-center th_yura_green" style="width: 20%">
+                FINCA
             </th>
             <th class="text-center th_yura_green" style="width: 60px">
                 <button type="button" class="btn btn-xs btn-yura_default"
@@ -30,6 +33,15 @@
                 <input type="date" style="width: 100%" class="text-center bg-yura_dark" id="entrega_new"
                     name="entrega_new" placeholder="Entrega" required value="{{ hoy() }}">
             </th>
+            <th class="text-center" style="border-color: #9d9d9d">
+                <select id="finca_new" style="width: 100%; height: 26px;" class="bg-yura_dark">
+                    @foreach ($fincas as $f)
+                        <option value="{{ $f->id_configuracion_empresa }}">
+                            {{ $f->nombre }}
+                        </option>
+                    @endforeach
+                </select>
+            </th>
             <th class="text-center" style="border-color: #9d9d9d" colspan="3">
                 <button type="button" class="btn btn-xs btn-yura_primary" onclick="store_fecha()">
                     <i class="fa fa-fw fa-save"></i>
@@ -49,6 +61,16 @@
                 <th class="text-center" style="border-color: #9d9d9d">
                     <input type="date" style="width: 100%" class="text-center"
                         id="entrega_{{ $item->id_fecha_entrega }}" value="{{ $item->entrega }}" required>
+                </th>
+                <th class="text-center" style="border-color: #9d9d9d">
+                    <select id="finca_{{ $item->id_fecha_entrega }}" style="width: 100%; height: 26px;">
+                        @foreach ($fincas as $f)
+                            <option value="{{ $f->id_configuracion_empresa }}"
+                                {{ $f->id_configuracion_empresa == $item->id_empresa ? 'selected' : '' }}>
+                                {{ $f->nombre }}
+                            </option>
+                        @endforeach
+                    </select>
                 </th>
                 <th class="text-center" style="border-color: #9d9d9d">
                     <div class="btn-group">
@@ -74,6 +96,7 @@
             desde: $('#desde_new').val(),
             hasta: $('#hasta_new').val(),
             entrega: $('#entrega_new').val(),
+            finca: $('#finca_new').val(),
         };
         post_jquery_m('{{ url('fecha_entrega/store_fecha') }}', datos, function() {
             cerrar_modals();
@@ -88,6 +111,7 @@
             desde: $('#desde_' + id).val(),
             hasta: $('#hasta_' + id).val(),
             entrega: $('#entrega_' + id).val(),
+            finca: $('#finca_' + id).val(),
         };
         post_jquery_m('{{ url('fecha_entrega/update_fecha') }}', datos, function() {
             cerrar_modals();

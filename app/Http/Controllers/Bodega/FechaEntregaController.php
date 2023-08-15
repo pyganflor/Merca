@@ -14,20 +14,30 @@ class FechaEntregaController extends Controller
     {
         $desde = opDiasFecha('+', 0, hoy());
         $hasta = opDiasFecha('+', 7, hoy());
+        $fincas = getAllFincas();
 
         return view('adminlte.gestion.bodega.fecha_entrega.inicio', [
             'url' => $request->getRequestUri(),
             'submenu' => Submenu::Where('url', '=', substr($request->getRequestUri(), 1))->get()[0],
             'desde' => $desde,
             'hasta' => $hasta,
+            'fincas' => $fincas,
         ]);
     }
     public function listar_reporte(Request $request)
     {
-        $listado = FechaEntrega::orderBy('entrega')->get();
+        if ($request->finca != 'T') {
+            $listado = FechaEntrega::where('id_empresa', $request->finca)
+                ->orderBy('entrega')
+                ->get();
+        } else {
+            $listado = FechaEntrega::orderBy('entrega')->get();
+        }
+        $fincas = getAllFincas();
 
         return view('adminlte.gestion.bodega.fecha_entrega.partials.listado', [
             'listado' => $listado,
+            'fincas' => $fincas,
         ]);
     }
 
@@ -39,6 +49,7 @@ class FechaEntregaController extends Controller
             $model->desde = $request->desde;
             $model->hasta = $request->hasta;
             $model->entrega = $request->entrega;
+            $model->id_empresa = $request->finca;
             $model->save();
 
             $success = true;
@@ -67,6 +78,7 @@ class FechaEntregaController extends Controller
             $model->desde = $request->desde;
             $model->hasta = $request->hasta;
             $model->entrega = $request->entrega;
+            $model->id_empresa = $request->finca;
             $model->save();
 
             $success = true;
