@@ -99,6 +99,12 @@
             @php
                 $url_imagen = 'images\productos\*' . $item->imagen;
                 $url_imagen = str_replace('*', '', $url_imagen);
+                if ($item->tiene_iva) {
+                    $temp = $item->precio_venta - porcentaje(12, $item->precio_venta, 2);
+                    $margen = $temp - $item->precio;
+                } else {
+                    $margen = $item->precio_venta - $item->precio;
+                }
             @endphp
             <tr id="tr_producto_{{ $item->id_producto }}" class="{{ $item->estado == 0 ? 'error' : '' }}">
                 <th class="text-center" style="border-color: #9d9d9d">
@@ -157,10 +163,10 @@
                         {{ $item->tiene_iva == 1 ? 'checked' : '' }}>
                 </th>
                 <th class="text-center" style="border-color: #9d9d9d; vertical-align: top">
-                    {{ $item->precio_venta - $item->precio }}
+                    {{ $margen }}
                 </th>
                 <th class="text-center" style="border-color: #9d9d9d; vertical-align: top">
-                    {{ porcentaje($item->precio_venta - $item->precio, $item->precio, 1) }}%
+                    {{ porcentaje($margen, $item->precio, 1) }}%
                 </th>
                 <th class="text-center" style="border-color: #9d9d9d; vertical-align: top">
                     <div class="btn-group">
