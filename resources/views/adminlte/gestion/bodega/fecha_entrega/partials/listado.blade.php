@@ -39,15 +39,15 @@
         @foreach ($listado as $item)
             <tr>
                 <th class="text-center" style="border-color: #9d9d9d">
-                    <input type="text" style="width: 100%" class="text-center"
+                    <input type="date" style="width: 100%" class="text-center"
                         id="desde_{{ $item->id_fecha_entrega }}" value="{{ $item->desde }}" required>
                 </th>
                 <th class="text-center" style="border-color: #9d9d9d">
-                    <input type="text" style="width: 100%" class="text-center"
+                    <input type="date" style="width: 100%" class="text-center"
                         id="hasta_{{ $item->id_fecha_entrega }}" value="{{ $item->hasta }}" required>
                 </th>
                 <th class="text-center" style="border-color: #9d9d9d">
-                    <input type="text" style="width: 100%" class="text-center"
+                    <input type="date" style="width: 100%" class="text-center"
                         id="entrega_{{ $item->id_fecha_entrega }}" value="{{ $item->entrega }}" required>
                 </th>
                 <th class="text-center" style="border-color: #9d9d9d">
@@ -94,22 +94,19 @@
         });
     }
 
-    function cambiar_estado_producto(p, estado) {
+    function eliminar_fecha(id) {
         mensaje = {
-            title: estado == 1 ? '<i class="fa fa-fw fa-trash"></i> Desactivar producto' :
-                '<i class="fa fa-fw fa-unlock"></i> Activar producto',
-            mensaje: estado == 1 ?
-                '<div class="alert alert-danger text-center"><i class="fa fa-fw fa-exclamation-triangle"></i> ¿Está seguro de desactivar este producto?</div>' :
-                '<div class="alert alert-info text-center"><i class="fa fa-fw fa-exclamation-triangle"></i> ¿Está seguro de activar este producto?</div>',
+            title: '<i class="fa fa-fw fa-trash"></i> ELIMINAR fecha de entrega',
+            mensaje: '<div class="alert alert-danger text-center"><i class="fa fa-fw fa-exclamation-triangle"></i> ¿Está seguro de ELIMINAR esta fecha de entrega?</div>',
         };
-        modal_quest('modal_delete_producto', mensaje['mensaje'], mensaje['title'], true, false,
+        modal_quest('modal_eliminar_fecha', mensaje['mensaje'], mensaje['title'], true, false,
             '{{ isPC() ? '45%' : '' }}',
             function() {
                 datos = {
                     _token: '{{ csrf_token() }}',
-                    id: p,
+                    id: id,
                 };
-                post_jquery_m('{{ url('bodega_productos/cambiar_estado_producto') }}', datos, function() {
+                post_jquery_m('{{ url('fecha_entrega/eliminar_fecha') }}', datos, function() {
                     cerrar_modals();
                     listar_reporte();
                 });

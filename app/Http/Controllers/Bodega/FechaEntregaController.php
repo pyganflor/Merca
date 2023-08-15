@@ -35,14 +35,67 @@ class FechaEntregaController extends Controller
     {
         DB::beginTransaction();
         try {
-            $pedido = new FechaEntrega();
-            $pedido->desde = $request->desde;
-            $pedido->hasta = $request->hasta;
-            $pedido->entrega = $request->entrega;
-            $pedido->save();
+            $model = new FechaEntrega();
+            $model->desde = $request->desde;
+            $model->hasta = $request->hasta;
+            $model->entrega = $request->entrega;
+            $model->save();
 
             $success = true;
             $msg = 'Se ha <b>CREADO</b> la fecha de entrega correctamente';
+
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            $success = false;
+            $msg = '<div class="alert alert-danger text-center">' .
+                '<p> Ha ocurrido un problema al guardar la informacion al sistema</p>' .
+                '<p>' . $e->getMessage() . ' ' . $e->getFile() . ' ' . $e->getLine() . '</p>'
+                . '</div>';
+        }
+        return [
+            'success' => $success,
+            'mensaje' => $msg,
+        ];
+    }
+
+    public function update_fecha(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            $model = FechaEntrega::find($request->id);
+            $model->desde = $request->desde;
+            $model->hasta = $request->hasta;
+            $model->entrega = $request->entrega;
+            $model->save();
+
+            $success = true;
+            $msg = 'Se ha <b>CREADO</b> la fecha de entrega correctamente';
+
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            $success = false;
+            $msg = '<div class="alert alert-danger text-center">' .
+                '<p> Ha ocurrido un problema al guardar la informacion al sistema</p>' .
+                '<p>' . $e->getMessage() . ' ' . $e->getFile() . ' ' . $e->getLine() . '</p>'
+                . '</div>';
+        }
+        return [
+            'success' => $success,
+            'mensaje' => $msg,
+        ];
+    }
+
+    public function eliminar_fecha(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            $model = FechaEntrega::find($request->id);
+            $model->delete();
+
+            $success = true;
+            $msg = 'Se ha <b>ELIMINADO</b> la fecha de entrega correctamente';
 
             DB::commit();
         } catch (\Exception $e) {
