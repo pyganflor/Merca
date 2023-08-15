@@ -1,14 +1,14 @@
 @extends('layouts.adminlte.master')
 
 @section('titulo')
-    Pedidos de Bodega
+    Fechas de Entrega
 @endsection
 
 @section('contenido')
     <!-- Content Header (Page header) -->
     <section class="content-header">
         <h1>
-            Pedidos de Bodega
+            Fechas de Entrega
             <small class="text-color_yura">módulo de bodega</small>
         </h1>
 
@@ -34,48 +34,21 @@
     <section class="content">
         <table style="width: 100%">
             <tr>
-                <td class="text-center" style="border-color: #9d9d9d">
+                <td class="text-center padding_lateral_5" style="border-color: #9d9d9d" id="td_cargar_longitudes">
                     <div class="input-group">
                         <span class="input-group-addon bg-yura_dark span-input-group-yura-fixed">
                             Desde
                         </span>
                         <input type="date" id="filtro_desde" style="width: 100%" class="text-center form-control"
-                            value="{{ hoy() }}">
-                    </div>
-                </td>
-                <td class="text-center" style="border-color: #9d9d9d">
-                    <div class="input-group">
+                            value="{{ $desde }}">
                         <span class="input-group-addon bg-yura_dark">
                             Hasta
                         </span>
                         <input type="date" id="filtro_hasta" style="width: 100%" class="text-center form-control"
-                            value="{{ opDiasFecha('+', 3, hoy()) }}">
-                    </div>
-                </td>
-                <td class="text-center" style="border-color: #9d9d9d">
-                    <div class="input-group">
-                        <span class="input-group-addon bg-yura_dark">
-                            Finca
-                        </span>
-                        <select id="filtro_finca" style="width: 100%" class="form-control">
-                            @if (count($fincas) > 1)
-                                <option value="T">Todas mis fincas</option>
-                            @endif
-                            @foreach ($fincas as $f)
-                                <option value="{{ $f->id_empresa }}">
-                                    {{ $f->nombre }}
-                                </option>
-                            @endforeach
-                        </select>
+                            value="{{ $hasta }}">
                         <span class="input-group-btn">
                             <button type="button" class="btn btn-yura_dark" onclick="listar_reporte()">
-                                <i class="fa fa-fw fa-search"></i>
-                            </button>
-                            <button type="button" class="btn btn-yura_primary" onclick="add_pedido()">
-                                <i class="fa fa-fw fa-shopping-cart"></i> Pedido
-                            </button>
-                            <button type="button" class="btn btn-yura_dark" onclick="add_pedido()">
-                                <i class="fa fa-fw fa-file-excel-o"></i> Resumen
+                                <i class="fa fa-fw fa-search"></i> Buscar
                             </button>
                         </span>
                     </div>
@@ -83,7 +56,7 @@
             </tr>
         </table>
 
-        <div id="div_listado" style="margin-top: 5px">
+        <div id="div_listado" style="margin-top: 10px">
         </div>
     </section>
 
@@ -103,5 +76,5 @@
 @endsection
 
 @section('script_final')
-    @include('adminlte.gestion.bodega.pedido.script')
+    @include('adminlte.gestion.bodega.fecha_entrega.script')
 @endsection
