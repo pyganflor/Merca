@@ -20,20 +20,20 @@
     <section class="content-header">
         <h1>
             Usuarios
-            <small>módulo de administrador</small>
+            <small class="text-color_yura">módulo de administrador</small>
         </h1>
 
         <ol class="breadcrumb">
-            <li><a href="javascript:void(0)" onclick="cargar_url('')"><i class="fa fa-home"></i> Inicio</a></li>
-            <li>
+            <li><a href="javascript:void(0)" onclick="cargar_url('')" class="text-color_yura"><i class="fa fa-home"></i>
+                    Inicio</a></li>
+            <li class="text-color_yura">
                 {{ $submenu->menu->grupo_menu->nombre }}
             </li>
-            <li>
+            <li class="text-color_yura">
                 {{ $submenu->menu->nombre }}
             </li>
-
             <li class="active">
-                <a href="javascript:void(0)" onclick="cargar_url('{{ $submenu->url }}')">
+                <a href="javascript:void(0)" onclick="cargar_url('{{ $submenu->url }}')" class="text-color_yura">
                     <i class="fa fa-fw fa-refresh"></i> {{ $submenu->nombre }}
                 </a>
             </li>
@@ -50,8 +50,8 @@
                             <span class="input-group-addon bg-yura_dark span-input-group-yura-fixed">
                                 Búsqueda
                             </span>
-                            <input type="text" class="form-control text-center" placeholder="Búsqueda" id="busqueda_usuarios"
-                                name="busqueda_usuarios">
+                            <input type="text" class="form-control text-center" placeholder="Búsqueda"
+                                id="busqueda_usuarios" name="busqueda_usuarios">
                             <span class="input-group-btn">
                                 <button type="button" class="btn btn-yura_dark" onclick="buscar_listado()">
                                     <i class="fa fa-fw fa-search"></i>
