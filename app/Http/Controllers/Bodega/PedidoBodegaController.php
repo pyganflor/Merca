@@ -96,6 +96,7 @@ class PedidoBodegaController extends Controller
             ->select('uf.id_usuario', 'u.nombre_completo', 'u.username')->distinct()
             ->where('uf.id_empresa', $request->finca)
             ->where('u.estado', 'A')
+            ->where('u.aplica', 1)
             ->orderBy('u.nombre_completo')
             ->get();
 
@@ -113,6 +114,7 @@ class PedidoBodegaController extends Controller
     {
         DB::beginTransaction();
         try {
+            dd($request->all());
             $pedido = new PedidoBodega();
             $pedido->fecha = $request->fecha;
             $pedido->id_usuario = $request->usuario;

@@ -80,7 +80,8 @@
 
         <div id="div_catalogo" style="overflow-x: scroll; overflow-y: scroll; margin-top: 3px; max-height: 550px"></div>
     </div>
-    <div id="tab-contenido_pedido" class="tab-pane fade" style="overflow-x: scroll; overflow-y: scroll; max-height: 550px">
+    <div id="tab-contenido_pedido" class="tab-pane fade"
+        style="overflow-x: scroll; overflow-y: scroll; max-height: 550px">
         <table class="table-bordered" style="border: 1px solid #9d9d9d; width: 100%" id="table_contenido_pedido">
             <tr class="tr_fija_top_0">
                 <th class="text-center th_yura_green" style="width: 80px">
@@ -129,6 +130,7 @@
             <tr>
                 <th style="width: 25%; text-align: right; min-width: 120px">
                     MONTO TOTAL:
+                    <input type="hidden" id="input_monto_total" value="0">
                 </th>
                 <th id="th_total_monto_pedido" style="text-align: right; padding-right: 5px; width: 10%">
                     $0
@@ -267,6 +269,7 @@
             fecha: $('#form_fecha').val(),
             finca: $('#form_finca').val(),
             usuario: $('#form_usuario').val(),
+            monto_total: $('#input_monto_total').val(),
             detalles: JSON.stringify(detalles),
         }
         if (datos['fecha'] != '' && datos['finca'] != '' && datos['usuario'] != '' && detalles.length > 0) {
@@ -305,5 +308,6 @@
         $('#th_total_monto_pedido').html('$' + monto_total);
         $('#th_total_iva_pedido').html('$' + monto_total_iva);
         $('#th_total_subtotal_pedido').html('$' + monto_subtotal);
+        $('#input_monto_total').val(monto_total);
     }
 </script>

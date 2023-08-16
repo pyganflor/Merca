@@ -252,7 +252,7 @@ class UsuarioController extends Controller
                 return view('adminlte.gestion.usuarios.partials.detalles', [
                     'usuario' => $u,
                     'key' => $raw['n']->toHex(),
-                    'roles' => Rol::All()
+                    'roles' => Rol::where('estado', 'A')->orderBy('nombre')->get()
                 ]);
             } else {
                 return '<div class="alert alert-warning text-center">No se ha encontrado el usuario en el sistema</div>';
@@ -269,18 +269,14 @@ class UsuarioController extends Controller
 
         $valida = Validator::make($request->all(), [
             'nombre_completo' => 'required|min:3|max:250',
-            'correo' => 'required|email|max:250',
             'username' => 'required|max:250',
             'id_rol' => 'required|',
             'id_usuario' => 'required|',
         ], [
             'nombre_completo.required' => 'El nombre es obligatorio',
-            'correo.required' => 'El correo es obligatorio',
             'username.required' => 'El nombre de usuario es obligatorio',
             'id_rol.required' => 'El rol es obligatorio',
             'id_usuario.required' => 'El usuario es obligatorio',
-            'correo.email' => 'El correo es inválido',
-            'correo.max' => 'El correo es muy grande',
             'username.max' => 'El nombre de usuario es muy grande',
             'nombre_completo.max' => 'El nombre es muy grande',
             'nombre_completo.min' => 'El nombre es muy corto',
@@ -297,6 +293,8 @@ class UsuarioController extends Controller
                 $model = Usuario::find($request->id_usuario);
 
                 $model->id_rol = $request->id_rol;
+                $model->cupo_disponible = $request->cupo_disponible;
+                $model->aplica = $request->aplica;
                 $model->correo = str_limit(mb_strtolower(espacios($request->correo)), 250);
                 $model->nombre_completo = str_limit(mb_strtoupper(espacios($request->nombre_completo)), 250);
                 $model->username = str_limit(mb_strtolower(espacios($request->username)), 250);

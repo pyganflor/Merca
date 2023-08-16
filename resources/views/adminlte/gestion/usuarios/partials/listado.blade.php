@@ -19,6 +19,9 @@
                         CUPO DISPONIBLE
                     </th>
                     <th class="text-center th_yura_green">
+                        APLICA
+                    </th>
+                    <th class="text-center th_yura_green">
                         OPCIONES
                     </th>
                 </tr>
@@ -45,6 +48,13 @@
                     <th style="border-color: #9d9d9d" class="text-center">
                         ${{ number_format($item->cupo_disponible, 2) }}
                     </th>
+                    <td style="border-color: #9d9d9d" class="text-center">
+                        @if ($item->aplica == 1)
+                            SI
+                        @else
+                            <b>NO</b>
+                        @endif
+                    </td>
                     <td style="border-color: #9d9d9d" class="text-center">
                         <div class="btn-group">
                             <button type="button" class="btn btn-xs btn-yura_default" title="Detalles"
