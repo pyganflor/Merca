@@ -1,8 +1,12 @@
 <div style="overflow-y: scroll; max-height: 700px" class="container">
     <div class="row">
         @foreach ($listado as $item)
+            @php
+                $fecha_entrega = $item->getFechaEntrega();
+            @endphp
             <div class="col-md-2 sombra_pequeña col-md-listado {{ $item->armado == 1 ? 'pedido_armado' : 'pedido_sin_armar' }}"
-                onmouseover="$(this).addClass('sombra_primary')" onmouseleave="$(this).removeClass('sombra_primary')" title="{{ $item->armado == 1 ? 'Armado' : 'Sin Armar' }}">
+                onmouseover="$(this).addClass('sombra_primary')" onmouseleave="$(this).removeClass('sombra_primary')"
+                title="{{ $item->armado == 1 ? 'Armado' : 'Sin Armar' }}">
                 <span class="span_pedido">
                     <button type="button" class="btn btn-xs btn-yura_dark btn_ver_pedido_listado" title="Ver Pedido"
                         onclick="ver_pedido('{{ $item->id_pedido_bodega }}')">
@@ -16,7 +20,15 @@
                     <br>
                     <em>{{ $item->empresa->nombre }}</em>
                     <br>
-                    <small>{{ convertDateToText($item->fecha) }}</small>
+                    <small title="Fecha de Toma">
+                        <i class="fa fa-fw fa-arrow-right color_text-yura_primary"></i>
+                        {{ convertDateToText($item->fecha) }}
+                    </small>
+                    <br>
+                    <small title="Fecha de Entrega">
+                        <i class="fa fa-fw fa-arrow-right color_text-yura_danger"></i>
+                        {{ $fecha_entrega != '' ? convertDateToText($item->getFechaEntrega()) : '' }}
+                    </small>
                     <br>
                     <small class="span_contador_productos" title="Productos">
                         {{ $item->getTotalProductos() }}<i class="fa fa-fw fa-gift"></i>
@@ -37,7 +49,7 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        height: 120px;
+        height: 150px;
         margin-left: 5px;
         margin-right: 5px;
         margin-bottom: 13px;

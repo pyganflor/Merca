@@ -32,56 +32,49 @@
 
     <!-- Main content -->
     <section class="content">
-        <table style="width: 100%">
-            <tr>
-                <td class="text-center" style="border-color: #9d9d9d">
-                    <div class="input-group">
-                        <span class="input-group-addon bg-yura_dark span-input-group-yura-fixed">
-                            Desde
-                        </span>
-                        <input type="date" id="filtro_desde" style="width: 100%" class="text-center form-control"
-                            value="{{ hoy() }}">
-                    </div>
-                </td>
-                <td class="text-center" style="border-color: #9d9d9d">
-                    <div class="input-group">
-                        <span class="input-group-addon bg-yura_dark">
-                            Hasta
-                        </span>
-                        <input type="date" id="filtro_hasta" style="width: 100%" class="text-center form-control"
-                            value="{{ opDiasFecha('+', 3, hoy()) }}">
-                    </div>
-                </td>
-                <td class="text-center" style="border-color: #9d9d9d">
-                    <div class="input-group">
-                        <span class="input-group-addon bg-yura_dark">
-                            Finca
-                        </span>
-                        <select id="filtro_finca" style="width: 100%" class="form-control">
-                            @if (count($fincas) > 1)
-                                <option value="T">Todas mis fincas</option>
-                            @endif
-                            @foreach ($fincas as $f)
-                                <option value="{{ $f->id_empresa }}">
-                                    {{ $f->nombre }}
-                                </option>
-                            @endforeach
-                        </select>
-                        <span class="input-group-btn">
-                            <button type="button" class="btn btn-yura_dark" onclick="listar_reporte()">
-                                <i class="fa fa-fw fa-search"></i>
-                            </button>
-                            <button type="button" class="btn btn-yura_primary" onclick="add_pedido()">
-                                <i class="fa fa-fw fa-shopping-cart"></i> Pedido
-                            </button>
-                            <button type="button" class="btn btn-yura_dark" onclick="add_pedido()">
-                                <i class="fa fa-fw fa-file-excel-o"></i> Resumen
-                            </button>
-                        </span>
-                    </div>
-                </td>
-            </tr>
-        </table>
+        <div style="overflow-x: scroll">
+            <table style="width: 100%">
+                <tr>
+                    <td class="text-center" style="border-color: #9d9d9d">
+                        <div class="input-group">
+                            <span class="input-group-addon bg-yura_dark span-input-group-yura-fixed">
+                                Fecha de Entrega
+                            </span>
+                            <input type="date" id="filtro_entrega" style="width: 100%" class="text-center form-control"
+                                value="{{ hoy() }}">
+                        </div>
+                    </td>
+                    <td class="text-center" style="border-color: #9d9d9d">
+                        <div class="input-group">
+                            <span class="input-group-addon bg-yura_dark">
+                                Finca
+                            </span>
+                            <select id="filtro_finca" style="width: 100%" class="form-control">
+                                @if (count($fincas) > 1)
+                                    <option value="T">Todas mis fincas</option>
+                                @endif
+                                @foreach ($fincas as $f)
+                                    <option value="{{ $f->id_empresa }}">
+                                        {{ $f->nombre }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            <span class="input-group-btn">
+                                <button type="button" class="btn btn-yura_dark" onclick="listar_reporte()">
+                                    <i class="fa fa-fw fa-search"></i>
+                                </button>
+                                <button type="button" class="btn btn-yura_primary" onclick="add_pedido()">
+                                    <i class="fa fa-fw fa-shopping-cart"></i> Pedido
+                                </button>
+                                <button type="button" class="btn btn-yura_dark" onclick="resumen_pedido()">
+                                    <i class="fa fa-fw fa-file-excel-o"></i> Resumen
+                                </button>
+                            </span>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </div>
 
         <div id="div_listado" style="margin-top: 5px">
         </div>

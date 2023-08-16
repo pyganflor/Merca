@@ -33,15 +33,20 @@ class PedidoBodegaController extends Controller
 
     public function listar_reporte(Request $request)
     {
-        $listado = PedidoBodega::where('fecha', '>=', $request->desde)
-            ->where('fecha', '<=', $request->hasta)
-            ->where('estado', 1);
+        $query = PedidoBodega::where('estado', 1);
         if ($request->finca != 'T')
-            $listado = $listado->where('id_empresa', $request->finca);
-        $listado = $listado->orderBy('fecha')
+            $query = $query->where('id_empresa', $request->finca);
+        $query = $query->orderBy('fecha')
             ->orderBy('id_empresa')
             ->orderBy('id_usuario')
             ->get();
+        $listado = [];
+        foreach ($query as $q) {
+            $fecha_entrega = $q->getFechaEntrega();
+            if ($fecha_entrega == $request->entrega) {
+                $listado[] = $q;
+            }
+        }
 
         return view('adminlte.gestion.bodega.pedido.partials.listado', [
             'listado' => $listado

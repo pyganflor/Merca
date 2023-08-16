@@ -55,4 +55,14 @@ class PedidoBodega extends Model
         }
         return round($monto, 2);
     }
+
+    public function getFechaEntrega()
+    {
+        $entrega = FechaEntrega::All()
+            ->where('desde', '<=', $this->fecha)
+            ->where('hasta', '>=', $this->fecha)
+            ->where('id_empresa', $this->id_empresa)
+            ->first();
+        return $entrega != '' ? $entrega->entrega : '';
+    }
 }

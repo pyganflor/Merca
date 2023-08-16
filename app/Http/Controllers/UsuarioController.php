@@ -131,7 +131,6 @@ class UsuarioController extends Controller
         ]);
         if (!$valida->fails()) {
             $model = new Usuario();
-
             $model->estado = 'A';
             $model->id_rol = $request->id_rol;
             $model->correo = str_limit(mb_strtolower(espacios($request->correo)), 250);

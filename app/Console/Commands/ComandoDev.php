@@ -5,6 +5,7 @@ namespace yura\Console\Commands;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use yura\Jobs\jobActualizarProyeccion;
 use yura\Jobs\jobActualizarSemProyPerenne;
 use yura\Jobs\ProyeccionUpdateSemanal;
@@ -21,12 +22,14 @@ use yura\Modelos\ProyeccionModuloSemana;
 use yura\Modelos\ResumenTotalSemanalExportcalas;
 use yura\Modelos\Semana;
 use yura\Modelos\SemanaProyPerenne;
+use yura\Modelos\UsuarioFinca;
 use yura\Modelos\Variedad;
 use Storage as Almacenamiento;
 //use PHPExcel_IOFactory;
 use \PhpOffice\PhpSpreadsheet\IOFactory as IOFactory;
 use yura\Modelos\Planta;
 use yura\Modelos\Sector;
+use yura\Modelos\Usuario;
 
 class ComandoDev extends Command
 {
@@ -115,6 +118,9 @@ class ComandoDev extends Command
         }
         if ($comando == 'importar_productos') {
             $this->importar_productos();
+        }
+        if ($comando == 'importar_usuarios') {
+            $this->importar_usuarios();
         }
         if ($comando == 'caca') {
             $this->caca();
@@ -1137,6 +1143,48 @@ class ComandoDev extends Command
             //unlink($url);
         } catch (\Exception $e) {
             dump('************************* ERROR ****************************');
+            dump($e->getMessage());
+        }
+    }
+
+    function importar_usuarios()
+    {
+        dump('<<<<< ! >>>>> Ejecutando comando:dev "importar_usuarios" <<<<< ! >>>>>');
+        try {
+            $url = public_path('storage/file_loads/usuarios.xlsx');
+            $document = IOFactory::load($url);
+            $activeSheetData = $document->getActiveSheet()->toArray(null, true, true, true);
+
+            foreach ($activeSheetData as $pos_row => $row) {
+                if ($pos_row > 1 && $row['A'] != '') {
+                    dump('usuario: ' . $pos_row . '/' . count($activeSheetData));
+                    $fecha_ingreso = $row['D'];
+                    $dias_activo = difFechas(hoy(), $fecha_ingreso)->days;
+                    $aplica = 0;
+                    if ($dias_activo >= 90 && $row['F'] == 'SI APLICA')
+                        $aplica = 1;
+                    $passw = Hash::make(str_limit(mb_strtoupper(espacios($row['C'])), 250));
+
+                    $usuario = new Usuario();
+                    $usuario->estado = 'A';
+                    $usuario->id_rol = 23;
+                    $usuario->aplica = $aplica;
+                    $usuario->cupo_disponible = 50;
+                    $usuario->password = $passw;
+                    $usuario->nombre_completo = str_limit(mb_strtoupper(espacios($row['B'])), 250);
+                    $usuario->username = str_limit(mb_strtolower(espacios($row['C'])), 250);
+                    $usuario->save();
+                    $usuario = Usuario::All()->last();
+
+                    $usuario_finca = new UsuarioFinca();
+                    $usuario_finca->id_usuario = $usuario->id_usuario;
+                    $usuario_finca->id_empresa = 1;
+                    $usuario_finca->save();
+                }
+            }
+            //unlink($url);
+        } catch (\Exception $e) {
+            dump('************************* ERROR *************************');
             dump($e->getMessage());
         }
     }

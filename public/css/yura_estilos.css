@@ -223,6 +223,10 @@ table.dataTable thead .sorting_desc_disabled:after {
     color: #d01c62 !important;
 }
 
+.color_text-yura_primary {
+    color: #00B388 !important;
+}
+
 .color_text-yura_white {
     color: white !important;
 }
