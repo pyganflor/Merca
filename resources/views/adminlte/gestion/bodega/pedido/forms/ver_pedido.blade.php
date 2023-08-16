@@ -156,23 +156,25 @@
                 <td rowspan="4" style="text-align: right; padding-right: 20px; min-width: 320px">
                     <div class="btn-group">
                         <button type="button" class="btn btn-yura_primary"
-                            @if ($pedido->armado == 0) onclick="update_pedido('{{ $pedido->id_pedido_bodega }}')"@else disabled @endif>
+                            @if ($pedido->armado == 0 && substr($pedido->fecha, 0, 7) == substr(hoy(), 0, 7)) onclick="update_pedido('{{ $pedido->id_pedido_bodega }}')"@else disabled @endif>
                             <i class="fa fa-fw fa-save"></i> ACTUALIZAR
                         </button>
                         <button type="button" class="btn btn-yura_default"
                             onclick="cerrar_modals(); ver_pedido('{{ $pedido->id_pedido_bodega }}')">
                             <i class="fa fa-fw fa-refresh"></i> Reiniciar
                         </button>
-                        @if ($pedido->armado == 0)
-                            <button type="button" class="btn btn-yura_dark"
-                                onclick="armar_pedido('{{ $pedido->id_pedido_bodega }}')">
-                                <i class="fa fa-fw fa-gift"></i> ARMAR
+                        @if (in_array(session('id_usuario'), [1, 2]))
+                            @if ($pedido->armado == 0)
+                                <button type="button" class="btn btn-yura_dark"
+                                    onclick="armar_pedido('{{ $pedido->id_pedido_bodega }}')">
+                                    <i class="fa fa-fw fa-gift"></i> ARMAR
+                                </button>
+                            @endif
+                            <button type="button" class="btn btn-yura_default"
+                                onclick="imprimir_pedido('{{ $pedido->id_pedido_bodega }}')">
+                                <i class="fa fa-fw fa-print"></i> IMPRIMIR
                             </button>
                         @endif
-                        <button type="button" class="btn btn-yura_default"
-                            onclick="imprimir_pedido('{{ $pedido->id_pedido_bodega }}')">
-                            <i class="fa fa-fw fa-print"></i> IMPRIMIR
-                        </button>
                     </div>
                 </td>
                 <th style="width: 25%; text-align: right; min-width: 120px">
