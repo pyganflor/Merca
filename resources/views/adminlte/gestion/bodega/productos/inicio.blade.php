@@ -34,7 +34,7 @@
     <section class="content">
         <table style="width: 100%">
             <tr>
-                <td class="text-center padding_lateral_5" style="border-color: #9d9d9d" id="td_cargar_longitudes">
+                <td>
                     <div class="input-group">
                         <span class="input-group-addon bg-yura_dark span-input-group-yura-fixed">
                             Búsqueda
