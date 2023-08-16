@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\DB;
 use yura\Http\Controllers\Controller;
 use yura\Modelos\CategoriaProducto;
 use yura\Modelos\DetallePedidoBodega;
+use yura\Modelos\FechaEntrega;
 use yura\Modelos\PedidoBodega;
 use yura\Modelos\Producto;
 use yura\Modelos\Submenu;
@@ -36,6 +37,8 @@ class PedidoBodegaController extends Controller
         $query = PedidoBodega::where('estado', 1);
         if ($request->finca != 'T')
             $query = $query->where('id_empresa', $request->finca);
+        if (!in_array(session('id_usuario'), [1, 2]))
+            $query = $query->where('id_usuario', session('id_usuario'));
         $query = $query->orderBy('fecha')
             ->orderBy('id_empresa')
             ->orderBy('id_usuario')
@@ -81,7 +84,7 @@ class PedidoBodegaController extends Controller
         });
         if ($request->categoria != 'T')
             $listado = $listado->where('id_categoria_producto', $request->categoria);
-        $listado = $listado->orderBy('nombre')
+        $listado = $listado->orderBy('orden')
             ->get();
 
         return view('adminlte.gestion.bodega.pedido.forms._listar_catalogo', [
@@ -89,11 +92,27 @@ class PedidoBodegaController extends Controller
         ]);
     }
 
+    public function seleccionar_finca_filtro(Request $request)
+    {
+        $listado = FechaEntrega::All();
+        if ($request->finca != 'T')
+            $listado = $listado->where('id_empresa', $request->finca);
+
+        $options = '<option value="">Seleccione</option>';
+        foreach ($listado as $item) {
+            $options .= '<option value="' . $item->entrega . '">' . convertDateToText($item->entrega) . ' - ' . $item->empresa->nombre . '</option>';
+        }
+
+        return [
+            'options' => $options
+        ];
+    }
+
     public function seleccionar_finca(Request $request)
     {
         $listado = DB::table('usuario_finca as uf')
             ->join('usuario as u', 'u.id_usuario', '=', 'uf.id_usuario')
-            ->select('uf.id_usuario', 'u.nombre_completo', 'u.username')->distinct()
+            ->select('uf.id_usuario', 'u.nombre_completo', 'u.username', 'u.saldo')->distinct()
             ->where('uf.id_empresa', $request->finca)
             ->where('u.estado', 'A')
             ->where('u.aplica', 1)
@@ -102,7 +121,7 @@ class PedidoBodegaController extends Controller
 
         $options_usuarios = '<option value="">Seleccione</option>';
         foreach ($listado as $item) {
-            $options_usuarios .= '<option value="' . $item->id_usuario . '">' . $item->nombre_completo . '-' . $item->username . '</option>';
+            $options_usuarios .= '<option value="' . $item->id_usuario . '">' . $item->nombre_completo . ' CI:' . $item->username . ' saldo:$' . $item->saldo . '</option>';
         }
 
         return [
@@ -114,26 +133,37 @@ class PedidoBodegaController extends Controller
     {
         DB::beginTransaction();
         try {
-            dd($request->all());
-            $pedido = new PedidoBodega();
-            $pedido->fecha = $request->fecha;
-            $pedido->id_usuario = $request->usuario;
-            $pedido->id_empresa = $request->finca;
-            $pedido->save();
-            $pedido = PedidoBodega::All()->last();
+            $usuario = getUsuario($request->usuario);
+            if ($usuario->saldo >= $request->monto_total || in_array($request->usuario, [1, 2])) {
+                $pedido = new PedidoBodega();
+                $pedido->fecha = $request->fecha;
+                $pedido->id_usuario = $request->usuario;
+                $pedido->id_empresa = $request->finca;
+                $pedido->save();
+                $pedido = PedidoBodega::All()->last();
 
-            foreach (json_decode($request->detalles) as $det) {
-                $detalle = new DetallePedidoBodega();
-                $detalle->id_pedido_bodega = $pedido->id_pedido_bodega;
-                $detalle->id_producto = $det->producto;
-                $detalle->cantidad = $det->cantidad;
-                $detalle->precio = $det->precio_venta;
-                $detalle->iva = $det->iva;
-                $detalle->save();
+                foreach (json_decode($request->detalles) as $det) {
+                    $detalle = new DetallePedidoBodega();
+                    $detalle->id_pedido_bodega = $pedido->id_pedido_bodega;
+                    $detalle->id_producto = $det->producto;
+                    $detalle->cantidad = $det->cantidad;
+                    $detalle->precio = $det->precio_venta;
+                    $detalle->iva = $det->iva;
+                    $detalle->save();
+                }
+
+                if (!in_array($request->usuario, [1, 2])) {
+                    $usuario->saldo -= $request->monto_total;
+                    $usuario->save();
+                }
+
+                $success = true;
+                $msg = 'Se ha <b>CREADO</b> el pedido correctamente';
+            } else {
+                $success = false;
+                $msg = '<div class="alert alert-danger text-center">' .
+                    'El Usuario no tiene cupo disponible (<b>$' . $usuario->saldo . ' actualmente</b>)</div>';
             }
-
-            $success = true;
-            $msg = 'Se ha <b>CREADO</b> el pedido correctamente';
 
             DB::commit();
         } catch (\Exception $e) {
@@ -155,6 +185,12 @@ class PedidoBodegaController extends Controller
         DB::beginTransaction();
         try {
             $pedido = PedidoBodega::find($request->ped);
+            if (!in_array($pedido->id_usuario, [1, 2])) {
+                $monto_total = $pedido->getTotalMonto();
+                $usuario = $pedido->usuario;
+                $usuario->saldo += $monto_total;
+                $usuario->save();
+            }
             $pedido->delete();
 
             $success = true;
@@ -202,27 +238,48 @@ class PedidoBodegaController extends Controller
         DB::beginTransaction();
         try {
             $pedido_delete = PedidoBodega::find($request->ped);
-            $pedido_delete->delete();
+            $usuario = $pedido_delete->usuario;
+            $valida_saldo = true;
+            if (!in_array($pedido_delete->id_usuario, [1, 2])) {
+                $monto_total_anterior = $pedido_delete->getTotalMonto();
+                $saldo_anterior = $usuario->saldo;
+                $usuario->saldo += $monto_total_anterior;
 
-            $pedido = new PedidoBodega();
-            $pedido->fecha = $request->fecha;
-            $pedido->id_usuario = $request->usuario;
-            $pedido->id_empresa = $request->finca;
-            $pedido->save();
-            $pedido = PedidoBodega::All()->last();
-
-            foreach (json_decode($request->detalles) as $det) {
-                $detalle = new DetallePedidoBodega();
-                $detalle->id_pedido_bodega = $pedido->id_pedido_bodega;
-                $detalle->id_producto = $det->producto;
-                $detalle->cantidad = $det->cantidad;
-                $detalle->precio = $det->precio_venta;
-                $detalle->iva = $det->iva;
-                $detalle->save();
+                if ($usuario->saldo >= $request->monto_total) {
+                    $usuario->saldo -= $request->monto_total;
+                    $usuario->save();
+                    $valida_saldo = true;
+                } else {
+                    $valida_saldo = false;
+                }
             }
+            if ($valida_saldo) {
+                $pedido_delete->delete();
 
-            $success = true;
-            $msg = 'Se ha <b>MODIFICADO</b> el pedido correctamente';
+                $pedido = new PedidoBodega();
+                $pedido->fecha = $request->fecha;
+                $pedido->id_usuario = $request->usuario;
+                $pedido->id_empresa = $request->finca;
+                $pedido->save();
+                $pedido = PedidoBodega::All()->last();
+
+                foreach (json_decode($request->detalles) as $det) {
+                    $detalle = new DetallePedidoBodega();
+                    $detalle->id_pedido_bodega = $pedido->id_pedido_bodega;
+                    $detalle->id_producto = $det->producto;
+                    $detalle->cantidad = $det->cantidad;
+                    $detalle->precio = $det->precio_venta;
+                    $detalle->iva = $det->iva;
+                    $detalle->save();
+                }
+
+                $success = true;
+                $msg = 'Se ha <b>MODIFICADO</b> el pedido correctamente';
+            } else {
+                $success = false;
+                $msg = '<div class="alert alert-danger text-center">' .
+                    'El Usuario no tiene cupo disponible (<b>$' . $saldo_anterior . ' actualmente</b>)</div>';
+            }
 
             DB::commit();
         } catch (\Exception $e) {

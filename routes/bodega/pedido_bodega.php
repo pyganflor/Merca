@@ -10,3 +10,4 @@ Route::post('pedido_bodega/delete_pedido', 'Bodega\PedidoBodegaController@delete
 Route::get('pedido_bodega/ver_pedido', 'Bodega\PedidoBodegaController@ver_pedido');
 Route::post('pedido_bodega/update_pedido', 'Bodega\PedidoBodegaController@update_pedido');
 Route::post('pedido_bodega/armar_pedido', 'Bodega\PedidoBodegaController@armar_pedido');
+Route::post('pedido_bodega/seleccionar_finca_filtro', 'Bodega\PedidoBodegaController@seleccionar_finca_filtro');

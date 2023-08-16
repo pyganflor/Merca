@@ -19,6 +19,9 @@
                         CUPO DISPONIBLE
                     </th>
                     <th class="text-center th_yura_green">
+                        SALDO
+                    </th>
+                    <th class="text-center th_yura_green">
                         APLICA
                     </th>
                     <th class="text-center th_yura_green">
@@ -47,6 +50,9 @@
                     </td>
                     <th style="border-color: #9d9d9d" class="text-center">
                         ${{ number_format($item->cupo_disponible, 2) }}
+                    </th>
+                    <th style="border-color: #9d9d9d" class="text-center">
+                        ${{ number_format($item->saldo, 2) }}
                     </th>
                     <td style="border-color: #9d9d9d" class="text-center">
                         @if ($item->aplica == 1)

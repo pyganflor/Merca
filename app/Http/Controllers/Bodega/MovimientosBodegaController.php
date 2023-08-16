@@ -26,7 +26,7 @@ class MovimientosBodegaController extends Controller
         $listado = Producto::Where(function ($q) use ($request) {
             $q->Where('nombre', 'like', '%' . mb_strtoupper($request->busqueda) . '%')
                 ->orWhere('codigo', 'like', '%' . mb_strtoupper($request->busqueda) . '%');
-        })->orderBy('nombre')
+        })->orderBy('orden')
             ->get();
 
         return view('adminlte.gestion.bodega.movimientos_bodega.partials.listado', [

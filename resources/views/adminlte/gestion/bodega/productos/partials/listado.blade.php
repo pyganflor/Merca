@@ -1,6 +1,9 @@
 <div style="overflow-y: scroll; overflow-x: scroll; height: 700px;">
     <table class="table-striped table-bordered" style="width: 100%; border: 1px solid #9d9d9d">
         <tr id="tr_fija_top_0">
+            <th class="text-center th_yura_green" style="width: 60px">
+                ORDEN
+            </th>
             <th class="text-center th_yura_green" style="width: 130px">
                 IMAGEN
             </th>
@@ -44,6 +47,10 @@
             </th>
         </tr>
         <tr id="tr_new_producto" class="hidden">
+            <th class="text-center" style="border-color: #9d9d9d">
+                <input type="number" style="width: 100%" class="text-center bg-yura_dark" required min="0"
+                    id="orden_new" name="orden_new" placeholder="0">
+            </th>
             <th class="text-center" style="border-color: #9d9d9d">
                 <form id="form_add_producto" action="{{ url('bodega_productos/store_producto') }}" method="post"
                     enctype="multipart/form-data">
@@ -107,6 +114,10 @@
                 }
             @endphp
             <tr id="tr_producto_{{ $item->id_producto }}" class="{{ $item->estado == 0 ? 'error' : '' }}">
+                <th class="text-center" style="border-color: #9d9d9d; vertical-align: top">
+                    <input type="number" style="width: 100%" class="text-center" required min="0"
+                        id="orden_{{ $item->id_producto }}" value="{{ $item->orden }}">
+                </th>
                 <th class="text-center" style="border-color: #9d9d9d">
                     <img src="{{ url($url_imagen) }}" alt="..."
                         class="img-fluid img-thumbnail mouse-hand imagen_{{ $item->id_producto }}"
@@ -199,6 +210,7 @@
             formData.append('conversion', $('#conversion_new').val());
             formData.append('precio_compra', $('#precio_compra_new').val());
             formData.append('precio_venta', $('#precio_venta_new').val());
+            formData.append('orden', $('#orden_new').val());
             formData.append('disponibles', 0);
             //hacemos la petición ajax
             $.ajax({
@@ -246,6 +258,7 @@
             formData.append('precio_compra', $('#precio_compra_' + id).val());
             formData.append('precio_venta', $('#precio_venta_' + id).val());
             formData.append('tiene_iva', $('#tiene_iva_' + id).prop('checked'));
+            formData.append('orden', $('#orden_' + id).val());
             formData.append('id', id);
             //hacemos la petición ajax
             $.ajax({

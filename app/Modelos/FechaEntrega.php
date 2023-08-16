@@ -16,4 +16,9 @@ class FechaEntrega extends Model
         'hasta',
         'entrega',
     ];
+
+    public function empresa()
+    {
+        return $this->belongsTo('\yura\Modelos\ConfiguracionEmpresa', 'id_empresa');
+    }
 }

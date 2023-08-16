@@ -35,21 +35,13 @@
         <div style="overflow-x: scroll">
             <table style="width: 100%">
                 <tr>
-                    <td class="text-center" style="border-color: #9d9d9d">
+                    <td>
                         <div class="input-group">
                             <span class="input-group-addon bg-yura_dark span-input-group-yura-fixed">
-                                Fecha de Entrega
-                            </span>
-                            <input type="date" id="filtro_entrega" style="width: 100%" class="text-center form-control"
-                                value="{{ hoy() }}">
-                        </div>
-                    </td>
-                    <td class="text-center" style="border-color: #9d9d9d">
-                        <div class="input-group">
-                            <span class="input-group-addon bg-yura_dark">
                                 Finca
                             </span>
-                            <select id="filtro_finca" style="width: 100%" class="form-control">
+                            <select id="filtro_finca" style="width: 100%" class="form-control"
+                                onchange="seleccionar_finca_filtro()">
                                 @if (count($fincas) > 1)
                                     <option value="T">Todas mis fincas</option>
                                 @endif
@@ -59,6 +51,16 @@
                                     </option>
                                 @endforeach
                             </select>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="input-group">
+                            <div class="input-group">
+                                <span class="input-group-addon bg-yura_dark">
+                                    Fecha de Entrega
+                                </span>
+                                <select id="filtro_entrega" style="width: 100%" class="form-control"></select>
+                            </div>
                             <span class="input-group-btn">
                                 <button type="button" class="btn btn-yura_dark" onclick="listar_reporte()">
                                     <i class="fa fa-fw fa-search"></i>

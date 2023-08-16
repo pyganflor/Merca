@@ -1,7 +1,8 @@
 <script>
     $('#vista_actual').val('pedido_bodega');
+    seleccionar_finca_filtro();
     listar_reporte();
-
+    
     function listar_reporte() {
         datos = {
             entrega: $('#filtro_entrega').val(),
@@ -19,6 +20,22 @@
                 '<i class="fa fa-fw fa-shopping-cart"></i> Nuevo Pedido',
                 true, false, '{{ isPC() ? '98%' : '' }}',
                 function() {});
+        });
+    }
+
+    function seleccionar_finca_filtro() {
+        datos = {
+            _token: '{{ csrf_token() }}',
+            finca: $('#filtro_finca').val()
+        }
+        $('#filtro_entrega').LoadingOverlay('show');
+        $.post('{{ url('pedido_bodega/seleccionar_finca_filtro') }}', datos, function(retorno) {
+            $('#filtro_entrega').html(retorno.options);
+        }, 'json').fail(function(retorno) {
+            console.log(retorno);
+            alerta_errores(retorno.responseText);
+        }).always(function() {
+            $('#filtro_entrega').LoadingOverlay('hide');
         });
     }
 </script>

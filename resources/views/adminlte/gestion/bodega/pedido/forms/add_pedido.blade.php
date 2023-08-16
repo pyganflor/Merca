@@ -24,7 +24,7 @@
                     </select>
                 </div>
             </td>
-            <td class="text-center" style="border-color: #9d9d9d; min-width: 260px">
+            <td class="text-center" style="border-color: #9d9d9d; min-width: 290px; width: 50%">
                 <div class="input-group">
                     <span class="input-group-addon bg-yura_dark">
                         Usuario
@@ -294,10 +294,11 @@
             precio_venta = $('#input_precio_producto_selected_' + prod).val();
             iva = $('#tiene_iva_selected_' + prod).prop('checked');
             precio_prod = cantidad * precio_venta;
-            monto_subtotal += precio_prod;
             if (iva == true) {
-                monto_total_iva += (12 * precio_prod) / 100;
-                precio_prod += (12 * precio_prod) / 100;
+                monto_subtotal += precio_prod / 1.12;
+                monto_total_iva += monto_subtotal * 0.12;
+            } else {
+                monto_subtotal += precio_prod;
             }
             monto_total += precio_prod;
         }

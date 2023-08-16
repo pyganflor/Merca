@@ -24,7 +24,7 @@ class ProductosController extends Controller
         $listado = Producto::Where(function ($q) use ($request) {
             $q->Where('nombre', 'like', '%' . mb_strtoupper($request->busqueda) . '%')
                 ->orWhere('codigo', 'like', '%' . mb_strtoupper($request->busqueda) . '%');
-        })->orderBy('nombre')
+        })->orderBy('orden')
             ->get();
 
         $categorias = CategoriaProducto::where('estado', 1)
@@ -72,6 +72,7 @@ class ProductosController extends Controller
             $model->conversion = $request->conversion;
             $model->precio = $request->precio_compra;
             $model->precio_venta = $request->precio_venta;
+            $model->orden = $request->orden;
             $model->save();
             $model = Producto::All()->last();
 
@@ -197,6 +198,7 @@ class ProductosController extends Controller
                     $model->precio = $request->precio_compra;
                     $model->precio_venta = $request->precio_venta;
                     $model->tiene_iva = $request->tiene_iva == 'true' ? 1 : 0;
+                    $model->orden = $request->orden;
 
                     //------------------------------  GRABAR LA IMAGEN DEL PRODUCTO  -----------------------------------------
                     try {
