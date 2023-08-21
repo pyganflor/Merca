@@ -79,7 +79,7 @@
                         {{ $producto->nombre }}
                     </td>
                     <td class="border-1px text-center">
-                        ${{ number_format($det->precio, 2) }}<sup>{{ $det->iva ? '+IVA' : '' }}</sup>
+                        ${{ number_format($det->precio, 2) }}
                     </td>
                     <td class="border-1px text-center">
                         {{ $det->cantidad }}
