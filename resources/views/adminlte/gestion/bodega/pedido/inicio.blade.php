@@ -68,7 +68,7 @@
                                 <button type="button" class="btn btn-yura_primary" onclick="add_pedido()">
                                     <i class="fa fa-fw fa-shopping-cart"></i> Pedido
                                 </button>
-                                <button type="button" class="btn btn-yura_dark" onclick="resumen_pedido()">
+                                <button type="button" class="btn btn-yura_dark" onclick="exportar_resumen_pedidos()">
                                     <i class="fa fa-fw fa-file-excel-o"></i> Resumen
                                 </button>
                             </span>

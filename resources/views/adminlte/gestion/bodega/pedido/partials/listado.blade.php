@@ -8,17 +8,23 @@
                 onmouseover="$(this).addClass('sombra_primary')" onmouseleave="$(this).removeClass('sombra_primary')"
                 title="{{ $item->armado == 1 ? 'Armado' : 'Sin Armar' }}">
                 <span class="span_pedido">
-                    <button type="button" class="btn btn-xs btn-yura_dark btn_ver_pedido_listado" title="Ver Pedido"
-                        onclick="ver_pedido('{{ $item->id_pedido_bodega }}')">
-                        <i class="fa fa-fw fa-eye"></i>
-                    </button>
+                    <div class="btn-group btn_ver_pedido_listado">
+                        <button type="button" class="btn btn-xs btn-yura_dark" title="Ver Pedido"
+                            onclick="ver_pedido('{{ $item->id_pedido_bodega }}')" style="height: 30px; border-radius: 14px 0 0 0">
+                            <i class="fa fa-fw fa-eye"></i>
+                        </button>
+                        <button type="button" class="btn btn-xs btn-yura_default" title="Imprimir Pedido"
+                            onclick="imprimir_pedido('{{ $item->id_pedido_bodega }}')" style="height: 30px; border-radius: 0 0 14px 0;">
+                            <i class="fa fa-fw fa-print"></i>
+                        </button>
+                    </div>
                     @if ($item->armado == 0 && substr($item->fecha, 0, 7) == substr(hoy(), 0, 7))
                         <button type="button" class="btn btn-xs btn-yura_danger btn_elimiar_pedido_listado"
                             title="Eliminar Pedido" onclick="delete_pedido('{{ $item->id_pedido_bodega }}')">
                             <i class="fa fa-fw fa-times"></i>
                         </button>
                     @endif
-                    {{ $item->usuario->nombre_completo }} 
+                    {{ $item->usuario->nombre_completo }}
                     <br>
                     <em>{{ $item->empresa->nombre }}</em>
                     <br>
@@ -75,10 +81,8 @@
 
     .btn_ver_pedido_listado {
         position: absolute;
-        padding: 5px;
         left: 0;
         top: 0;
-        border-radius: 14px 0 16px 0 !important;
     }
 
     .btn_elimiar_pedido_listado {

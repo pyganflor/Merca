@@ -1,8 +1,10 @@
 <script>
     $('#vista_actual').val('pedido_bodega');
     seleccionar_finca_filtro();
-    listar_reporte();
-    
+    setTimeout(() => {
+        listar_reporte();
+    }, 1000);
+
     function listar_reporte() {
         datos = {
             entrega: $('#filtro_entrega').val(),
@@ -37,5 +39,18 @@
         }).always(function() {
             $('#filtro_entrega').LoadingOverlay('hide');
         });
+    }
+
+    function exportar_resumen_pedidos() {
+        $.LoadingOverlay('show');
+        window.open('{{ url('pedido_bodega/exportar_resumen_pedidos') }}?entrega=' + $('#filtro_entrega').val() +
+            '&finca=' + $('#filtro_finca').val(), '_blank');
+        $.LoadingOverlay('hide');
+    }
+
+    function imprimir_pedido(ped) {
+        $.LoadingOverlay('show');
+        window.open('{{ url('pedido_bodega/imprimir_pedido') }}?pedido=' + ped, '_blank');
+        $.LoadingOverlay('hide');
     }
 </script>
