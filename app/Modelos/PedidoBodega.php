@@ -47,8 +47,7 @@ class PedidoBodega extends Model
     {
         $monto = 0;
         foreach ($this->detalles as $det) {
-            $producto = $det->producto;
-            $monto += $det->cantidad * $producto->precio_venta;
+            $monto += $det->cantidad * $det->precio;
         }
         return round($monto, 2);
     }
