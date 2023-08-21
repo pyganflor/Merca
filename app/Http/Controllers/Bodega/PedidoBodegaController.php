@@ -469,6 +469,32 @@ class PedidoBodegaController extends Controller
             'pedido' => $pedido,
         ];
         return PDF::loadView('adminlte.gestion.bodega.pedido.partials.pdf_pedido', compact('datos', 'barCode'))
-            ->setPaper(array(0, 0, 360, 200), 'landscape')->stream();
+            ->setPaper(array(0, 0, 360, 250), 'landscape')->stream();
+    }
+
+    public function imprimir_pedidos_all(Request $request)
+    {
+        $barCode = new BarcodeGeneratorHTML();
+        $query = PedidoBodega::where('estado', 1);
+        if ($request->finca != 'T')
+            $query = $query->where('id_empresa', $request->finca);
+        if (!in_array(session('id_usuario'), [1, 2]))
+            $query = $query->where('id_usuario', session('id_usuario'));
+        $query = $query->orderBy('fecha')
+            ->orderBy('id_empresa')
+            ->orderBy('id_usuario')
+            ->get();
+        $pedidos = [];
+        foreach ($query as $q) {
+            $fecha_entrega = $q->getFechaEntrega();
+            if ($fecha_entrega == $request->entrega) {
+                $pedidos[] = $q;
+            }
+        }
+        $datos = [
+            'pedidos' => $pedidos,
+        ];
+        return PDF::loadView('adminlte.gestion.bodega.pedido.partials.pdf_pedido_all', compact('datos', 'barCode'))
+            ->setPaper(array(0, 0, 360, 250), 'landscape')->stream();
     }
 }

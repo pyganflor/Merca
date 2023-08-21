@@ -1,9 +1,6 @@
 <div style="overflow-y: scroll; max-height: 700px" class="container">
     <div class="row">
         @foreach ($listado as $item)
-            @php
-                $fecha_entrega = $item->getFechaEntrega();
-            @endphp
             <div class="col-md-2 sombra_pequeña col-md-listado {{ $item->armado == 1 ? 'pedido_armado' : 'pedido_sin_armar' }}"
                 onmouseover="$(this).addClass('sombra_primary')" onmouseleave="$(this).removeClass('sombra_primary')"
                 title="{{ $item->armado == 1 ? 'Armado' : 'Sin Armar' }}">
@@ -31,11 +28,6 @@
                     <small title="Fecha de Toma">
                         <i class="fa fa-fw fa-arrow-right color_text-yura_primary"></i>
                         {{ convertDateToText($item->fecha) }}
-                    </small>
-                    <br>
-                    <small title="Fecha de Entrega">
-                        <i class="fa fa-fw fa-arrow-right color_text-yura_danger"></i>
-                        {{ $fecha_entrega != '' ? convertDateToText($item->getFechaEntrega()) : '' }}
                     </small>
                     <br>
                     <small class="span_contador_productos" title="Productos">

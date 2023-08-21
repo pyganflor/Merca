@@ -53,4 +53,11 @@
         window.open('{{ url('pedido_bodega/imprimir_pedido') }}?pedido=' + ped, '_blank');
         $.LoadingOverlay('hide');
     }
+
+    function imprimir_pedidos_all(ped) {
+        $.LoadingOverlay('show');
+        window.open('{{ url('pedido_bodega/imprimir_pedidos_all') }}?entrega=' + $('#filtro_entrega').val() +
+            '&finca=' + $('#filtro_finca').val(), '_blank');
+        $.LoadingOverlay('hide');
+    }
 </script>

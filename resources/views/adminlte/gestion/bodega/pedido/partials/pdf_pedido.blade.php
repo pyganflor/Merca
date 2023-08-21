@@ -1,4 +1,10 @@
-<div style="position: relative; top: -40px; left: -40px; width: 255px">
+@php
+    $usuario = $datos['pedido']->usuario;
+    $monto_total = 0;
+    $monto_subtotal = 0;
+    $monto_total_iva = 0;
+@endphp
+<div style="position: relative; top: -40px; left: -40px; width: 320px">
     <table class="text-center" style="font-size: 0.9em; width: 100%">
         <tr>
             <td style="vertical-align: top; text-align: left">
@@ -11,9 +17,8 @@
                     {{ str_pad($datos['pedido']->id_pedido_bodega, 8, '0', STR_PAD_LEFT) }}
                 </span>
             </td>
-            <td style="text-align: center">
-                <img src="{{ public_path('/images/logo_1Toque.png') }}" width="50px" alt="Logo"
-                    style="padding: 0;">
+            <td style="text-align: right">
+                <img src="{{ public_path('/images/logo_1Toque.png') }}" width="60px" alt="Logo" style="padding: 0;">
             </td>
         </tr>
         <tr>
@@ -28,13 +33,13 @@
             <td style="font-size: 0.6em; text-align: left">
                 <em>RUC <b>1793209142001</b></em>
             </td>
-            <td style="font-size: 0.6em; text-align: right; width: 60px">
+            <td style="font-size: 0.6em; text-align: right; width: 80px">
                 <em>{{ $datos['pedido']->fecha }}</em>
             </td>
         </tr>
         <tr>
             <th style="font-size: 0.9em; text-align: left">
-                {{ $datos['pedido']->usuario->nombre_completo }}
+                {{ $usuario->nombre_completo }}
             </th>
             <td style="font-size: 0.6em; text-align: right">
                 {{ $datos['pedido']->empresa->nombre }}
@@ -44,20 +49,71 @@
         </tr>
     </table>
 
-    <table class="border-1px" style="font-size: 10px">
-        <tr>
-            <td class="border-1px text-center">
+    <table>
+        <tr style="font-size: 0.6em">
+            <th class="border-1px text-center">
                 PRODUCTO
-            </td>
-            <td class="border-1px text-center">
+            </th>
+            <th class="border-1px text-center" style="width: 60px">
                 PRECIO
-            </td>
-            <td class="border-1px text-center">
+            </th>
+            <th class="border-1px text-center" style="width: 60px">
                 CANTIDAD
-            </td>
-            <td class="border-1px text-center">
+            </th>
+            <th class="border-1px text-center" style="width: 60px">
                 SUBTOTAL
-            </td>
+            </th>
+        </tr>
+        @foreach ($datos['pedido']->detalles as $det)
+            @php
+                $producto = $det->producto;
+                $precio_prod = $det->cantidad * $det->precio;
+                if ($det->iva == true) {
+                    $monto_subtotal += $precio_prod / 1.12;
+                    $monto_total_iva += $monto_subtotal * 0.12;
+                } else {
+                    $monto_subtotal += $precio_prod;
+                }
+                $monto_total += $precio_prod;
+            @endphp
+            <tr style="font-size: 0.6em">
+                <td class="border-1px" style="text-align: left; padding-left: 2px">
+                    {{ $producto->nombre }}
+                </td>
+                <td class="border-1px text-center">
+                    ${{ number_format($det->precio, 2) }}<sup>{{ $det->iva ? '+IVA' : '' }}</sup>
+                </td>
+                <td class="border-1px text-center">
+                    {{ $det->cantidad }}
+                </td>
+                <td class="border-1px" style="text-align: right; padding-right: 2px">
+                    ${{ number_format($precio_prod, 2) }}
+                </td>
+            </tr>
+        @endforeach
+        <tr style="font-size: 0.6em">
+            <th style="text-align: right; padding-right: 2px" colspan="3">
+                Subtotal
+            </th>
+            <th style="text-align: right; padding-right: 2px">
+                ${{ number_format($monto_subtotal, 2) }}
+            </th>
+        </tr>
+        <tr style="font-size: 0.6em">
+            <th style="text-align: right; padding-right: 2px" colspan="3">
+                Total IVA
+            </th>
+            <th style="text-align: right; padding-right: 2px">
+                ${{ number_format($monto_total_iva, 2) }}
+            </th>
+        </tr>
+        <tr style="font-size: 0.6em">
+            <th style="text-align: right; padding-right: 2px" colspan="3">
+                TOTAL
+            </th>
+            <th style="text-align: right; padding-right: 2px">
+                ${{ number_format($monto_total, 2) }}
+            </th>
         </tr>
     </table>
 </div>

@@ -71,6 +71,9 @@
                                 <button type="button" class="btn btn-yura_dark" onclick="exportar_resumen_pedidos()">
                                     <i class="fa fa-fw fa-file-excel-o"></i> Resumen
                                 </button>
+                                <button type="button" class="btn btn-yura_default" onclick="imprimir_pedidos_all()">
+                                    <i class="fa fa-fw fa-print"></i> Imprimir Pedidos
+                                </button>
                             </span>
                         </div>
                     </td>
