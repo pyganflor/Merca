@@ -70,7 +70,7 @@
                 $precio_prod = $det->cantidad * $det->precio;
                 if ($det->iva == true) {
                     $monto_subtotal += $precio_prod / 1.12;
-                    $monto_total_iva += $monto_subtotal * 0.12;
+                    $monto_total_iva += ($precio_prod / 1.12) * 0.12;
                 } else {
                     $monto_subtotal += $precio_prod;
                 }
