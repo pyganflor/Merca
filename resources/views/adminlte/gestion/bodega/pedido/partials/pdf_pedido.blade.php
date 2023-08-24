@@ -17,12 +17,15 @@
                     {{ str_pad($datos['pedido']->id_pedido_bodega, 8, '0', STR_PAD_LEFT) }}
                 </span>
             </td>
+            <th style="font-size: 0.8em; text-align: left">
+                NOTA DE VENTA
+            </th>
             <td style="text-align: right">
                 <img src="{{ public_path('/images/logo_1Toque.png') }}" width="60px" alt="Logo" style="padding: 0;">
             </td>
         </tr>
         <tr>
-            <th colspan="2" class="text-center" style="font-size: 0.8em">
+            <th style="font-size: 0.8em; text-align: center" colspan="3">
                 BENCHMARKET S.A.S.
             </th>
         </tr>
@@ -40,6 +43,10 @@
         <tr>
             <th style="font-size: 0.9em; text-align: left">
                 {{ $usuario->nombre_completo }}
+                <br>
+                <em style="font-size: 10px">
+                    CI:{{ $usuario->username }}
+                </em>
             </th>
             <td style="font-size: 0.6em; text-align: right">
                 {{ $datos['pedido']->empresa->nombre }}
@@ -78,7 +85,7 @@
             @endphp
             <tr style="font-size: 0.6em">
                 <td class="border-1px" style="text-align: left; padding-left: 2px">
-                    {{ $producto->nombre }}
+                    {{ $producto->nombre }}{{ $det->iva == 1 ? '*' : '' }}
                 </td>
                 <td class="border-1px text-center">
                     ${{ number_format($det->precio, 2) }}
