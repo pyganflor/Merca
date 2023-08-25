@@ -1156,29 +1156,30 @@ class ComandoDev extends Command
             $activeSheetData = $document->getActiveSheet()->toArray(null, true, true, true);
 
             foreach ($activeSheetData as $pos_row => $row) {
-                if ($pos_row > 1 && $row['A'] != '') {
+                if ($row['A'] != '') {
                     dump('usuario: ' . $pos_row . '/' . count($activeSheetData));
-                    $fecha_ingreso = $row['D'];
+                    $fecha_ingreso = $row['C'];
                     $dias_activo = difFechas(hoy(), $fecha_ingreso)->days;
                     $aplica = 0;
-                    if ($dias_activo >= 90 && $row['F'] == 'SI APLICA')
+                    if ($dias_activo >= 90 && $row['D'] == 1)
                         $aplica = 1;
-                    $passw = Hash::make(str_limit(mb_strtoupper(espacios($row['C'])), 250));
+                    $passw = Hash::make(str_limit(mb_strtoupper(espacios($row['B'])), 250));
 
                     $usuario = new Usuario();
                     $usuario->estado = 'A';
                     $usuario->id_rol = 23;
                     $usuario->aplica = $aplica;
-                    $usuario->cupo_disponible = 50;
+                    $usuario->cupo_disponible = 40;
+                    $usuario->saldo = $aplica ? 40 : 0;
                     $usuario->password = $passw;
-                    $usuario->nombre_completo = str_limit(mb_strtoupper(espacios($row['B'])), 250);
-                    $usuario->username = str_limit(mb_strtolower(espacios($row['C'])), 250);
+                    $usuario->nombre_completo = str_limit(mb_strtoupper(espacios($row['A'])), 250);
+                    $usuario->username = str_limit(mb_strtolower(espacios($row['B'])), 250);
                     $usuario->save();
                     $usuario = Usuario::All()->last();
 
                     $usuario_finca = new UsuarioFinca();
                     $usuario_finca->id_usuario = $usuario->id_usuario;
-                    $usuario_finca->id_empresa = 1;
+                    $usuario_finca->id_empresa = 2;
                     $usuario_finca->save();
                 }
             }
