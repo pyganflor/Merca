@@ -19,9 +19,14 @@
                         style="padding: 0;">
                 </td>
             </tr>
+        </table>
+        <table class="text-center" style="font-size: 0.9em; width: 100%">
             <tr>
-                <th colspan="2" class="text-center" style="font-size: 0.8em">
+                <th style="font-size: 0.8em; text-align: left" colspan="3">
                     BENCHMARKET S.A.S.
+                </th>
+                <th style="font-size: 0.8em; text-align: right" colspan="3">
+                    <em>RUC <b>1793209142001</b></em>
                 </th>
             </tr>
         </table>
@@ -29,7 +34,6 @@
         <table style="width: 100%">
             <tr>
                 <td style="font-size: 0.6em; text-align: left">
-                    <em>RUC <b>1793209142001</b></em>
                 </td>
                 <td style="font-size: 0.6em; text-align: right; width: 80px">
                     <em>{{ $pedido->fecha }}</em>
