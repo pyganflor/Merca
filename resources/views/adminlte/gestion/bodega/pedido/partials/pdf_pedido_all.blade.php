@@ -14,6 +14,9 @@
                         {{ str_pad($pedido->id_pedido_bodega, 8, '0', STR_PAD_LEFT) }}
                     </span>
                 </td>
+                <th style="font-size: 0.8em; text-align: left">
+                    NOTA DE VENTA
+                </th>
                 <td style="text-align: right">
                     <img src="{{ public_path('/images/logo_1Toque.png') }}" width="60px" alt="Logo"
                         style="padding: 0;">
