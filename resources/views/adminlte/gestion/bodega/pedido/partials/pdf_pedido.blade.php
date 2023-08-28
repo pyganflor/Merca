@@ -5,32 +5,29 @@
     $monto_total_iva = 0;
 @endphp
 <div style="position: relative; top: -40px; left: -40px; width: 320px">
-    <table class="text-center" style="font-size: 0.9em; width: 100%">
+    <table class="text-center" style="width: 100%">
         <tr>
-            <td style="vertical-align: top; text-align: left">
+            <th style="vertical-align: top; text-align: left">
                 {!! $barCode->getBarcode(
                     str_pad($datos['pedido']->id_pedido_bodega, 8, '0', STR_PAD_LEFT),
                     $barCode::TYPE_CODE_128,
-                    1,
+                    2,
                 ) !!}
-                <span style="font-size: 0.8em">
+                <span style="font-size: 0.7em">
                     {{ str_pad($datos['pedido']->id_pedido_bodega, 8, '0', STR_PAD_LEFT) }}
                 </span>
-            </td>
-            <th style="font-size: 0.8em; text-align: left">
+            </th>
+            <th style="font-size: 0.7em; text-align: center">
                 NOTA DE VENTA
             </th>
-            <td style="text-align: right">
-                <img src="{{ public_path('/images/logo_1Toque.png') }}" width="60px" alt="Logo" style="padding: 0;">
-            </td>
         </tr>
     </table>
-    <table class="text-center" style="font-size: 0.9em; width: 100%">
+    <table class="text-center" style="width: 100%">
         <tr>
-            <th style="font-size: 0.8em; text-align: left" colspan="3">
+            <th style="font-size: 0.7em; text-align: left" colspan="3">
                 BENCHMARKET S.A.S.
             </th>
-            <th style="font-size: 0.8em; text-align: right" colspan="3">
+            <th style="font-size: 0.7em; text-align: right" colspan="3">
                 <em>RUC <b>1793209142001</b></em>
             </th>
         </tr>
@@ -40,39 +37,39 @@
         <tr>
             <td style="font-size: 0.6em; text-align: left">
             </td>
-            <td style="font-size: 0.6em; text-align: right; width: 80px">
+            <th style="font-size: 0.7em; text-align: right">
                 <em>{{ $datos['pedido']->fecha }}</em>
-            </td>
+            </th>
         </tr>
         <tr>
             <th style="font-size: 0.9em; text-align: left">
                 {{ $usuario->nombre_completo }}
                 <br>
-                <em style="font-size: 10px">
+                <em>
                     CI:{{ $usuario->username }}
                 </em>
             </th>
-            <td style="font-size: 0.6em; text-align: right">
+            <th style="font-size: 0.7em; text-align: right">
                 {{ $datos['pedido']->empresa->nombre }}
                 <br>
                 Saldo: ${{ number_format($datos['pedido']->saldo_usuario, 2) }}
-            </td>
+            </th>
         </tr>
     </table>
 
     <table>
-        <tr style="font-size: 0.6em">
+        <tr style="font-size: 0.7em">
             <th class="border-1px text-center">
                 PRODUCTO
             </th>
-            <th class="border-1px text-center" style="width: 60px">
+            <th class="border-1px text-center">
                 PRECIO
             </th>
-            <th class="border-1px text-center" style="width: 60px">
-                CANTIDAD
+            <th class="border-1px text-center">
+                CANT.
             </th>
-            <th class="border-1px text-center" style="width: 60px">
-                SUBTOTAL
+            <th class="border-1px text-center">
+                S_TOTAL
             </th>
         </tr>
         @foreach ($datos['pedido']->detalles as $det)
@@ -87,22 +84,22 @@
                 }
                 $monto_total += $precio_prod;
             @endphp
-            <tr style="font-size: 0.6em">
-                <td class="border-1px" style="text-align: left; padding-left: 2px">
+            <tr style="font-size: 0.7em">
+                <th class="border-1px" style="text-align: left; padding-left: 2px">
                     {{ $producto->nombre }}{{ $det->iva == 1 ? '*' : '' }}
-                </td>
-                <td class="border-1px text-center">
+                </th>
+                <th class="border-1px text-center">
                     ${{ number_format($det->precio, 2) }}
-                </td>
-                <td class="border-1px text-center">
+                </th>
+                <th class="border-1px text-center">
                     {{ $det->cantidad }}
-                </td>
-                <td class="border-1px" style="text-align: right; padding-right: 2px">
+                </th>
+                <th class="border-1px" style="text-align: right; padding-right: 2px">
                     ${{ number_format($precio_prod, 2) }}
-                </td>
+                </th>
             </tr>
         @endforeach
-        <tr style="font-size: 0.6em">
+        <tr style="font-size: 0.7em">
             <th style="text-align: right; padding-right: 2px" colspan="3">
                 Subtotal
             </th>
@@ -110,7 +107,7 @@
                 ${{ number_format($monto_subtotal, 2) }}
             </th>
         </tr>
-        <tr style="font-size: 0.6em">
+        <tr style="font-size: 0.7em">
             <th style="text-align: right; padding-right: 2px" colspan="3">
                 Total IVA
             </th>
@@ -118,7 +115,7 @@
                 ${{ number_format($monto_total_iva, 2) }}
             </th>
         </tr>
-        <tr style="font-size: 0.6em">
+        <tr style="font-size: 0.7em">
             <th style="text-align: right; padding-right: 2px" colspan="3">
                 TOTAL
             </th>

@@ -6,21 +6,17 @@
         $monto_total_iva = 0;
     @endphp
     <div style="position: relative; top: -40px; left: -40px; width: 320px">
-        <table class="text-center" style="font-size: 0.9em; width: 100%">
+        <table class="text-center" style="width: 100%">
             <tr>
-                <td style="vertical-align: top; text-align: left">
-                    {!! $barCode->getBarcode(str_pad($pedido->id_pedido_bodega, 8, '0', STR_PAD_LEFT), $barCode::TYPE_CODE_128, 1) !!}
+                <th style="vertical-align: top; text-align: left">
+                    {!! $barCode->getBarcode(str_pad($pedido->id_pedido_bodega, 8, '0', STR_PAD_LEFT), $barCode::TYPE_CODE_128, 2) !!}
                     <span style="font-size: 0.8em">
                         {{ str_pad($pedido->id_pedido_bodega, 8, '0', STR_PAD_LEFT) }}
                     </span>
-                </td>
-                <th style="font-size: 0.8em; text-align: left">
+                </th>
+                <th style="font-size: 0.8em; text-align: center">
                     NOTA DE VENTA
                 </th>
-                <td style="text-align: right">
-                    <img src="{{ public_path('/images/logo_1Toque.png') }}" width="60px" alt="Logo"
-                        style="padding: 0;">
-                </td>
             </tr>
         </table>
         <table class="text-center" style="font-size: 0.9em; width: 100%">
@@ -36,9 +32,9 @@
 
         <table style="width: 100%">
             <tr>
-                <td style="font-size: 0.6em; text-align: left">
+                <td style="font-size: 0.8em; text-align: left">
                 </td>
-                <td style="font-size: 0.6em; text-align: right; width: 80px">
+                <td style="font-size: 0.8em; text-align: right; width: 80px">
                     <em>{{ $pedido->fecha }}</em>
                 </td>
             </tr>
@@ -46,7 +42,7 @@
                 <th style="font-size: 0.9em; text-align: left">
                     {{ $usuario->nombre_completo }}
                 </th>
-                <td style="font-size: 0.6em; text-align: right">
+                <td style="font-size: 0.8em; text-align: right">
                     {{ $pedido->empresa->nombre }}
                     <br>
                     Saldo: ${{ number_format($pedido->saldo_usuario, 2) }}
@@ -55,7 +51,7 @@
         </table>
 
         <table>
-            <tr style="font-size: 0.6em">
+            <tr style="font-size: 0.8em">
                 <th class="border-1px text-center">
                     PRODUCTO
                 </th>

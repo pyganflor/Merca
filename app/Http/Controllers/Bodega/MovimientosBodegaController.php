@@ -36,7 +36,7 @@ class MovimientosBodegaController extends Controller
 
     public function add_ingresos(Request $request)
     {
-        $listado = Producto::orderBy('nombre')
+        $listado = Producto::orderBy('orden')
             ->get();
 
         return view('adminlte.gestion.bodega.movimientos_bodega.forms.add_ingresos', [
@@ -86,7 +86,7 @@ class MovimientosBodegaController extends Controller
 
     public function add_salidas(Request $request)
     {
-        $listado = Producto::orderBy('nombre')
+        $listado = Producto::orderBy('orden')
             ->get();
         $empresas = DB::table('configuracion_empresa')
             ->where('proveedor', 0)
