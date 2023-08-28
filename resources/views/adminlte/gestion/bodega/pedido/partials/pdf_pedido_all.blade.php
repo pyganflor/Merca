@@ -35,7 +35,7 @@
                 <td style="font-size: 0.8em; text-align: left">
                 </td>
                 <td style="font-size: 0.8em; text-align: right; width: 80px">
-                    <em>{{ $pedido->fecha }}</em>
+                    <em>{{ $pedido->getFechaEntrega() }}</em>
                 </td>
             </tr>
             <tr>

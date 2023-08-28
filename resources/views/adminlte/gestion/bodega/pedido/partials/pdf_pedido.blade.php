@@ -38,7 +38,7 @@
             <td style="font-size: 0.6em; text-align: left">
             </td>
             <th style="font-size: 0.7em; text-align: right">
-                <em>{{ $datos['pedido']->fecha }}</em>
+                <em>{{ $datos['pedido']->getFechaEntrega() }}</em>
             </th>
         </tr>
         <tr>
