@@ -9,22 +9,24 @@
         <table class="text-center" style="width: 100%">
             <tr>
                 <th style="vertical-align: top; text-align: left">
-                    {!! $barCode->getBarcode(str_pad($pedido->id_pedido_bodega, 8, '0', STR_PAD_LEFT), $barCode::TYPE_CODE_128, 2) !!}
+                    {!! $barCode->getBarcode(str_pad($pedido->id_pedido_bodega, 8, '0', STR_PAD_LEFT), $barCode::TYPE_CODE_128, 3) !!}
                     <span style="font-size: 0.8em">
                         {{ str_pad($pedido->id_pedido_bodega, 8, '0', STR_PAD_LEFT) }}
                     </span>
-                </th>
-                <th style="font-size: 0.8em; text-align: center">
-                    NOTA DE VENTA
                 </th>
             </tr>
         </table>
         <table class="text-center" style="font-size: 0.9em; width: 100%">
             <tr>
-                <th style="font-size: 0.8em; text-align: left" colspan="3">
+                <th style="text-align: center" colspan="2">
+                    NOTA DE VENTA
+                </th>
+            </tr>
+            <tr>
+                <th style="font-size: 0.8em; text-align: left">
                     BENCHMARKET S.A.S.
                 </th>
-                <th style="font-size: 0.8em; text-align: right" colspan="3">
+                <th style="font-size: 0.8em; text-align: right">
                     <em>RUC <b>1793209142001</b></em>
                 </th>
             </tr>
@@ -34,35 +36,35 @@
             <tr>
                 <td style="font-size: 0.8em; text-align: left">
                 </td>
-                <td style="font-size: 0.8em; text-align: right; width: 80px">
+                <th style="font-size: 0.8em; text-align: right; width: 80px">
                     <em>{{ $pedido->getFechaEntrega() }}</em>
-                </td>
+                </th>
             </tr>
             <tr>
                 <th style="font-size: 0.9em; text-align: left">
                     {{ $usuario->nombre_completo }}
                 </th>
-                <td style="font-size: 0.8em; text-align: right">
+                <th style="font-size: 0.8em; text-align: right">
                     {{ $pedido->empresa->nombre }}
                     <br>
                     Saldo: ${{ number_format($pedido->saldo_usuario, 2) }}
-                </td>
+                </th>
             </tr>
         </table>
 
         <table>
             <tr style="font-size: 0.8em">
                 <th class="border-1px text-center">
-                    PRODUCTO
+                    ITEM
                 </th>
-                <th class="border-1px text-center" style="width: 60px">
-                    PRECIO
+                <th class="border-1px text-center">
+                    Precio
                 </th>
-                <th class="border-1px text-center" style="width: 60px">
-                    CANTIDAD
+                <th class="border-1px text-center">
+                    Cant
                 </th>
-                <th class="border-1px text-center" style="width: 60px">
-                    SUBTOTAL
+                <th class="border-1px text-center">
+                    S.Total
                 </th>
             </tr>
             @foreach ($pedido->detalles as $det)
@@ -78,18 +80,18 @@
                     $monto_total += $precio_prod;
                 @endphp
                 <tr style="font-size: 0.6em">
-                    <td class="border-1px" style="text-align: left; padding-left: 2px">
+                    <th class="border-1px" style="text-align: left; padding-left: 2px">
                         {{ $producto->nombre }}
-                    </td>
-                    <td class="border-1px text-center">
+                    </th>
+                    <th class="border-1px text-center">
                         ${{ number_format($det->precio, 2) }}
-                    </td>
-                    <td class="border-1px text-center">
+                    </th>
+                    <th class="border-1px text-center">
                         {{ $det->cantidad }}
-                    </td>
-                    <td class="border-1px" style="text-align: right; padding-right: 2px">
+                    </th>
+                    <th class="border-1px" style="text-align: right; padding-right: 2px">
                         ${{ number_format($precio_prod, 2) }}
-                    </td>
+                    </th>
                 </tr>
             @endforeach
             <tr style="font-size: 0.6em">
