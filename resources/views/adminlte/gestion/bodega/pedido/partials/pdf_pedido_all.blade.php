@@ -81,7 +81,7 @@
                 @endphp
                 <tr style="font-size: 0.6em">
                     <th class="border-1px" style="text-align: left; padding-left: 2px">
-                        {{ $producto->nombre }}
+                        {{ $producto->nombre }} {{ $det->iva ? '*' : '' }}
                     </th>
                     <th class="border-1px text-center">
                         ${{ number_format($det->precio, 2) }}

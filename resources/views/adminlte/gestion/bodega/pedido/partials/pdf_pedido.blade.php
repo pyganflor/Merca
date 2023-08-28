@@ -58,10 +58,10 @@
                 ITEM
             </th>
             <th class="border-1px text-center">
-                $u
+                Precio
             </th>
             <th class="border-1px text-center">
-                #
+                Cant
             </th>
             <th class="border-1px text-center">
                 S.Total
@@ -81,7 +81,7 @@
             @endphp
             <tr style="font-size: 0.6em">
                 <th class="border-1px" style="text-align: left; padding-left: 2px">
-                    {{ $producto->nombre }}
+                    {{ $producto->nombre }} {{ $det->iva ? '*' : '' }}
                 </th>
                 <th class="border-1px text-center">
                     ${{ number_format($det->precio, 2) }}
