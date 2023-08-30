@@ -5,7 +5,7 @@
     $monto_total_iva = 0;
     $pedido = $datos['pedido'];
 @endphp
-<div style="position: relative; top: -40px; left: -40px; width: 240px">
+<div style="position: relative; top: -40px; left: -40px; width: 255px">
     <table class="text-center" style="width: 100%">
         <tr>
             <th style="vertical-align: top; text-align: center">
