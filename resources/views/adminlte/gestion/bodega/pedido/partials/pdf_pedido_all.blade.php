@@ -57,13 +57,13 @@
                 <th class="border-1px text-center">
                     Item
                 </th>
-                <th class="border-1px text-center">
+                <th class="border-1px text-center" style="width: 40px">
                     Precio
                 </th>
-                <th class="border-1px text-center">
+                <th class="border-1px text-center" style="width: 40px">
                     Cant
                 </th>
-                <th class="border-1px text-center">
+                <th class="border-1px text-center" style="width: 40px">
                     Total
                 </th>
             </tr>
@@ -95,7 +95,10 @@
                 </tr>
             @endforeach
             <tr style="font-size: 0.6em">
-                <th style="text-align: right; padding-right: 2px" colspan="3">
+                <th style="text-align: left; padding-right: 2px" colspan="2">
+                    * Tiene IVA
+                </th>
+                <th style="text-align: right; padding-right: 2px">
                     Subtotal
                 </th>
                 <th style="text-align: right; padding-right: 2px">
