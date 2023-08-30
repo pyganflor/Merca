@@ -25,7 +25,10 @@
         <tr>
             <th style="font-size: 0.7em; text-align: left" colspan="2">
                 BENCHMARKET S.A.S.
-                <br>
+            </th>
+        </tr>
+        <tr>
+            <th style="font-size: 0.7em; text-align: left" colspan="2">
                 RUC <b>1793209142001</b>
             </th>
         </tr>

@@ -5,57 +5,57 @@
         $monto_subtotal = 0;
         $monto_total_iva = 0;
     @endphp
-    <div style="position: relative; top: -40px; left: -40px; width: 320px">
+    <div style="position: relative; top: -40px; left: -40px; width: 245px">
         <table class="text-center" style="width: 100%">
             <tr>
-                <th style="vertical-align: top; text-align: left">
-                    {!! $barCode->getBarcode(str_pad($pedido->id_pedido_bodega, 8, '0', STR_PAD_LEFT), $barCode::TYPE_CODE_128, 3) !!}
+                <th style="vertical-align: top; text-align: center">
+                    {!! $barCode->getBarcode(str_pad($pedido->id_pedido_bodega, 8, '0', STR_PAD_LEFT), $barCode::TYPE_CODE_128, 2) !!}
                     <span style="font-size: 0.8em">
                         {{ str_pad($pedido->id_pedido_bodega, 8, '0', STR_PAD_LEFT) }}
                     </span>
                 </th>
             </tr>
         </table>
-        <table class="text-center" style="font-size: 0.9em; width: 100%">
+        <table class="text-center" style="width: 100%">
             <tr>
                 <th style="text-align: center" colspan="2">
                     NOTA DE VENTA
                 </th>
             </tr>
             <tr>
-                <th style="font-size: 0.8em; text-align: left">
+                <th style="font-size: 0.7em; text-align: left" colspan="2">
                     BENCHMARKET S.A.S.
                 </th>
-                <th style="font-size: 0.8em; text-align: right">
-                    <em>RUC <b>1793209142001</b></em>
-                </th>
             </tr>
-        </table>
-
-        <table style="width: 100%">
             <tr>
-                <td style="font-size: 0.8em; text-align: left">
-                </td>
-                <th style="font-size: 0.8em; text-align: right; width: 80px">
-                    <em>{{ $pedido->getFechaEntrega() }}</em>
+                <th style="font-size: 0.7em; text-align: left" colspan="2">
+                    RUC <b>1793209142001</b>
                 </th>
             </tr>
             <tr>
-                <th style="font-size: 0.9em; text-align: left">
+                <th style="font-size: 0.7em; text-align: left" colspan="2">
+                    Entrega: {{ $pedido->getFechaEntrega() }}
+                </th>
+            </tr>
+            <tr>
+                <th style="text-align: left" colspan="2">
                     {{ $usuario->nombre_completo }}
                 </th>
-                <th style="font-size: 0.8em; text-align: right">
-                    {{ $pedido->empresa->nombre }}
-                    <br>
+            </tr>
+            <tr>
+                <th style="font-size: 0.7em; text-align: left">
+                    CI: {{ $usuario->username }}
+                </th>
+                <th style="font-size: 0.7em; text-align: right">
                     Saldo: ${{ number_format($pedido->saldo_usuario, 2) }}
                 </th>
             </tr>
         </table>
 
         <table>
-            <tr style="font-size: 0.8em">
+            <tr style="font-size: 0.7em">
                 <th class="border-1px text-center">
-                    ITEM
+                    Item
                 </th>
                 <th class="border-1px text-center">
                     Precio
@@ -64,7 +64,7 @@
                     Cant
                 </th>
                 <th class="border-1px text-center">
-                    S.Total
+                    Total
                 </th>
             </tr>
             @foreach ($pedido->detalles as $det)
