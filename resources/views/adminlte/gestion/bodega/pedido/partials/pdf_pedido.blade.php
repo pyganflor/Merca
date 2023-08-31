@@ -19,7 +19,7 @@
     <table class="text-center" style="width: 100%">
         <tr>
             <th style="text-align: center" colspan="2">
-                NOTA DE VENTA
+                NOTA DE ENTREGA
             </th>
         </tr>
         <tr>

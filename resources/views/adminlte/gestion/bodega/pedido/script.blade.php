@@ -54,9 +54,16 @@
         $.LoadingOverlay('hide');
     }
 
-    function imprimir_pedidos_all(ped) {
+    function imprimir_pedidos_all() {
         $.LoadingOverlay('show');
         window.open('{{ url('pedido_bodega/imprimir_pedidos_all') }}?entrega=' + $('#filtro_entrega').val() +
+            '&finca=' + $('#filtro_finca').val(), '_blank');
+        $.LoadingOverlay('hide');
+    }
+
+    function imprimir_entregas_all() {
+        $.LoadingOverlay('show');
+        window.open('{{ url('pedido_bodega/imprimir_entregas_all') }}?entrega=' + $('#filtro_entrega').val() +
             '&finca=' + $('#filtro_finca').val(), '_blank');
         $.LoadingOverlay('hide');
     }

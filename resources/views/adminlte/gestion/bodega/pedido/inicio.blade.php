@@ -74,6 +74,9 @@
                                 <button type="button" class="btn btn-yura_default" onclick="imprimir_pedidos_all()">
                                     <i class="fa fa-fw fa-print"></i> Imprimir Pedidos
                                 </button>
+                                <button type="button" class="btn btn-yura_default" onclick="imprimir_entregas_all()">
+                                    <i class="fa fa-fw fa-print"></i> Imprimir Entregas
+                                </button>
                             </span>
                         </div>
                     </td>
