@@ -19,9 +19,9 @@ class Autenticacion
     {
         if ($request->session()->has('logeado')) {
             if ($request->session()->get('logeado')) {
-                if (getUsuario($request->session()->get('id_usuario'))->estado == 'A')
+                if (getUsuario($request->session()->get('id_usuario'))->estado == 'A') {
                     return $next($request);
-                else
+                } else
                     return new Response(view('errores.usuario_inactivo'));
             }
         }

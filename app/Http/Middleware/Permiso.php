@@ -25,8 +25,10 @@ class Permiso
             foreach ($rol->submenus as $item) {
                 $url = explode('/', substr($request->getRequestUri(), 1))[0];
                 if ($item->submenu->url == $url && Rol_Submenu::All()->where('id_rol', '=', $rol->id_rol)
-                        ->where('id_submenu', '=', $item->submenu->id_submenu)->first()->estado == 'A')
+                    ->where('id_submenu', '=', $item->submenu->id_submenu)->first()->estado == 'A'
+                ) {
                     return $next($request);
+                }
             }
         }
         return new Response(view('errores.acceso_denegado'));

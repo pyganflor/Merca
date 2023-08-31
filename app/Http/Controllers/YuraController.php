@@ -37,26 +37,15 @@ class YuraController extends Controller
 {
     public function inicio(Request $request)
     {
-        //$empresas = SuperFinca::All()->sortBy('nombre');
-        //$semana_pasada = getSemanaByDate(opDiasFecha('-', 7, hoy()));
-        //$semana_1mes = $semana_pasada->last_4_semana;
-
-        $data = [];
-        /*foreach ($empresas as $sf) {
-            $data[] = [
-                'sf' => $sf,
-                'ventas_1_mes' => getIndicadorByName('SF1-' . $sf->id_super_finca),
-                'ventas_4_mes' => getIndicadorByName('SF2-' . $sf->id_super_finca),
-                'ventas_1_anno' => getIndicadorByName('SF3-' . $sf->id_super_finca),
-                'costos_1_mes' => getIndicadorByName('SF4-' . $sf->id_super_finca),
-                'costos_4_mes' => getIndicadorByName('SF5-' . $sf->id_super_finca),
-                'costos_1_anno' => getIndicadorByName('SF6-' . $sf->id_super_finca),
-            ];
-        }*/
-        return view('adminlte.inicio_resumen', [
-            'fincas_propias' => getFincasPropias(),
-            'data' => $data
-        ]);
+        if (in_array(getUsuario(session('id_usuario'))->id_rol, [1, 2])) {  // usuarios Admins
+            $data = [];
+            return view('adminlte.inicio_resumen', [
+                'fincas_propias' => getFincasPropias(),
+                'data' => $data
+            ]);
+        } else {    // usuarios clientes
+            return 'EN DESARROLLO';
+        }
     }
 
     public function listar_dashboard_inicial(Request $request)
