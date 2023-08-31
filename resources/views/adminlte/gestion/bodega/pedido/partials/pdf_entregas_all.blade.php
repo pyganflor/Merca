@@ -32,7 +32,7 @@
                 <th class="border-1px text-center" style="width: 50px">
                     Total
                 </th>
-                <th class="border-1px text-center" style="width: 130px">
+                <th class="border-1px text-center" style="width: 250px">
                     Firma
                 </th>
             </tr>
