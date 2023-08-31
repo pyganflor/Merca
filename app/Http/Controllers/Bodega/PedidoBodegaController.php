@@ -516,6 +516,6 @@ class PedidoBodegaController extends Controller
             'pedidos' => $pedidos,
         ];
         return PDF::loadView('adminlte.gestion.bodega.pedido.partials.pdf_entregas_all', compact('datos', 'barCode'))
-            ->setPaper(array(0, 0, 450, 550), 'landscape')->stream();
+            ->setPaper(array(0, 0, 750, 530), 'landscape')->stream();
     }
 }
