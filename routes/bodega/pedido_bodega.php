@@ -16,3 +16,5 @@ Route::get('pedido_bodega/imprimir_pedido', 'Bodega\PedidoBodegaController@impri
 Route::get('pedido_bodega/imprimir_pedidos_all', 'Bodega\PedidoBodegaController@imprimir_pedidos_all');
 Route::get('pedido_bodega/imprimir_entregas_all', 'Bodega\PedidoBodegaController@imprimir_entregas_all');
 Route::get('pedido_bodega/get_armar_pedido', 'Bodega\PedidoBodegaController@get_armar_pedido');
+Route::get('pedido_bodega/escanear_codigo_pedido', 'Bodega\PedidoBodegaController@escanear_codigo_pedido');
+Route::post('pedido_bodega/store_armar_pedidos', 'Bodega\PedidoBodegaController@store_armar_pedidos');

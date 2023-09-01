@@ -83,8 +83,65 @@ class PedidoBodegaController extends Controller
 
     public function get_armar_pedido(Request $request)
     {
-        return view('adminlte.gestion.bodega.pedido.forms.get_armar_pedido', [
+        return view('adminlte.gestion.bodega.pedido.forms.get_armar_pedido', []);
+    }
+
+    public function escanear_codigo_pedido(Request $request)
+    {
+        $pedido = PedidoBodega::find($request->codigo);
+        return view('adminlte.gestion.bodega.pedido.forms._escanear_codigo_pedido', [
+            'pedido' => $pedido
         ]);
+    }
+
+    public function store_armar_pedidos(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            foreach (json_decode($request->data) as $data) {
+                $pedido = PedidoBodega::find($data);
+                if ($pedido->armado == 0) {
+                    $models_productos = [];
+                    foreach ($pedido->detalles as $det) {
+                        $producto = $det->producto;
+                        if ($producto->disponibles >= $det->cantidad) {
+                            $producto->disponibles -= $det->cantidad;
+                            $models_productos[] = $producto;
+                        } else {
+                            DB::rollBack();
+                            return [
+                                'success' => false,
+                                'mensaje' => '<div class="alert alert-danger text-center">' .
+                                    'No hay disponibilidad para el producto: "' . $producto->nombre . '" en el pedido #' . $pedido->id_pedido_bodega .
+                                    '</div>',
+                            ];
+                        }
+                    }
+                    $pedido->armado = 1;
+                    $pedido->save();
+
+                    foreach ($models_productos as $p) {
+                        $p->save();
+                    }
+                }
+            }
+
+            $success = true;
+            $msg = 'Se ha <b>ARMADO</b> el pedido correctamente';
+
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            $success = false;
+            $msg = '<div class="alert alert-danger text-center">' .
+                '<p> Ha ocurrido un problema al guardar la informacion al sistema</p>' .
+                '<p>' . $e->getMessage() . ' ' . $e->getFile() . ' ' . $e->getLine() . '</p>'
+                . '</div>';
+        }
+        return [
+            'success' => $success,
+            'mensaje' => $msg,
+        ];
     }
 
     public function listar_catalogo(Request $request)
