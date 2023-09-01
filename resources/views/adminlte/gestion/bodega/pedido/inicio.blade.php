@@ -68,14 +68,17 @@
                                 <button type="button" class="btn btn-yura_primary" onclick="add_pedido()">
                                     <i class="fa fa-fw fa-shopping-cart"></i> Pedido
                                 </button>
-                                <button type="button" class="btn btn-yura_dark" onclick="exportar_resumen_pedidos()">
+                                <button type="button" class="btn btn-yura_dark" onclick="get_armar_pedido()">
+                                    <i class="fa fa-fw fa-gift"></i> Armado
+                                </button>
+                                <button type="button" class="btn btn-yura_default" onclick="exportar_resumen_pedidos()">
                                     <i class="fa fa-fw fa-file-excel-o"></i> Resumen
                                 </button>
                                 <button type="button" class="btn btn-yura_default" onclick="imprimir_pedidos_all()">
-                                    <i class="fa fa-fw fa-print"></i> Imprimir Pedidos
+                                    <i class="fa fa-fw fa-print"></i> Pedidos
                                 </button>
                                 <button type="button" class="btn btn-yura_default" onclick="imprimir_entregas_all()">
-                                    <i class="fa fa-fw fa-print"></i> Imprimir Entregas
+                                    <i class="fa fa-fw fa-print"></i> Entregas
                                 </button>
                             </span>
                         </div>

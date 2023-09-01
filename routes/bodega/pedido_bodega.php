@@ -15,3 +15,4 @@ Route::get('pedido_bodega/exportar_resumen_pedidos', 'Bodega\PedidoBodegaControl
 Route::get('pedido_bodega/imprimir_pedido', 'Bodega\PedidoBodegaController@imprimir_pedido');
 Route::get('pedido_bodega/imprimir_pedidos_all', 'Bodega\PedidoBodegaController@imprimir_pedidos_all');
 Route::get('pedido_bodega/imprimir_entregas_all', 'Bodega\PedidoBodegaController@imprimir_entregas_all');
+Route::get('pedido_bodega/get_armar_pedido', 'Bodega\PedidoBodegaController@get_armar_pedido');

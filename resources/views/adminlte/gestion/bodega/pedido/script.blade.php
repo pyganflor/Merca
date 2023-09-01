@@ -25,6 +25,16 @@
         });
     }
 
+    function get_armar_pedido() {
+        datos = {}
+        get_jquery('{{ url('pedido_bodega/get_armar_pedido') }}', datos, function(retorno) {
+            modal_view('modal_get_armar_pedido', retorno,
+                '<i class="fa fa-fw fa-shopping-cart"></i> Nuevo Pedido',
+                true, false, '{{ isPC() ? '70%' : '' }}',
+                function() {});
+        });
+    }
+
     function seleccionar_finca_filtro() {
         datos = {
             _token: '{{ csrf_token() }}',

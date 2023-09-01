@@ -156,7 +156,7 @@
                 <td rowspan="4" style="text-align: right; padding-right: 20px; min-width: 320px">
                     <div class="btn-group">
                         <button type="button" class="btn btn-yura_primary"
-                            @if ($pedido->armado == 0 && substr($pedido->fecha, 0, 7) == substr(hoy(), 0, 7)) onclick="update_pedido('{{ $pedido->id_pedido_bodega }}')"@else disabled @endif>
+                            @if ($pedido->armado == 0 /*&& substr($pedido->fecha, 0, 7) == substr(hoy(), 0, 7)*/) onclick="update_pedido('{{ $pedido->id_pedido_bodega }}')"@else disabled @endif>
                             <i class="fa fa-fw fa-save"></i> ACTUALIZAR
                         </button>
                         <button type="button" class="btn btn-yura_default"

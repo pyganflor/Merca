@@ -81,6 +81,12 @@ class PedidoBodegaController extends Controller
         ]);
     }
 
+    public function get_armar_pedido(Request $request)
+    {
+        return view('adminlte.gestion.bodega.pedido.forms.get_armar_pedido', [
+        ]);
+    }
+
     public function listar_catalogo(Request $request)
     {
         $listado = Producto::Where(function ($q) use ($request) {
