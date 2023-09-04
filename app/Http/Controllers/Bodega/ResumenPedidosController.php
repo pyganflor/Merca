@@ -34,9 +34,7 @@ class ResumenPedidosController extends Controller
         $usuarios = DB::table('pedido_bodega as p')
             ->join('usuario as u', 'u.id_usuario', '=', 'p.id_usuario')
             ->select('p.id_usuario', 'u.nombre_completo', 'u.username')
-            ->where('p.estado', 1)
-            ->where('p.fecha', '>=', $request->desde)
-            ->where('p.fecha', '<=', $request->hasta);
+            ->where('p.estado', 1);
         if ($request->finca != 'T')
             $usuarios = $usuarios->where('p.id_empresa', $request->finca);
         $usuarios = $usuarios->orderBy('p.fecha')
@@ -56,23 +54,27 @@ class ResumenPedidosController extends Controller
             $monto_total_iva = 0;
             $monto_total = 0;
             foreach ($pedidos as $pedido) {
-                foreach ($pedido->detalles as $det) {
-                    $precio_prod = $det->cantidad * $det->precio;
-                    if ($det->iva == true) {
-                        $monto_subtotal += $precio_prod / 1.12;
-                        $monto_total_iva += ($precio_prod / 1.12) * 0.12;
-                    } else {
-                        $monto_subtotal += $precio_prod;
+                $fecha_entrega = $pedido->getFechaEntrega();
+                if ($fecha_entrega >= $request->desde && $fecha_entrega <= $request->hasta) {
+                    foreach ($pedido->detalles as $det) {
+                        $precio_prod = $det->cantidad * $det->precio;
+                        if ($det->iva == true) {
+                            $monto_subtotal += $precio_prod / 1.12;
+                            $monto_total_iva += ($precio_prod / 1.12) * 0.12;
+                        } else {
+                            $monto_subtotal += $precio_prod;
+                        }
+                        $monto_total += $precio_prod;
                     }
-                    $monto_total += $precio_prod;
                 }
             }
-            $listado[] = [
-                'usuario' => $u,
-                'subtotal' => $monto_subtotal,
-                'total_iva' => $monto_total_iva,
-                'total' => $monto_total,
-            ];
+            if ($monto_total > 0)
+                $listado[] = [
+                    'usuario' => $u,
+                    'subtotal' => $monto_subtotal,
+                    'total_iva' => $monto_total_iva,
+                    'total' => $monto_total,
+                ];
         }
 
         return view('adminlte.gestion.bodega.resumen_pedidos.partials.listado', [
@@ -85,9 +87,7 @@ class ResumenPedidosController extends Controller
         $usuarios = DB::table('pedido_bodega as p')
             ->join('usuario as u', 'u.id_usuario', '=', 'p.id_usuario')
             ->select('p.id_usuario', 'u.nombre_completo', 'u.username')
-            ->where('p.estado', 1)
-            ->where('p.fecha', '>=', $request->desde)
-            ->where('p.fecha', '<=', $request->hasta);
+            ->where('p.estado', 1);
         if ($request->finca != 'T')
             $usuarios = $usuarios->where('p.id_empresa', $request->finca);
         $usuarios = $usuarios->orderBy('p.fecha')
@@ -107,23 +107,27 @@ class ResumenPedidosController extends Controller
             $monto_total_iva = 0;
             $monto_total = 0;
             foreach ($pedidos as $pedido) {
-                foreach ($pedido->detalles as $det) {
-                    $precio_prod = $det->cantidad * $det->precio;
-                    if ($det->iva == true) {
-                        $monto_subtotal += $precio_prod / 1.12;
-                        $monto_total_iva += ($precio_prod / 1.12) * 0.12;
-                    } else {
-                        $monto_subtotal += $precio_prod;
+                $fecha_entrega = $pedido->getFechaEntrega();
+                if ($fecha_entrega >= $request->desde && $fecha_entrega <= $request->hasta) {
+                    foreach ($pedido->detalles as $det) {
+                        $precio_prod = $det->cantidad * $det->precio;
+                        if ($det->iva == true) {
+                            $monto_subtotal += $precio_prod / 1.12;
+                            $monto_total_iva += ($precio_prod / 1.12) * 0.12;
+                        } else {
+                            $monto_subtotal += $precio_prod;
+                        }
+                        $monto_total += $precio_prod;
                     }
-                    $monto_total += $precio_prod;
                 }
             }
-            $listado[] = [
-                'usuario' => $u,
-                'subtotal' => $monto_subtotal,
-                'total_iva' => $monto_total_iva,
-                'total' => $monto_total,
-            ];
+            if ($monto_total > 0)
+                $listado[] = [
+                    'usuario' => $u,
+                    'subtotal' => $monto_subtotal,
+                    'total_iva' => $monto_total_iva,
+                    'total' => $monto_total,
+                ];
         }
 
         $datos = [
