@@ -1,14 +1,14 @@
 @extends('layouts.adminlte.master')
 
 @section('titulo')
-    Pedidos de Bodega
+    Resumen de Pedidos
 @endsection
 
 @section('contenido')
     <!-- Content Header (Page header) -->
     <section class="content-header">
         <h1>
-            Pedidos de Bodega
+            Resumen de Pedidos
             <small class="text-color_yura">módulo de bodega</small>
         </h1>
 
@@ -40,11 +40,7 @@
                             <span class="input-group-addon bg-yura_dark span-input-group-yura-fixed">
                                 Finca
                             </span>
-                            <select id="filtro_finca" style="width: 100%" class="form-control"
-                                onchange="seleccionar_finca_filtro()">
-                                @if (count($fincas) > 1)
-                                    <option value="T">Todas mis fincas</option>
-                                @endif
+                            <select id="filtro_finca" style="width: 100%" class="form-control">
                                 @foreach ($fincas as $f)
                                     <option value="{{ $f->id_empresa }}">
                                         {{ $f->nombre }}
@@ -55,30 +51,26 @@
                     </td>
                     <td>
                         <div class="input-group">
-                            <div class="input-group">
-                                <span class="input-group-addon bg-yura_dark">
-                                    Fecha de Entrega
-                                </span>
-                                <select id="filtro_entrega" style="width: 100%" class="form-control"></select>
-                            </div>
+                            <span class="input-group-addon bg-yura_dark">
+                                Desde
+                            </span>
+                            <input type="date" class="form-control text-center" id="filtro_desde"
+                                value="{{ substr(hoy(), 0, 8) . '01' }}" style="width: 100%">
+                        </div>
+                    </td>
+                    <td>
+                        <div class="input-group">
+                            <span class="input-group-addon bg-yura_dark">
+                                Hasta
+                            </span>
+                            <input type="date" class="form-control text-center" id="filtro_hasta"
+                                value="{{ hoy() }}" style="width: 100%">
                             <span class="input-group-btn">
                                 <button type="button" class="btn btn-yura_dark" onclick="listar_reporte()">
-                                    <i class="fa fa-fw fa-search"></i>
+                                    <i class="fa fa-fw fa-search"></i> Buscar
                                 </button>
-                                <button type="button" class="btn btn-yura_primary" onclick="add_pedido()">
-                                    <i class="fa fa-fw fa-shopping-cart"></i> Pedido
-                                </button>
-                                <button type="button" class="btn btn-yura_dark" onclick="get_armar_pedido()">
-                                    <i class="fa fa-fw fa-gift"></i> Armado
-                                </button>
-                                <button type="button" class="btn btn-yura_default" onclick="exportar_resumen_pedidos()">
-                                    <i class="fa fa-fw fa-file-excel-o"></i> Compra
-                                </button>
-                                <button type="button" class="btn btn-yura_default" onclick="imprimir_pedidos_all()">
-                                    <i class="fa fa-fw fa-print"></i> Etiquetas
-                                </button>
-                                <button type="button" class="btn btn-yura_default" onclick="imprimir_entregas_all()">
-                                    <i class="fa fa-fw fa-print"></i> Entregas
+                                <button type="button" class="btn btn-yura_default" onclick="exportar_reporte()">
+                                    <i class="fa fa-fw fa-file-pdf-o"></i> Exportar
                                 </button>
                             </span>
                         </div>
@@ -87,7 +79,7 @@
             </table>
         </div>
 
-        <div id="div_listado" style="margin-top: 5px">
+        <div id="div_listado" style="margin-top: 5px; overflow-y: scroll; max-height: 700px">
         </div>
     </section>
 
@@ -107,5 +99,5 @@
 @endsection
 
 @section('script_final')
-    @include('adminlte.gestion.bodega.pedido.script')
+    @include('adminlte.gestion.bodega.resumen_pedidos.script')
 @endsection

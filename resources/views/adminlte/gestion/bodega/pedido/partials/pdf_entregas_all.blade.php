@@ -39,11 +39,6 @@
             @foreach ($datos['pedidos'] as $pos_ped => $pedido)
                 @php
                     $usuario = $pedido->usuario;
-                    $monto_total = 0;
-                    $monto_subtotal = 0;
-                    $monto_total_iva = 0;
-                @endphp
-                @php
                     $monto_subtotal = 0;
                     $monto_total_iva = 0;
                     $monto_total = 0;
