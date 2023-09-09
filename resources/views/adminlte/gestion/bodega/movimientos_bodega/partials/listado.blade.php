@@ -33,7 +33,7 @@
                         style="border-radius: 16px; width: 60px"
                         onclick="$('.imagen_{{ $item->id_producto }}').toggleClass('hidden')">
                 </th>
-                <th class="padding_lateral_5" style="border-color: #9d9d9d">
+                <th class="text-center padding_lateral_5" style="border-color: #9d9d9d">
                     {{ $item->categoria_producto->nombre }}
                 </th>
                 <th class="padding_lateral_5" style="border-color: #9d9d9d">

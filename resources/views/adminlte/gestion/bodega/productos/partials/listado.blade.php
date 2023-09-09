@@ -12,10 +12,13 @@
                 <input type="text" style="width: 100%; color: black" class="text-center" placeholder="Nueva"
                     onchange="store_categoria()" id="new_nombre_categoria">
             </th>
-            <th class="text-center th_yura_green" style="width: 110px">
+            <th class="text-center th_yura_green" style="width: 150px">
+                PROVEEDOR
+            </th>
+            <th class="text-center th_yura_green" style="width: 60px">
                 CODIGO
             </th>
-            <th class="text-center th_yura_green">
+            <th class="text-center th_yura_green" style="width: 180px">
                 NOMBRE
             </th>
             <th class="text-center th_yura_green" style="width: 60px">
@@ -39,7 +42,7 @@
             <th class="text-center th_yura_green" style="width: 60px">
                 % UTILDIAD
             </th>
-            <th class="text-center th_yura_green" style="width: 60px">
+            <th class="text-center th_yura_green" style="width: 80px">
                 <button type="button" class="btn btn-xs btn-yura_default"
                     onclick="$('#tr_new_producto').removeClass('hidden'); $('#codigo_new').focus()">
                     <i class="fa fa-fw fa-plus"></i>
@@ -64,6 +67,16 @@
                     @foreach ($categorias as $cat)
                         <option value="{{ $cat->id_categoria_producto }}">
                             {{ $cat->nombre }}
+                        </option>
+                    @endforeach
+                </select>
+            </th>
+            <th class="text-center" style="border-color: #9d9d9d">
+                <select id="proveedor_new" style="width: 100%; height: 26px;">
+                    <option value="">Ninguno</option>
+                    @foreach ($proveedores as $prov)
+                        <option value="{{ $prov->id_proveedor }}">
+                            {{ $prov->nombre }}
                         </option>
                     @endforeach
                 </select>
@@ -143,6 +156,17 @@
                     </select>
                 </th>
                 <th class="text-center" style="border-color: #9d9d9d; vertical-align: top">
+                    <select id="proveedor_{{ $item->id_producto }}" style="width: 100%; height: 26px;">
+                        <option value="">Ninguno</option>
+                        @foreach ($proveedores as $prov)
+                            <option value="{{ $prov->id_proveedor }}"
+                                {{ $prov->id_proveedor == $item->id_proveedor ? 'selected' : '' }}>
+                                {{ $prov->nombre }}
+                            </option>
+                        @endforeach
+                    </select>
+                </th>
+                <th class="text-center" style="border-color: #9d9d9d; vertical-align: top">
                     <input type="text" style="width: 100%" class="text-center"
                         id="codigo_{{ $item->id_producto }}" value="{{ $item->codigo }}" required>
                 </th>
@@ -203,6 +227,7 @@
             formulario = $('#form_add_producto');
             var formData = new FormData(formulario[0]);
             formData.append('categoria', $('#categoria_new').val());
+            formData.append('proveedor', $('#proveedor_new').val());
             formData.append('codigo', $('#codigo_new').val());
             formData.append('nombre', $('#nombre_new').val());
             formData.append('unidad_medida', $('#unidad_medida_new').val());
@@ -250,6 +275,7 @@
             formulario = $('#form_edit_producto_' + id);
             var formData = new FormData(formulario[0]);
             formData.append('categoria', $('#categoria_' + id).val());
+            formData.append('proveedor', $('#proveedor_' + id).val());
             formData.append('codigo', $('#codigo_' + id).val());
             formData.append('nombre', $('#nombre_' + id).val());
             formData.append('unidad_medida', $('#unidad_medida_' + id).val());

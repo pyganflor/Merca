@@ -5,6 +5,7 @@ namespace yura\Http\Controllers\Bodega;
 use DB;
 use Illuminate\Http\Request;
 use yura\Http\Controllers\Controller;
+use yura\Modelos\CategoriaProducto;
 use yura\Modelos\IngresoBodega;
 use yura\Modelos\Producto;
 use yura\Modelos\SalidaBodega;
@@ -15,9 +16,13 @@ class MovimientosBodegaController extends Controller
 {
     public function inicio(Request $request)
     {
+        $categorias = CategoriaProducto::where('estado', 1)
+            ->orderBy('nombre')
+            ->get();
         return view('adminlte.gestion.bodega.movimientos_bodega.inicio', [
             'url' => $request->getRequestUri(),
             'submenu' => Submenu::Where('url', '=', substr($request->getRequestUri(), 1))->get()[0],
+            'categorias' => $categorias
         ]);
     }
 
@@ -26,7 +31,10 @@ class MovimientosBodegaController extends Controller
         $listado = Producto::Where(function ($q) use ($request) {
             $q->Where('nombre', 'like', '%' . mb_strtoupper($request->busqueda) . '%')
                 ->orWhere('codigo', 'like', '%' . mb_strtoupper($request->busqueda) . '%');
-        })->orderBy('orden')
+        });
+        if ($request->categoria != 'T')
+            $listado = $listado->where('id_categoria_producto', $request->categoria);
+        $listado = $listado->orderBy('orden')
             ->get();
 
         return view('adminlte.gestion.bodega.movimientos_bodega.partials.listado', [

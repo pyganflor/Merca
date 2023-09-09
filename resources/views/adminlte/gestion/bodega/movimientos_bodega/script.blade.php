@@ -5,6 +5,7 @@
     function listar_reporte() {
         datos = {
             busqueda: $('#filtro_busqueda').val(),
+            categoria: $('#filtro_categoria').val(),
         };
         get_jquery('{{ url('movimientos_bodega/listar_reporte') }}', datos, function(retorno) {
             $('#div_listado').html(retorno);

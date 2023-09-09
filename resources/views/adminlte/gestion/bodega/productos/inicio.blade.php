@@ -41,6 +41,17 @@
                         </span>
                         <input type="text" id="filtro_busqueda" style="width: 100%" class="text-center form-control"
                             onkeyup="listar_reporte()">
+                        <span class="input-group-addon bg-yura_dark">
+                            Categoria
+                        </span>
+                        <select id="filtro_categoria" style="width: 100%" class="form-control" onchange="listar_reporte()">
+                            <option value="T">Todas</option>
+                            @foreach ($categorias as $cat)
+                                <option value="{{ $cat->id_categoria_producto }}">
+                                    {{ $cat->nombre }}
+                                </option>
+                            @endforeach
+                        </select>
                         <span class="input-group-btn">
                             <button type="button" class="btn btn-yura_dark" onclick="listar_reporte()">
                                 <i class="fa fa-fw fa-search"></i>
@@ -67,6 +78,7 @@
             left: 0;
             z-index: 9;
         }
+
     </style>
 @endsection
 

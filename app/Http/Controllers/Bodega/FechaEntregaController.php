@@ -28,10 +28,14 @@ class FechaEntregaController extends Controller
     {
         if ($request->finca != 'T') {
             $listado = FechaEntrega::where('id_empresa', $request->finca)
+                ->where('entrega', '>=', $request->desde)
+                ->where('entrega', '<=', $request->hasta)
                 ->orderBy('entrega')
                 ->get();
         } else {
-            $listado = FechaEntrega::orderBy('entrega')->get();
+            $listado = FechaEntrega::where('entrega', '>=', $request->desde)
+                ->where('entrega', '<=', $request->hasta)
+                ->orderBy('entrega')->get();
         }
         $fincas = getAllFincas();
 

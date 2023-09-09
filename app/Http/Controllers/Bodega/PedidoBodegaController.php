@@ -213,7 +213,7 @@ class PedidoBodegaController extends Controller
         DB::beginTransaction();
         try {
             $usuario = getUsuario($request->usuario);
-            if ($usuario->saldo >= $request->monto_total || in_array($request->usuario, [1, 2])) {
+            if ($usuario->saldo >= $request->monto_total || in_array($request->usuario, [1, 2]) || 1) {
                 $pedido = new PedidoBodega();
                 $pedido->fecha = $request->fecha;
                 $pedido->id_usuario = $request->usuario;

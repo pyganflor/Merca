@@ -1,13 +1,12 @@
 <script>
-    $('#vista_actual').val('bodega_productos');
+    $('#vista_actual').val('proveedores');
     listar_reporte();
 
     function listar_reporte() {
         datos = {
             busqueda: $('#filtro_busqueda').val(),
-            categoria: $('#filtro_categoria').val(),
         };
-        get_jquery('{{ url('bodega_productos/listar_reporte') }}', datos, function(retorno) {
+        get_jquery('{{ url('proveedores/listar_reporte') }}', datos, function(retorno) {
             $('#div_listado').html(retorno);
         }, 'div_listado');
     }
