@@ -579,6 +579,8 @@ class PedidoBodegaController extends Controller
         }
         $datos = [
             'pedidos' => $pedidos,
+            'fecha' => $request->entrega,
+            'finca' => getConfiguracionEmpresa($request->finca),
         ];
         return PDF::loadView('adminlte.gestion.bodega.pedido.partials.pdf_entregas_all', compact('datos', 'barCode'))
             ->setPaper(array(0, 0, 750, 530), 'landscape')->stream();

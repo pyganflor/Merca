@@ -2,7 +2,11 @@
         <table class="text-center" style="width: 100%">
             <tr>
                 <th style="text-align: center" colspan="2">
-                    RECIBO DE ENTREGA
+                    RECIBO DE ENTREGA para "{{ $datos['finca']->nombre }}"
+                    <br>
+                    <small style="font-size: 0.8em">
+                        {{ convertDateToText($datos['fecha']) }}
+                    </small>
                 </th>
             </tr>
             <tr>
@@ -90,8 +94,7 @@
                         @endphp
                         <tr style="font-size: 0.6em">
                             @if ($m == 0)
-                                <th class="border-1px" style="text-align: center;" colspan="2"
-                                    rowspan="3">
+                                <th class="border-1px" style="text-align: center;" colspan="2" rowspan="3">
                                     DESCUENTO
                                 </th>
                             @endif
