@@ -62,6 +62,15 @@
                                         {{ $item->codigo }}
                                         <input type="hidden" id="codigo_{{ $item->id_producto }}"
                                             value="{{ $item->codigo }}">
+                                        {{--<select id="proveedor_{{ $item->id_producto }}" style="display: none">
+                                            <option value="">Ninguno</option>
+                                            @foreach ($proveedores as $prov)
+                                                <option value="{{ $prov->id_proveedor }}"
+                                                    {{ $prov->id_proveedor == $item->id_proveedor ? 'selected' : '' }}>
+                                                    {{ $prov->nombre }}
+                                                </option>
+                                            @endforeach
+                                        </select>--}}
                                         <input type="hidden" class="tr_productos" value="{{ $item->id_producto }}">
                                     </th>
                                     <th class="padding_lateral_5" style="border-color: #9d9d9d">

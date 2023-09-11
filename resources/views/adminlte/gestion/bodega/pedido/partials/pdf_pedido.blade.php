@@ -4,6 +4,7 @@
     $monto_subtotal = 0;
     $monto_total_iva = 0;
     $pedido = $datos['pedido'];
+    $fecha = $pedido->getFechaEntrega();
 @endphp
 <div style="position: relative; top: -40px; left: -40px; width: 245px">
     <table class="text-center" style="width: 100%">
@@ -34,7 +35,7 @@
         </tr>
         <tr>
             <th style="font-size: 0.7em; text-align: left" colspan="2">
-                Entrega: {{ $pedido->getFechaEntrega() }}
+                Entrega: {{ $fecha }}
             </th>
         </tr>
         <tr>
@@ -67,6 +68,9 @@
                 Total
             </th>
         </tr>
+        @php
+            $monto_diferido = 0;
+        @endphp
         @foreach ($pedido->detalles as $det)
             @php
                 $producto = $det->producto;
@@ -78,6 +82,10 @@
                     $monto_subtotal += $precio_prod;
                 }
                 $monto_total += $precio_prod;
+                
+                if ($det->diferido > 0) {
+                    $monto_diferido += $precio_prod / $det->diferido;
+                }
             @endphp
             <tr style="font-size: 0.6em">
                 <th class="border-1px" style="text-align: left; padding-left: 2px">
@@ -121,6 +129,28 @@
                 ${{ number_format($monto_total, 2) }}
             </th>
         </tr>
+        @if ($monto_diferido > 0)
+            <tr style="font-size: 0.6em;">
+                <th style="text-align: left; padding-left: 2px; border-top: 1px solid black" colspan="4">
+                    DESCUENTO
+                </th>
+            </tr>
+            @for ($m = 0; $m <= 2; $m++)
+                @php
+                    $fechaObj = new DateTime($fecha);
+                    $fechaObj->modify('+' . $m . ' month');
+                    $fecha_next = $fechaObj->format('Y-m-d');
+                @endphp
+                <tr style="font-size: 0.6em">
+                    <th style="text-align: right; padding-right: 2px" colspan="3">
+                        {{ explode('de ', convertDateToText($fecha_next))[1] }}
+                    </th>
+                    <th style="text-align: right; padding-right: 2px">
+                        ${{ number_format($monto_diferido, 2) }}
+                    </th>
+                </tr>
+            @endfor
+        @endif
     </table>
 </div>
 

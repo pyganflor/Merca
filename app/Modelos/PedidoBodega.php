@@ -52,6 +52,32 @@ class PedidoBodega extends Model
         return round($monto, 2);
     }
 
+    public function getTotalMontoDiferido()
+    {
+        $monto_diferido = 0;
+        $monto_total = 0;
+        foreach ($this->detalles as $det) {
+            $precio_prod = $det->cantidad * $det->precio;
+            $monto_total += $precio_prod;
+            if ($det->diferido > 0) {
+                $monto_diferido += $precio_prod / $det->diferido;
+            }
+        }
+        return round($monto_total - ($monto_diferido * 2), 2);
+    }
+
+    public function getTotalDiferido()
+    {
+        $monto_diferido = 0;
+        foreach ($this->detalles as $det) {
+            $precio_prod = $det->cantidad * $det->precio;
+            if ($det->diferido > 0) {
+                $monto_diferido += $precio_prod / $det->diferido;
+            }
+        }
+        return round($monto_diferido, 2);
+    }
+
     public function getFechaEntrega()
     {
         $entrega = FechaEntrega::All()

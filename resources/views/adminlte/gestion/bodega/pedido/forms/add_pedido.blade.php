@@ -91,6 +91,9 @@
                     Producto
                 </th>
                 <th class="text-center th_yura_green" style="width: 110px">
+                    Diferido
+                </th>
+                <th class="text-center th_yura_green" style="width: 110px">
                     Cantidad
                 </th>
             </tr>
@@ -102,7 +105,7 @@
     <table style="margin-top: 0; width: 100%">
         <tbody>
             <tr>
-                <td rowspan="4" style="text-align: right; padding-right: 20px; min-width: 320px">
+                <td rowspan="5" style="text-align: right; padding-right: 20px; min-width: 320px">
                     <div class="btn-group">
                         <button type="button" class="btn btn-yura_primary" onclick="store_pedido()">
                             <i class="fa fa-fw fa-save"></i> Grabar Pedido
@@ -133,6 +136,24 @@
                     <input type="hidden" id="input_monto_total" value="0">
                 </th>
                 <th id="th_total_monto_pedido" style="text-align: right; padding-right: 5px; width: 10%">
+                    $0
+                </th>
+            </tr>
+            <tr>
+                <th style="width: 25%; text-align: right; min-width: 120px">
+                    DIFERIDO TOTAL:
+                    <input type="hidden" id="input_diferido_total" value="0">
+                </th>
+                <th id="th_total_diferido_pedido" style="text-align: right; padding-right: 5px; width: 10%">
+                    $0
+                </th>
+            </tr>
+            <tr>
+                <th style="width: 25%; text-align: right; min-width: 120px">
+                    RESTAR SALDO:
+                    <input type="hidden" id="input_saldo_total" value="0">
+                </th>
+                <th id="th_total_saldo_pedido" style="text-align: right; padding-right: 5px; width: 10%">
                     $0
                 </th>
             </tr>
@@ -174,6 +195,13 @@
                 '</td>' +
                 '<th class="text-center" style="border-color: #9d9d9d">' +
                 nombre_producto +
+                '</th>' +
+                '<th class="text-center" style="border-color: #9d9d9d">' +
+                '<select id="input_diferido_producto_selected_' + prod +
+                '" style="width: 100%; height: 30px" onchange="calcular_totales_pedido()">' +
+                '<option value="0">No</option>' +
+                '<option value="3">3 Meses</option>' +
+                '</select>' +
                 '</th>' +
                 '<th class="text-center" style="border-color: #9d9d9d">' +
                 '<input type="hidden" id="input_precio_producto_selected_' + prod + '" ' +
@@ -256,11 +284,13 @@
             prod = parseInt($('#' + id_span).attr('data-id_producto'));
             cantidad = parseInt($('#span_contador_selected_' + prod).html());
             precio_venta = $('#input_precio_producto_selected_' + prod).val();
+            diferido = $('#input_diferido_producto_selected_' + prod).val();
             iva = $('#tiene_iva_selected_' + prod).prop('checked');
             detalles.push({
                 producto: prod,
                 cantidad: cantidad,
                 precio_venta: precio_venta,
+                diferido: diferido,
                 iva: iva,
             });
         }
@@ -270,6 +300,7 @@
             finca: $('#form_finca').val(),
             usuario: $('#form_usuario').val(),
             monto_total: $('#input_monto_total').val(),
+            monto_saldo: $('#input_saldo_total').val(),
             detalles: JSON.stringify(detalles),
         }
         if (datos['fecha'] != '' && datos['finca'] != '' && datos['usuario'] != '' && detalles.length > 0) {
@@ -286,12 +317,14 @@
         monto_total = 0;
         monto_subtotal = 0;
         monto_total_iva = 0;
+        monto_diferido = 0;
         span_contador_selected = $('.span_contador_selected');
         for (i = 0; i < span_contador_selected.length; i++) {
             id_span = span_contador_selected[i].id;
             prod = parseInt($('#' + id_span).attr('data-id_producto'));
             cantidad = parseInt($('#span_contador_selected_' + prod).html());
             precio_venta = $('#input_precio_producto_selected_' + prod).val();
+            diferido = $('#input_diferido_producto_selected_' + prod).val();
             iva = $('#tiene_iva_selected_' + prod).prop('checked');
             precio_prod = cantidad * precio_venta;
             if (iva == true) {
@@ -300,15 +333,26 @@
             } else {
                 monto_subtotal += precio_prod;
             }
+            if (diferido > 0) {
+                monto_diferido += precio_prod / diferido;
+            }
             monto_total += precio_prod;
         }
+        monto_saldo = monto_total - (monto_diferido * 2);
+
         monto_total = Math.round(monto_total * 100) / 100;
         monto_subtotal = Math.round(monto_subtotal * 100) / 100;
         monto_total_iva = Math.round(monto_total_iva * 100) / 100;
+        monto_diferido = Math.round(monto_diferido * 100) / 100;
+        monto_saldo = Math.round(monto_saldo * 100) / 100;
         $('#span_total_monto_pedido').html('$' + monto_total);
         $('#th_total_monto_pedido').html('$' + monto_total);
         $('#th_total_iva_pedido').html('$' + monto_total_iva);
         $('#th_total_subtotal_pedido').html('$' + monto_subtotal);
+        $('#th_total_diferido_pedido').html('$' + monto_diferido);
+        $('#th_total_saldo_pedido').html('$' + monto_saldo);
+        $('#input_saldo_total').val(monto_saldo);
+        $('#input_diferido_total').val(monto_diferido);
         $('#input_monto_total').val(monto_total);
     }
 </script>

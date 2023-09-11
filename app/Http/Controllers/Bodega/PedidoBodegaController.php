@@ -213,7 +213,7 @@ class PedidoBodegaController extends Controller
         DB::beginTransaction();
         try {
             $usuario = getUsuario($request->usuario);
-            if ($usuario->saldo >= $request->monto_total || in_array($request->usuario, [1, 2]) || 1) {
+            if ($usuario->saldo >= $request->monto_saldo || in_array($request->usuario, [1, 2])) {
                 $pedido = new PedidoBodega();
                 $pedido->fecha = $request->fecha;
                 $pedido->id_usuario = $request->usuario;
@@ -227,12 +227,13 @@ class PedidoBodegaController extends Controller
                     $detalle->id_producto = $det->producto;
                     $detalle->cantidad = $det->cantidad;
                     $detalle->precio = $det->precio_venta;
+                    $detalle->diferido = $det->diferido;
                     $detalle->iva = $det->iva;
                     $detalle->save();
                 }
 
                 if (!in_array($request->usuario, [1, 2])) {
-                    $usuario->saldo -= $request->monto_total;
+                    $usuario->saldo -= $request->monto_saldo;
                     $usuario->save();
                     $pedido->saldo_usuario = $usuario->saldo;
                     $pedido->save();
@@ -322,12 +323,12 @@ class PedidoBodegaController extends Controller
             $usuario = $pedido_delete->usuario;
             $valida_saldo = true;
             if (!in_array($pedido_delete->id_usuario, [1, 2])) {
-                $monto_total_anterior = $pedido_delete->getTotalMonto();
+                $monto_total_anterior = $pedido_delete->getTotalMontoDiferido();
                 $saldo_anterior = $usuario->saldo;
                 $usuario->saldo += $monto_total_anterior;
 
-                if ($usuario->saldo >= $request->monto_total) {
-                    $usuario->saldo -= $request->monto_total;
+                if ($usuario->saldo >= $request->monto_saldo) {
+                    $usuario->saldo -= $request->monto_saldo;
                     $usuario->save();
                     $valida_saldo = true;
                 } else {
@@ -351,6 +352,7 @@ class PedidoBodegaController extends Controller
                     $detalle->id_producto = $det->producto;
                     $detalle->cantidad = $det->cantidad;
                     $detalle->precio = $det->precio_venta;
+                    $detalle->diferido = $det->diferido;
                     $detalle->iva = $det->iva;
                     $detalle->save();
                 }

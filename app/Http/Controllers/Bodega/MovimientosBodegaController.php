@@ -8,6 +8,7 @@ use yura\Http\Controllers\Controller;
 use yura\Modelos\CategoriaProducto;
 use yura\Modelos\IngresoBodega;
 use yura\Modelos\Producto;
+use yura\Modelos\Proveedor;
 use yura\Modelos\SalidaBodega;
 use yura\Modelos\Sector;
 use yura\Modelos\Submenu;
@@ -46,9 +47,13 @@ class MovimientosBodegaController extends Controller
     {
         $listado = Producto::orderBy('orden')
             ->get();
+        $proveedores = Proveedor::where('estado', 1)
+            ->orderBy('nombre')
+            ->get();
 
         return view('adminlte.gestion.bodega.movimientos_bodega.forms.add_ingresos', [
             'listado' => $listado,
+            'proveedores' => $proveedores,
         ]);
     }
 
