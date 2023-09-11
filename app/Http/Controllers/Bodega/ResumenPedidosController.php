@@ -93,8 +93,9 @@ class ResumenPedidosController extends Controller
     {
         $usuarios = DB::table('pedido_bodega as p')
             ->join('usuario as u', 'u.id_usuario', '=', 'p.id_usuario')
-            ->select('p.id_usuario', 'u.nombre_completo', 'u.username')
-            ->where('p.estado', 1);
+            ->select('p.id_usuario', 'u.nombre_completo', 'u.username')->distinct()
+            ->where('p.estado', 1)
+            ->where('p.fecha', '<=', $request->hasta);
         if ($request->finca != 'T')
             $usuarios = $usuarios->where('p.id_empresa', $request->finca);
         $usuarios = $usuarios->orderBy('p.fecha')
@@ -102,13 +103,19 @@ class ResumenPedidosController extends Controller
             ->get();
         $listado = [];
         foreach ($usuarios as $u) {
-            $pedidos = PedidoBodega::where('id_usuario', $u->id_usuario)
+            $query_pedidos = PedidoBodega::where('id_usuario', $u->id_usuario)
                 ->where('estado', 1)
-                ->where('fecha', '>=', $request->desde)
                 ->where('fecha', '<=', $request->hasta);
             if ($request->finca != 'T')
-                $pedidos = $pedidos->where('id_empresa', $request->finca);
-            $pedidos = $pedidos->get();
+                $query_pedidos = $query_pedidos->where('id_empresa', $request->finca);
+            $query_pedidos = $query_pedidos->get();
+
+            $pedidos = [];
+            foreach ($query_pedidos as $ped) {
+                $fecha_entrega = $ped->getFechaEntrega();
+                if ($fecha_entrega >= $request->desde && $fecha_entrega <= $request->hasta)
+                    $pedidos[] = $ped;
+            }
 
             $monto_subtotal = 0;
             $monto_total_iva = 0;
