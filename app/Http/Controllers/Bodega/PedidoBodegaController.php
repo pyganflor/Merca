@@ -16,6 +16,7 @@ use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Barryvdh\DomPDF\Facade as PDF;
 use Picqer\Barcode\BarcodeGeneratorHTML;
+use yura\Modelos\Proveedor;
 
 class PedidoBodegaController extends Controller
 {
@@ -489,6 +490,8 @@ class PedidoBodegaController extends Controller
 
         $row = 1;
         $col = 0;
+        setValueToCeldaExcel($sheet, $columnas[$col] . $row, 'Proveedor');
+        $col++;
         setValueToCeldaExcel($sheet, $columnas[$col] . $row, 'Producto');
         $col++;
         setValueToCeldaExcel($sheet, $columnas[$col] . $row, 'Inventario');
@@ -500,8 +503,13 @@ class PedidoBodegaController extends Controller
         setColorTextToCeldaExcel($sheet, 'A' . $row . ':' . $columnas[$col] . $row, 'FFFFFF');
 
         foreach ($listado as $r) {
+            $proveedor = Proveedor::find($r['producto']->id_proveedor);
             $row++;
             $col = 0;
+            setValueToCeldaExcel($sheet, $columnas[$col] . $row, $proveedor != '' ? $proveedor->nombre : '');
+            setBgToCeldaExcel($sheet, $columnas[$col] . $row, '5a7177');
+            setColorTextToCeldaExcel($sheet, $columnas[$col] . $row, 'FFFFFF');
+            $col++;
             setValueToCeldaExcel($sheet, $columnas[$col] . $row, $r['producto']->nombre);
             setBgToCeldaExcel($sheet, $columnas[$col] . $row, '5a7177');
             setColorTextToCeldaExcel($sheet, $columnas[$col] . $row, 'FFFFFF');

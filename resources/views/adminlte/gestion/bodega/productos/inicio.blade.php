@@ -62,7 +62,7 @@
             </tr>
         </table>
 
-        <div id="div_listado" style="margin-top: 10px">
+        <div id="div_listado" style="margin-top: 10px; overflow-y: scroll; overflow-x: scroll; height: 700px;">
         </div>
     </section>
 

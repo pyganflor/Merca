@@ -1,224 +1,222 @@
-<div style="overflow-y: scroll; overflow-x: scroll; height: 700px;">
-    <table class="table-striped table-bordered" style="width: 100%; border: 1px solid #9d9d9d">
-        <tr id="tr_fija_top_0">
-            <th class="text-center th_yura_green" style="width: 60px">
-                ORDEN
+<table class="table-striped table-bordered" style="width: 100%; border: 1px solid #9d9d9d">
+    <tr id="tr_fija_top_0">
+        <th class="text-center th_yura_green" style="width: 60px">
+            ORDEN
+        </th>
+        <th class="text-center th_yura_green" style="width: 130px">
+            IMAGEN
+        </th>
+        <th class="text-center th_yura_green" style="width: 150px">
+            CATEGORIA
+            <input type="text" style="width: 100%; color: black" class="text-center" placeholder="Nueva"
+                onchange="store_categoria()" id="new_nombre_categoria">
+        </th>
+        <th class="text-center th_yura_green" style="width: 150px">
+            PROVEEDOR
+        </th>
+        <th class="text-center th_yura_green" style="width: 60px">
+            CODIGO
+        </th>
+        <th class="text-center th_yura_green" style="width: 180px">
+            NOMBRE
+        </th>
+        <th class="text-center th_yura_green" style="width: 60px">
+            UM
+        </th>
+        <th class="text-center th_yura_green" style="width: 60px">
+            STOCK MINIMO
+        </th>
+        <th class="text-center th_yura_green" style="width: 60px">
+            CONVERSION
+        </th>
+        <th class="text-center th_yura_green" style="width: 60px">
+            COSTO
+        </th>
+        <th class="text-center th_yura_green" style="width: 60px">
+            VENTA
+        </th>
+        <th class="text-center th_yura_green" style="width: 60px">
+            MARGEN
+        </th>
+        <th class="text-center th_yura_green" style="width: 60px">
+            % UTILDIAD
+        </th>
+        <th class="text-center th_yura_green" style="width: 80px">
+            <button type="button" class="btn btn-xs btn-yura_default"
+                onclick="$('#tr_new_producto').removeClass('hidden'); $('#codigo_new').focus()">
+                <i class="fa fa-fw fa-plus"></i>
+            </button>
+        </th>
+    </tr>
+    <tr id="tr_new_producto" class="hidden">
+        <th class="text-center" style="border-color: #9d9d9d">
+            <input type="number" style="width: 100%" class="text-center bg-yura_dark" required min="0"
+                id="orden_new" name="orden_new" placeholder="0">
+        </th>
+        <th class="text-center" style="border-color: #9d9d9d">
+            <form id="form_add_producto" action="{{ url('bodega_productos/store_producto') }}" method="post"
+                enctype="multipart/form-data">
+                {!! csrf_field() !!}
+                <input type="file" style="width: 100%;" class="text-center bg-yura_dark" id="imagen_new"
+                    name="imagen_new" placeholder="Codigo" accept="image/png, image/jpeg">
+            </form>
+        </th>
+        <th class="text-center" style="border-color: #9d9d9d">
+            <select id="categoria_new" style="width: 100%; height: 26px;">
+                @foreach ($categorias as $cat)
+                    <option value="{{ $cat->id_categoria_producto }}">
+                        {{ $cat->nombre }}
+                    </option>
+                @endforeach
+            </select>
+        </th>
+        <th class="text-center" style="border-color: #9d9d9d">
+            <select id="proveedor_new" style="width: 100%; height: 26px;">
+                <option value="">Ninguno</option>
+                @foreach ($proveedores as $prov)
+                    <option value="{{ $prov->id_proveedor }}">
+                        {{ $prov->nombre }}
+                    </option>
+                @endforeach
+            </select>
+        </th>
+        <th class="text-center" style="border-color: #9d9d9d">
+            <input type="text" style="width: 100%" class="text-center bg-yura_dark" id="codigo_new" name="codigo_new"
+                placeholder="Codigo" required>
+        </th>
+        <th class="text-center" style="border-color: #9d9d9d">
+            <input type="text" style="width: 100%" class="text-center bg-yura_dark" id="nombre_new" name="nombre_new"
+                placeholder="NOMBRE" required>
+        </th>
+        <th class="text-center" style="border-color: #9d9d9d">
+            <input type="text" style="width: 100%" class="text-center bg-yura_dark" required min="0"
+                id="unidad_medida_new" name="unidad_medida_new" placeholder="0">
+        </th>
+        <th class="text-center" style="border-color: #9d9d9d">
+            <input type="number" style="width: 100%" class="text-center bg-yura_dark" required min="0"
+                id="stock_minimo_new" name="stock_minimo_new" placeholder="0">
+        </th>
+        <th class="text-center" style="border-color: #9d9d9d">
+            <input type="number" style="width: 100%" class="text-center bg-yura_dark" required min="0"
+                id="conversion_new" name="conversion_new" placeholder="0">
+        </th>
+        <th class="text-center" style="border-color: #9d9d9d">
+            <input type="number" style="width: 100%" class="text-center bg-yura_dark" required min="0"
+                id="precio_compra_new" name="precio_compra_new" placeholder="0">
+        </th>
+        <th class="text-center" style="border-color: #9d9d9d">
+            <input type="number" style="width: 100%" class="text-center bg-yura_dark" required min="0"
+                id="precio_venta_new" name="precio_venta_new" placeholder="0">
+        </th>
+        <th class="text-center" style="border-color: #9d9d9d" colspan="3">
+            <button type="button" class="btn btn-xs btn-yura_primary" onclick="store_producto()">
+                <i class="fa fa-fw fa-save"></i>
+            </button>
+        </th>
+    </tr>
+    @foreach ($listado as $item)
+        @php
+            $url_imagen = 'images\productos\*' . $item->imagen;
+            $url_imagen = str_replace('*', '', $url_imagen);
+            if ($item->tiene_iva) {
+                $temp = $item->precio_venta - porcentaje(12, $item->precio_venta, 2);
+                $margen = $temp - $item->precio;
+            } else {
+                $margen = $item->precio_venta - $item->precio;
+            }
+        @endphp
+        <tr id="tr_producto_{{ $item->id_producto }}" class="{{ $item->estado == 0 ? 'error' : '' }}">
+            <th class="text-center" style="border-color: #9d9d9d; vertical-align: top">
+                <input type="number" style="width: 100%" class="text-center" required min="0"
+                    id="orden_{{ $item->id_producto }}" value="{{ $item->orden }}">
             </th>
-            <th class="text-center th_yura_green" style="width: 130px">
-                IMAGEN
-            </th>
-            <th class="text-center th_yura_green" style="width: 150px">
-                CATEGORIA
-                <input type="text" style="width: 100%; color: black" class="text-center" placeholder="Nueva"
-                    onchange="store_categoria()" id="new_nombre_categoria">
-            </th>
-            <th class="text-center th_yura_green" style="width: 150px">
-                PROVEEDOR
-            </th>
-            <th class="text-center th_yura_green" style="width: 60px">
-                CODIGO
-            </th>
-            <th class="text-center th_yura_green" style="width: 180px">
-                NOMBRE
-            </th>
-            <th class="text-center th_yura_green" style="width: 60px">
-                UM
-            </th>
-            <th class="text-center th_yura_green" style="width: 60px">
-                STOCK MINIMO
-            </th>
-            <th class="text-center th_yura_green" style="width: 60px">
-                CONVERSION
-            </th>
-            <th class="text-center th_yura_green" style="width: 60px">
-                COSTO
-            </th>
-            <th class="text-center th_yura_green" style="width: 60px">
-                VENTA
-            </th>
-            <th class="text-center th_yura_green" style="width: 60px">
-                MARGEN
-            </th>
-            <th class="text-center th_yura_green" style="width: 60px">
-                % UTILDIAD
-            </th>
-            <th class="text-center th_yura_green" style="width: 80px">
-                <button type="button" class="btn btn-xs btn-yura_default"
-                    onclick="$('#tr_new_producto').removeClass('hidden'); $('#codigo_new').focus()">
-                    <i class="fa fa-fw fa-plus"></i>
-                </button>
-            </th>
-        </tr>
-        <tr id="tr_new_producto" class="hidden">
             <th class="text-center" style="border-color: #9d9d9d">
-                <input type="number" style="width: 100%" class="text-center bg-yura_dark" required min="0"
-                    id="orden_new" name="orden_new" placeholder="0">
-            </th>
-            <th class="text-center" style="border-color: #9d9d9d">
-                <form id="form_add_producto" action="{{ url('bodega_productos/store_producto') }}" method="post"
-                    enctype="multipart/form-data">
+                <img src="{{ url($url_imagen) }}" alt="..."
+                    class="img-fluid img-thumbnail mouse-hand imagen_{{ $item->id_producto }}"
+                    style="border-radius: 16px"
+                    onclick="$('.imagen_{{ $item->id_producto }}').toggleClass('hidden')">
+                <form id="form_edit_producto_{{ $item->id_producto }}"
+                    action="{{ url('bodega_productos/update_producto') }}" method="post"
+                    enctype="multipart/form-data" class="imagen_{{ $item->id_producto }} hidden">
                     {!! csrf_field() !!}
-                    <input type="file" style="width: 100%;" class="text-center bg-yura_dark" id="imagen_new"
-                        name="imagen_new" placeholder="Codigo" accept="image/png, image/jpeg">
+                    <input type="file" style="width: 100%;" class="text-center bg-yura_dark"
+                        id="imagen_{{ $item->id_producto }}" name="imagen_{{ $item->id_producto }}"
+                        placeholder="Codigo" accept="image/png, image/jpeg">
                 </form>
             </th>
-            <th class="text-center" style="border-color: #9d9d9d">
-                <select id="categoria_new" style="width: 100%; height: 26px;">
+            <th class="text-center" style="border-color: #9d9d9d; vertical-align: top">
+                <select id="categoria_{{ $item->id_producto }}" style="width: 100%; height: 26px;">
                     @foreach ($categorias as $cat)
-                        <option value="{{ $cat->id_categoria_producto }}">
+                        <option value="{{ $cat->id_categoria_producto }}"
+                            {{ $cat->id_categoria_producto == $item->id_categoria_producto ? 'selected' : '' }}>
                             {{ $cat->nombre }}
                         </option>
                     @endforeach
                 </select>
             </th>
-            <th class="text-center" style="border-color: #9d9d9d">
-                <select id="proveedor_new" style="width: 100%; height: 26px;">
+            <th class="text-center" style="border-color: #9d9d9d; vertical-align: top">
+                <select id="proveedor_{{ $item->id_producto }}" style="width: 100%; height: 26px;">
                     <option value="">Ninguno</option>
                     @foreach ($proveedores as $prov)
-                        <option value="{{ $prov->id_proveedor }}">
+                        <option value="{{ $prov->id_proveedor }}"
+                            {{ $prov->id_proveedor == $item->id_proveedor ? 'selected' : '' }}>
                             {{ $prov->nombre }}
                         </option>
                     @endforeach
                 </select>
             </th>
-            <th class="text-center" style="border-color: #9d9d9d">
-                <input type="text" style="width: 100%" class="text-center bg-yura_dark" id="codigo_new"
-                    name="codigo_new" placeholder="Codigo" required>
+            <th class="text-center" style="border-color: #9d9d9d; vertical-align: top">
+                <input type="text" style="width: 100%" class="text-center" id="codigo_{{ $item->id_producto }}"
+                    value="{{ $item->codigo }}" required>
             </th>
-            <th class="text-center" style="border-color: #9d9d9d">
-                <input type="text" style="width: 100%" class="text-center bg-yura_dark" id="nombre_new"
-                    name="nombre_new" placeholder="NOMBRE" required>
+            <th class="text-center" style="border-color: #9d9d9d; vertical-align: top">
+                <input type="text" style="width: 100%" class="text-center" id="nombre_{{ $item->id_producto }}"
+                    value="{{ $item->nombre }}" required>
             </th>
-            <th class="text-center" style="border-color: #9d9d9d">
-                <input type="text" style="width: 100%" class="text-center bg-yura_dark" required min="0"
-                    id="unidad_medida_new" name="unidad_medida_new" placeholder="0">
+            <th class="text-center" style="border-color: #9d9d9d; vertical-align: top">
+                <input type="text" style="width: 100%" class="text-center"
+                    id="unidad_medida_{{ $item->id_producto }}" value="{{ $item->unidad_medida }}" required>
             </th>
-            <th class="text-center" style="border-color: #9d9d9d">
-                <input type="number" style="width: 100%" class="text-center bg-yura_dark" required min="0"
-                    id="stock_minimo_new" name="stock_minimo_new" placeholder="0">
+            <th class="text-center" style="border-color: #9d9d9d; vertical-align: top">
+                <input type="number" style="width: 100%" class="text-center" required min="0"
+                    id="stock_minimo_{{ $item->id_producto }}" value="{{ $item->stock_minimo }}">
             </th>
-            <th class="text-center" style="border-color: #9d9d9d">
-                <input type="number" style="width: 100%" class="text-center bg-yura_dark" required min="0"
-                    id="conversion_new" name="conversion_new" placeholder="0">
+            <th class="text-center" style="border-color: #9d9d9d; vertical-align: top">
+                <input type="number" style="width: 100%" class="text-center" required min="0"
+                    id="conversion_{{ $item->id_producto }}" value="{{ $item->conversion }}">
             </th>
-            <th class="text-center" style="border-color: #9d9d9d">
-                <input type="number" style="width: 100%" class="text-center bg-yura_dark" required min="0"
-                    id="precio_compra_new" name="precio_compra_new" placeholder="0">
+            <th class="text-center" style="border-color: #9d9d9d; vertical-align: top">
+                <input type="number" style="width: 100%" class="text-center" required min="0"
+                    id="precio_compra_{{ $item->id_producto }}" value="{{ $item->precio }}">
             </th>
-            <th class="text-center" style="border-color: #9d9d9d">
-                <input type="number" style="width: 100%" class="text-center bg-yura_dark" required min="0"
-                    id="precio_venta_new" name="precio_venta_new" placeholder="0">
+            <th class="text-center" style="border-color: #9d9d9d; vertical-align: top">
+                <input type="number" style="width: 100%" class="text-center" required min="0"
+                    id="precio_venta_{{ $item->id_producto }}" value="{{ $item->precio_venta }}">
+                <label for="tiene_iva_{{ $item->id_producto }}" class="mouse-hand">IVA</label>
+                <input type="checkbox" id="tiene_iva_{{ $item->id_producto }}"
+                    {{ $item->tiene_iva == 1 ? 'checked' : '' }}>
             </th>
-            <th class="text-center" style="border-color: #9d9d9d" colspan="3">
-                <button type="button" class="btn btn-xs btn-yura_primary" onclick="store_producto()">
-                    <i class="fa fa-fw fa-save"></i>
-                </button>
+            <th class="text-center" style="border-color: #9d9d9d; vertical-align: top">
+                {{ $margen }}
+            </th>
+            <th class="text-center" style="border-color: #9d9d9d; vertical-align: top">
+                {{ porcentaje($margen, $item->precio, 1) }}%
+            </th>
+            <th class="text-center" style="border-color: #9d9d9d; vertical-align: top">
+                <div class="btn-group">
+                    <button type="button" class="btn btn-xs btn-yura_warning"
+                        onclick="update_producto('{{ $item->id_producto }}')">
+                        <i class="fa fa-fw fa-edit"></i>
+                    </button>
+                    <button type="button" class="btn btn-xs btn-yura_danger"
+                        onclick="cambiar_estado_producto('{{ $item->id_producto }}', '{{ $item->estado }}')">
+                        <i class="fa fa-fw fa-{{ $item->estado == 1 ? 'lock' : 'unlock' }}"></i>
+                    </button>
+                </div>
             </th>
         </tr>
-        @foreach ($listado as $item)
-            @php
-                $url_imagen = 'images\productos\*' . $item->imagen;
-                $url_imagen = str_replace('*', '', $url_imagen);
-                if ($item->tiene_iva) {
-                    $temp = $item->precio_venta - porcentaje(12, $item->precio_venta, 2);
-                    $margen = $temp - $item->precio;
-                } else {
-                    $margen = $item->precio_venta - $item->precio;
-                }
-            @endphp
-            <tr id="tr_producto_{{ $item->id_producto }}" class="{{ $item->estado == 0 ? 'error' : '' }}">
-                <th class="text-center" style="border-color: #9d9d9d; vertical-align: top">
-                    <input type="number" style="width: 100%" class="text-center" required min="0"
-                        id="orden_{{ $item->id_producto }}" value="{{ $item->orden }}">
-                </th>
-                <th class="text-center" style="border-color: #9d9d9d">
-                    <img src="{{ url($url_imagen) }}" alt="..."
-                        class="img-fluid img-thumbnail mouse-hand imagen_{{ $item->id_producto }}"
-                        style="border-radius: 16px"
-                        onclick="$('.imagen_{{ $item->id_producto }}').toggleClass('hidden')">
-                    <form id="form_edit_producto_{{ $item->id_producto }}"
-                        action="{{ url('bodega_productos/update_producto') }}" method="post"
-                        enctype="multipart/form-data" class="imagen_{{ $item->id_producto }} hidden">
-                        {!! csrf_field() !!}
-                        <input type="file" style="width: 100%;" class="text-center bg-yura_dark"
-                            id="imagen_{{ $item->id_producto }}" name="imagen_{{ $item->id_producto }}"
-                            placeholder="Codigo" accept="image/png, image/jpeg">
-                    </form>
-                </th>
-                <th class="text-center" style="border-color: #9d9d9d; vertical-align: top">
-                    <select id="categoria_{{ $item->id_producto }}" style="width: 100%; height: 26px;">
-                        @foreach ($categorias as $cat)
-                            <option value="{{ $cat->id_categoria_producto }}"
-                                {{ $cat->id_categoria_producto == $item->id_categoria_producto ? 'selected' : '' }}>
-                                {{ $cat->nombre }}
-                            </option>
-                        @endforeach
-                    </select>
-                </th>
-                <th class="text-center" style="border-color: #9d9d9d; vertical-align: top">
-                    <select id="proveedor_{{ $item->id_producto }}" style="width: 100%; height: 26px;">
-                        <option value="">Ninguno</option>
-                        @foreach ($proveedores as $prov)
-                            <option value="{{ $prov->id_proveedor }}"
-                                {{ $prov->id_proveedor == $item->id_proveedor ? 'selected' : '' }}>
-                                {{ $prov->nombre }}
-                            </option>
-                        @endforeach
-                    </select>
-                </th>
-                <th class="text-center" style="border-color: #9d9d9d; vertical-align: top">
-                    <input type="text" style="width: 100%" class="text-center"
-                        id="codigo_{{ $item->id_producto }}" value="{{ $item->codigo }}" required>
-                </th>
-                <th class="text-center" style="border-color: #9d9d9d; vertical-align: top">
-                    <input type="text" style="width: 100%" class="text-center"
-                        id="nombre_{{ $item->id_producto }}" value="{{ $item->nombre }}" required>
-                </th>
-                <th class="text-center" style="border-color: #9d9d9d; vertical-align: top">
-                    <input type="text" style="width: 100%" class="text-center"
-                        id="unidad_medida_{{ $item->id_producto }}" value="{{ $item->unidad_medida }}" required>
-                </th>
-                <th class="text-center" style="border-color: #9d9d9d; vertical-align: top">
-                    <input type="number" style="width: 100%" class="text-center" required min="0"
-                        id="stock_minimo_{{ $item->id_producto }}" value="{{ $item->stock_minimo }}">
-                </th>
-                <th class="text-center" style="border-color: #9d9d9d; vertical-align: top">
-                    <input type="number" style="width: 100%" class="text-center" required min="0"
-                        id="conversion_{{ $item->id_producto }}" value="{{ $item->conversion }}">
-                </th>
-                <th class="text-center" style="border-color: #9d9d9d; vertical-align: top">
-                    <input type="number" style="width: 100%" class="text-center" required min="0"
-                        id="precio_compra_{{ $item->id_producto }}" value="{{ $item->precio }}">
-                </th>
-                <th class="text-center" style="border-color: #9d9d9d; vertical-align: top">
-                    <input type="number" style="width: 100%" class="text-center" required min="0"
-                        id="precio_venta_{{ $item->id_producto }}" value="{{ $item->precio_venta }}">
-                    <label for="tiene_iva_{{ $item->id_producto }}" class="mouse-hand">IVA</label>
-                    <input type="checkbox" id="tiene_iva_{{ $item->id_producto }}"
-                        {{ $item->tiene_iva == 1 ? 'checked' : '' }}>
-                </th>
-                <th class="text-center" style="border-color: #9d9d9d; vertical-align: top">
-                    {{ $margen }}
-                </th>
-                <th class="text-center" style="border-color: #9d9d9d; vertical-align: top">
-                    {{ porcentaje($margen, $item->precio, 1) }}%
-                </th>
-                <th class="text-center" style="border-color: #9d9d9d; vertical-align: top">
-                    <div class="btn-group">
-                        <button type="button" class="btn btn-xs btn-yura_warning"
-                            onclick="update_producto('{{ $item->id_producto }}')">
-                            <i class="fa fa-fw fa-edit"></i>
-                        </button>
-                        <button type="button" class="btn btn-xs btn-yura_danger"
-                            onclick="cambiar_estado_producto('{{ $item->id_producto }}', '{{ $item->estado }}')">
-                            <i class="fa fa-fw fa-{{ $item->estado == 1 ? 'lock' : 'unlock' }}"></i>
-                        </button>
-                    </div>
-                </th>
-            </tr>
-        @endforeach
-    </table>
-</div>
+    @endforeach
+</table>
 
 <script>
     function store_producto() {
@@ -301,7 +299,7 @@
                     if (retorno2.success) {
                         mini_alerta('success', retorno2.mensaje, 5000);
                         cerrar_modals();
-                        location.reload(true);
+                        listar_reporte();
                         //listar_reporte();
                     } else {
                         alerta(retorno2.mensaje);
