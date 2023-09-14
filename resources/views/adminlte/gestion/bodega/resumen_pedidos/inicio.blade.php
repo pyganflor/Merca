@@ -1,14 +1,14 @@
 @extends('layouts.adminlte.master')
 
 @section('titulo')
-    Resumen de Ventas
+    Resumen de Descuentos
 @endsection
 
 @section('contenido')
     <!-- Content Header (Page header) -->
     <section class="content-header">
         <h1>
-            Resumen de Ventas
+            Resumen de Descuentos
             <small class="text-color_yura">módulo de bodega</small>
         </h1>
 
