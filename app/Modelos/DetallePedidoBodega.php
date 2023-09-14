@@ -2,6 +2,7 @@
 
 namespace yura\Modelos;
 
+use DateTime;
 use Illuminate\Database\Eloquent\Model;
 
 class DetallePedidoBodega extends Model
@@ -25,5 +26,17 @@ class DetallePedidoBodega extends Model
     public function producto()
     {
         return $this->belongsTo('\yura\Modelos\Producto', 'id_producto');
+    }
+
+    public function getRangoDiferidoByFecha($fecha)
+    {
+        $fechas = [];
+        for ($m = 0; $m < $this->diferido; $m++) {
+            $f = new DateTime($fecha);
+            $f->modify('+' . $m . ' month');
+            $f = $f->format('Y-m-d');
+            $fechas[] = $f;
+        }
+        return $fechas;
     }
 }

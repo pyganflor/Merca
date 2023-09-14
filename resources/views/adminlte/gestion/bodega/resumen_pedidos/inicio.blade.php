@@ -65,6 +65,18 @@
                             </span>
                             <input type="date" class="form-control text-center" id="filtro_hasta"
                                 value="{{ hoy() }}" style="width: 100%">
+                        </div>
+                    </td>
+                    <td>
+                        <div class="input-group">
+                            <span class="input-group-addon bg-yura_dark">
+                                Tipo
+                            </span>
+                            <select class="form-control" id="filtro_tipo" style="width: 100%">
+                                <option value="T">Total Ventas</option>
+                                <option value="D">Diferidos</option>
+                                <option value="N">NO Diferidos</option>
+                            </select>
                             <span class="input-group-btn">
                                 <button type="button" class="btn btn-yura_dark" onclick="listar_reporte()">
                                     <i class="fa fa-fw fa-search"></i> Buscar
