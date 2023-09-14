@@ -16,7 +16,9 @@
     }
 
     function add_pedido() {
-        datos = {}
+        datos = {
+            finca: $('#filtro_finca').val(),
+        }
         get_jquery('{{ url('pedido_bodega/add_pedido') }}', datos, function(retorno) {
             modal_view('modal_add_pedido', retorno,
                 '<i class="fa fa-fw fa-shopping-cart"></i> Nuevo Pedido',

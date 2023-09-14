@@ -79,6 +79,7 @@ class PedidoBodegaController extends Controller
         return view('adminlte.gestion.bodega.pedido.forms.add_pedido', [
             'fincas' => $fincas,
             'categorias' => $categorias,
+            'finca_selected' => $request->finca,
         ]);
     }
 
