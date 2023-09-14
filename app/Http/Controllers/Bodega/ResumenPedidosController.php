@@ -112,7 +112,13 @@ class ResumenPedidosController extends Controller
                     $subtotal = $subtotal / $det_ped->diferido;
                     $iva = $iva / $det_ped->diferido;
 
-                    $rango_diferido = $det_ped->getRangoDiferidoByFecha($det_ped->fecha);
+                    $entrega = FechaEntrega::All()
+                        ->where('desde', '<=', $det_ped->fecha)
+                        ->where('hasta', '>=', $det_ped->fecha)
+                        ->where('id_empresa', $det_ped->id_empresa)
+                        ->first();
+                    $fecha_entrega = $entrega != '' ? $entrega->entrega : '';
+                    $rango_diferido = $det_ped->getRangoDiferidoByFecha($fecha_entrega);
                     foreach ($rango_diferido as $f) {
                         if ($f >= $request->desde && $f <= $request->hasta) {
                             $monto_diferido += $diferido;
@@ -133,8 +139,7 @@ class ResumenPedidosController extends Controller
                     ->select('detalle_pedido_bodega.*', 'p.fecha', 'p.id_empresa')->distinct()
                     ->where('p.id_usuario', $u->id_usuario)
                     ->where('p.estado', 1)
-                    ->where('p.fecha', '<=', $request->hasta)
-                    ->where('detalle_pedido_bodega.diferido', '<', 1);
+                    ->where('p.fecha', '<=', $request->hasta);
                 if ($request->finca != 'T')
                     $query_pedidos = $query_pedidos->where('p.id_empresa', $request->finca);
                 $query_pedidos = $query_pedidos->get();
@@ -143,25 +148,27 @@ class ResumenPedidosController extends Controller
                 $monto_total_iva = 0;
                 $monto_no_diferido = 0;
                 foreach ($query_pedidos as $det_ped) {
-                    $precio_prod = $det_ped->cantidad * $det_ped->precio;
-                    if ($det_ped->iva == true) {
-                        $subtotal = $precio_prod / 1.12;
-                        $iva = ($precio_prod / 1.12) * 0.12;
-                    } else {
-                        $subtotal = $precio_prod;
-                        $iva = 0;
-                    }
+                    if ($det_ped->diferido == null || $det_ped->diferido == 0) {
+                        $precio_prod = $det_ped->cantidad * $det_ped->precio;
+                        if ($det_ped->iva == true) {
+                            $subtotal = $precio_prod / 1.12;
+                            $iva = ($precio_prod / 1.12) * 0.12;
+                        } else {
+                            $subtotal = $precio_prod;
+                            $iva = 0;
+                        }
 
-                    $entrega = FechaEntrega::All()
-                        ->where('desde', '<=', $det_ped->fecha)
-                        ->where('hasta', '>=', $det_ped->fecha)
-                        ->where('id_empresa', $det_ped->id_empresa)
-                        ->first();
-                    $f = $entrega != '' ? $entrega->entrega : '';
-                    if ($f >= $request->desde && $f <= $request->hasta) {
-                        $monto_no_diferido += $precio_prod;
-                        $monto_subtotal += $subtotal;
-                        $monto_total_iva += $iva;
+                        $entrega = FechaEntrega::All()
+                            ->where('desde', '<=', $det_ped->fecha)
+                            ->where('hasta', '>=', $det_ped->fecha)
+                            ->where('id_empresa', $det_ped->id_empresa)
+                            ->first();
+                        $f = $entrega != '' ? $entrega->entrega : '';
+                        if ($f >= $request->desde && $f <= $request->hasta) {
+                            $monto_no_diferido += $precio_prod;
+                            $monto_subtotal += $subtotal;
+                            $monto_total_iva += $iva;
+                        }
                     }
                 }
                 if ($monto_no_diferido > 0)
