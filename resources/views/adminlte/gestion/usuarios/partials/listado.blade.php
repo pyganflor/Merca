@@ -13,7 +13,7 @@
                         IDENTIFICACION
                     </th>
                     <th class="text-center th_yura_green">
-                        ROL
+                        TELEFONO
                     </th>
                     <th class="text-center th_yura_green">
                         CUPO DISPONIBLE
@@ -46,7 +46,7 @@
                         {{ $item->username }}
                     </th>
                     <td style="border-color: #9d9d9d" class="text-center">
-                        {{ $item->rol }}
+                        {{ $item->telefono }}
                     </td>
                     <th style="border-color: #9d9d9d" class="text-center">
                         ${{ number_format($item->cupo_disponible, 2) }}

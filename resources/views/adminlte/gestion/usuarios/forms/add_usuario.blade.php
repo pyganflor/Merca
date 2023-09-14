@@ -1,12 +1,20 @@
 <form id="form_add_usuario" action="{{url('usuarios/store')}}" method="post">
     {!! csrf_field() !!}
     <div class="row">
-        <div class="col-md-12">
+        <div class="col-md-6">
             <div class="form-group">
                 <label for="nombre_completo">Nombre completo</label>
                 <input type="text" id="nombre_completo" name="nombre_completo" class="form-control" required
                        maxlength="250"
                        autocomplete="off" placeholder="Escriba el nombre completo">
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group has-feedback">
+                <label for="telefono">Telefono</label>
+                <input type="text" id="telefono" name="telefono" class="form-control" required maxlength="250"
+                       autocomplete="off" placeholder="0977889900">
+                <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
             </div>
         </div>
     </div>

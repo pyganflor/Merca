@@ -134,6 +134,7 @@ class UsuarioController extends Controller
             $model->estado = 'A';
             $model->id_rol = $request->id_rol;
             $model->correo = str_limit(mb_strtolower(espacios($request->correo)), 250);
+            $model->telefono = str_limit(mb_strtolower(espacios($request->telefono)), 250);
             $model->nombre_completo = str_limit(mb_strtoupper(espacios($request->nombre_completo)), 250);
             $model->username = str_limit(mb_strtolower(espacios($request->username)), 250);
             $model->fecha_registro = date('Y-m-d H:i:s');
@@ -296,6 +297,7 @@ class UsuarioController extends Controller
                 $model->cupo_disponible = $request->cupo_disponible;
                 $model->aplica = $request->aplica;
                 $model->correo = str_limit(mb_strtolower(espacios($request->correo)), 250);
+                $model->telefono = str_limit(mb_strtolower(espacios($request->telefono)), 250);
                 $model->nombre_completo = str_limit(mb_strtoupper(espacios($request->nombre_completo)), 250);
                 $model->username = str_limit(mb_strtolower(espacios($request->username)), 250);
 

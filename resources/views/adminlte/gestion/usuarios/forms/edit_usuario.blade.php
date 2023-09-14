@@ -46,11 +46,19 @@
                 </select>
             </div>
         </div>
-        <div class="col-md-6">
+        <div class="col-md-3">
             <div class="form-group has-feedback">
                 <label for="correo">Correo</label>
                 <input type="email" id="correo" name="correo" class="form-control" maxlength="250"
                     autocomplete="off" placeholder="info@yura.com" value="{{ $usuario->correo }}">
+                <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="form-group has-feedback">
+                <label for="telefono">Telefono</label>
+                <input type="text" id="telefono" name="telefono" class="form-control" required maxlength="250"
+                       autocomplete="off" placeholder="0977889900" value="{{ $usuario->telefono }}">
                 <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
             </div>
         </div>
@@ -80,6 +88,7 @@
                 nombre_completo: $('#nombre_completo').val(),
                 username: $('#username').val(),
                 correo: $('#correo').val(),
+                telefono: $('#telefono').val(),
                 id_rol: $('#id_rol').val(),
                 cupo_disponible: $('#cupo_disponible').val(),
                 aplica: $('#aplica').val(),
