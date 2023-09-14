@@ -2,7 +2,7 @@
     <table class="text-center" style="width: 100%">
         <tr>
             <th style="text-align: center" colspan="2">
-                RESUMEN de PEDIDOS "{{ $datos['finca']->nombre }}"
+                RESUMEN de PEDIDOS {{ $datos['tipo_reporte'] }} "{{ $datos['finca']->nombre }}"
             </th>
         </tr>
         <tr>
