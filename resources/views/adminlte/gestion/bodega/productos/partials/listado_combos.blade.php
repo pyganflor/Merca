@@ -68,11 +68,12 @@
         @php
             $url_imagen = 'images\productos\*' . $item->imagen;
             $url_imagen = str_replace('*', '', $url_imagen);
+            $precio_costo = $item->getCostoCombo();
             if ($item->tiene_iva) {
                 $temp = $item->precio_venta - porcentaje(12, $item->precio_venta, 2);
-                $margen = $temp - $item->precio;
+                $margen = $temp - $precio_costo;
             } else {
-                $margen = $item->precio_venta - $item->precio;
+                $margen = $item->precio_venta - $precio_costo;
             }
         @endphp
         <tr id="tr_producto_{{ $item->id_producto }}" class="{{ $item->estado == 0 ? 'error' : '' }}">
@@ -102,8 +103,7 @@
                     value="{{ $item->nombre }}" required>
             </th>
             <th class="text-center" style="border-color: #9d9d9d; vertical-align: top">
-                <input type="number" style="width: 100%" class="text-center" required min="0"
-                    id="precio_compra_{{ $item->id_producto }}" value="{{ $item->precio }}">
+                {{ $precio_costo }}
             </th>
             <th class="text-center" style="border-color: #9d9d9d; vertical-align: top">
                 <input type="number" style="width: 100%" class="text-center" required min="0"

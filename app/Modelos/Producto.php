@@ -3,6 +3,7 @@
 namespace yura\Modelos;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class Producto extends Model
 {
@@ -30,5 +31,15 @@ class Producto extends Model
     public function detalles_combo()
     {
         return $this->hasMany('\yura\Modelos\DetalleCombo', 'id_producto');
+    }
+
+    public function getCostoCombo()
+    {
+        $r = DB::table('detalle_combo as dc')
+            ->join('producto as p', 'p.id_producto', '=', 'dc.id_item')
+            ->select(DB::raw('sum(p.precio) as cantidad'))
+            ->where('dc.id_producto', $this->id_producto)
+            ->get()[0]->cantidad;
+        return round($r, 2);
     }
 }
