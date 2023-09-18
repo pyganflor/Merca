@@ -6,6 +6,7 @@
         datos = {
             busqueda: $('#filtro_busqueda').val(),
             categoria: $('#filtro_categoria').val(),
+            tipo: $('#filtro_tipo').val(),
         };
         get_jquery('{{ url('bodega_productos/listar_reporte') }}', datos, function(retorno) {
             $('#div_listado').html(retorno);

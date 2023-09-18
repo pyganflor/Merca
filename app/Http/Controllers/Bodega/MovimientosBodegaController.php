@@ -32,7 +32,8 @@ class MovimientosBodegaController extends Controller
         $listado = Producto::Where(function ($q) use ($request) {
             $q->Where('nombre', 'like', '%' . mb_strtoupper($request->busqueda) . '%')
                 ->orWhere('codigo', 'like', '%' . mb_strtoupper($request->busqueda) . '%');
-        });
+        })
+        ->where('combo', 0);
         if ($request->categoria != 'T')
             $listado = $listado->where('id_categoria_producto', $request->categoria);
         $listado = $listado->orderBy('orden')

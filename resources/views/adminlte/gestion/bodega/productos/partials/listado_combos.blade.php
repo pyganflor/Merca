@@ -3,51 +3,20 @@
         <th class="text-center th_yura_green" style="width: 60px">
             ORDEN
         </th>
-        <th class="text-center th_yura_green">
-            <div style="width: 90px">
-                IMAGEN
-            </div>
-        </th>
-        <th class="text-center th_yura_green" style="width: 150px">
-            CATEGORIA
-            <input type="text" style="width: 100%; color: black" class="text-center" placeholder="Nueva"
-                onchange="store_categoria()" id="new_nombre_categoria">
-        </th>
-        <th class="text-center th_yura_green">
-            <div style="width: 150px">
-                PROVEEDOR
-            </div>
-        </th>
-        <th class="text-center th_yura_green">
-            <div style="width: 60px">
-                CODIGO
-            </div>
-        </th>
-        <th class="text-center th_yura_green">
-            <div style="width: 250px">
-                NOMBRE
-            </div>
-        </th>
-        <th class="text-center th_yura_green">
-            <div style="width: 60px">
-                UM
-            </div>
+        <th class="text-center th_yura_green" style="width: 60px">
+            IMAGEN
         </th>
         <th class="text-center th_yura_green" style="width: 60px">
-            STOCK MINIMO
+            CODIGO
+        </th>
+        <th class="text-center th_yura_green" style="width: 180px">
+            NOMBRE
         </th>
         <th class="text-center th_yura_green" style="width: 60px">
-            CONVERSION
+            COSTO
         </th>
-        <th class="text-center th_yura_green">
-            <div style="width: 60px">
-                COSTO
-            </div>
-        </th>
-        <th class="text-center th_yura_green">
-            <div style="width: 60px">
-                VENTA
-            </div>
+        <th class="text-center th_yura_green" style="width: 60px">
+            VENTA
         </th>
         <th class="text-center th_yura_green" style="width: 60px">
             MARGEN
@@ -55,13 +24,11 @@
         <th class="text-center th_yura_green" style="width: 60px">
             % UTILDIAD
         </th>
-        <th class="text-center th_yura_green">
-            <div style="width: 60px">
-                <button type="button" class="btn btn-xs btn-yura_default"
-                    onclick="$('#tr_new_producto').removeClass('hidden'); $('#codigo_new').focus()">
-                    <i class="fa fa-fw fa-plus"></i>
-                </button>
-            </div>
+        <th class="text-center th_yura_green" style="width: 80px">
+            <button type="button" class="btn btn-xs btn-yura_default"
+                onclick="$('#tr_new_producto').removeClass('hidden'); $('#codigo_new').focus()">
+                <i class="fa fa-fw fa-plus"></i>
+            </button>
         </th>
     </tr>
     <tr id="tr_new_producto" class="hidden">
@@ -70,31 +37,12 @@
                 id="orden_new" name="orden_new" placeholder="0">
         </th>
         <th class="text-center" style="border-color: #9d9d9d">
-            <form id="form_add_producto" action="{{ url('bodega_productos/store_producto') }}" method="post"
+            <form id="form_add_producto" action="{{ url('bodega_productos/store_combo') }}" method="post"
                 enctype="multipart/form-data">
                 {!! csrf_field() !!}
                 <input type="file" style="width: 100%;" class="text-center bg-yura_dark" id="imagen_new"
                     name="imagen_new" placeholder="Codigo" accept="image/png, image/jpeg">
             </form>
-        </th>
-        <th class="text-center" style="border-color: #9d9d9d">
-            <select id="categoria_new" style="width: 100%; height: 26px;">
-                @foreach ($categorias as $cat)
-                    <option value="{{ $cat->id_categoria_producto }}">
-                        {{ $cat->nombre }}
-                    </option>
-                @endforeach
-            </select>
-        </th>
-        <th class="text-center" style="border-color: #9d9d9d">
-            <select id="proveedor_new" style="width: 100%; height: 26px;">
-                <option value="">Ninguno</option>
-                @foreach ($proveedores as $prov)
-                    <option value="{{ $prov->id_proveedor }}">
-                        {{ $prov->nombre }}
-                    </option>
-                @endforeach
-            </select>
         </th>
         <th class="text-center" style="border-color: #9d9d9d">
             <input type="text" style="width: 100%" class="text-center bg-yura_dark" id="codigo_new" name="codigo_new"
@@ -105,27 +53,13 @@
                 placeholder="NOMBRE" required>
         </th>
         <th class="text-center" style="border-color: #9d9d9d">
-            <input type="text" style="width: 100%" class="text-center bg-yura_dark" required min="0"
-                id="unidad_medida_new" name="unidad_medida_new" placeholder="0">
-        </th>
-        <th class="text-center" style="border-color: #9d9d9d">
-            <input type="number" style="width: 100%" class="text-center bg-yura_dark" required min="0"
-                id="stock_minimo_new" name="stock_minimo_new" placeholder="0">
-        </th>
-        <th class="text-center" style="border-color: #9d9d9d">
-            <input type="number" style="width: 100%" class="text-center bg-yura_dark" required min="0"
-                id="conversion_new" name="conversion_new" placeholder="0">
-        </th>
-        <th class="text-center" style="border-color: #9d9d9d">
-            <input type="number" style="width: 100%" class="text-center bg-yura_dark" required min="0"
-                id="precio_compra_new" name="precio_compra_new" placeholder="0">
         </th>
         <th class="text-center" style="border-color: #9d9d9d">
             <input type="number" style="width: 100%" class="text-center bg-yura_dark" required min="0"
                 id="precio_venta_new" name="precio_venta_new" placeholder="0">
         </th>
         <th class="text-center" style="border-color: #9d9d9d" colspan="3">
-            <button type="button" class="btn btn-xs btn-yura_primary" onclick="store_producto()">
+            <button type="button" class="btn btn-xs btn-yura_primary" onclick="store_combo()">
                 <i class="fa fa-fw fa-save"></i> Grabar
             </button>
         </th>
@@ -149,37 +83,15 @@
             <th class="text-center" style="border-color: #9d9d9d">
                 <img src="{{ url($url_imagen) }}" alt="..."
                     class="img-fluid img-thumbnail mouse-hand imagen_{{ $item->id_producto }}"
-                    style="border-radius: 16px"
-                    onclick="$('.imagen_{{ $item->id_producto }}').toggleClass('hidden')">
+                    style="border-radius: 16px;" onclick="$('.imagen_{{ $item->id_producto }}').toggleClass('hidden')">
                 <form id="form_edit_producto_{{ $item->id_producto }}"
-                    action="{{ url('bodega_productos/update_producto') }}" method="post"
-                    enctype="multipart/form-data" class="imagen_{{ $item->id_producto }} hidden">
+                    action="{{ url('bodega_productos/update_combo') }}" method="post" enctype="multipart/form-data"
+                    class="imagen_{{ $item->id_producto }} hidden">
                     {!! csrf_field() !!}
                     <input type="file" style="width: 100%;" class="text-center bg-yura_dark"
                         id="imagen_{{ $item->id_producto }}" name="imagen_{{ $item->id_producto }}"
                         placeholder="Codigo" accept="image/png, image/jpeg">
                 </form>
-            </th>
-            <th class="text-center" style="border-color: #9d9d9d; vertical-align: top">
-                <select id="categoria_{{ $item->id_producto }}" style="width: 100%; height: 26px;">
-                    @foreach ($categorias as $cat)
-                        <option value="{{ $cat->id_categoria_producto }}"
-                            {{ $cat->id_categoria_producto == $item->id_categoria_producto ? 'selected' : '' }}>
-                            {{ $cat->nombre }}
-                        </option>
-                    @endforeach
-                </select>
-            </th>
-            <th class="text-center" style="border-color: #9d9d9d; vertical-align: top">
-                <select id="proveedor_{{ $item->id_producto }}" style="width: 100%; height: 26px;">
-                    <option value="">Ninguno</option>
-                    @foreach ($proveedores as $prov)
-                        <option value="{{ $prov->id_proveedor }}"
-                            {{ $prov->id_proveedor == $item->id_proveedor ? 'selected' : '' }}>
-                            {{ $prov->nombre }}
-                        </option>
-                    @endforeach
-                </select>
             </th>
             <th class="text-center" style="border-color: #9d9d9d; vertical-align: top">
                 <input type="text" style="width: 100%" class="text-center" id="codigo_{{ $item->id_producto }}"
@@ -188,18 +100,6 @@
             <th class="text-center" style="border-color: #9d9d9d; vertical-align: top">
                 <input type="text" style="width: 100%" class="text-center" id="nombre_{{ $item->id_producto }}"
                     value="{{ $item->nombre }}" required>
-            </th>
-            <th class="text-center" style="border-color: #9d9d9d; vertical-align: top">
-                <input type="text" style="width: 100%" class="text-center"
-                    id="unidad_medida_{{ $item->id_producto }}" value="{{ $item->unidad_medida }}" required>
-            </th>
-            <th class="text-center" style="border-color: #9d9d9d; vertical-align: top">
-                <input type="number" style="width: 100%" class="text-center" required min="0"
-                    id="stock_minimo_{{ $item->id_producto }}" value="{{ $item->stock_minimo }}">
-            </th>
-            <th class="text-center" style="border-color: #9d9d9d; vertical-align: top">
-                <input type="number" style="width: 100%" class="text-center" required min="0"
-                    id="conversion_{{ $item->id_producto }}" value="{{ $item->conversion }}">
             </th>
             <th class="text-center" style="border-color: #9d9d9d; vertical-align: top">
                 <input type="number" style="width: 100%" class="text-center" required min="0"
@@ -221,8 +121,12 @@
             <th class="text-center" style="border-color: #9d9d9d; vertical-align: top">
                 <div class="btn-group">
                     <button type="button" class="btn btn-xs btn-yura_warning"
-                        onclick="update_producto('{{ $item->id_producto }}')">
+                        onclick="update_combo('{{ $item->id_producto }}')">
                         <i class="fa fa-fw fa-edit"></i>
+                    </button>
+                    <button type="button" class="btn btn-xs btn-yura_dark"
+                        onclick="admin_combo('{{ $item->id_producto }}')">
+                        <i class="fa fa-fw fa-gift"></i>
                     </button>
                     <button type="button" class="btn btn-xs btn-yura_danger"
                         onclick="cambiar_estado_producto('{{ $item->id_producto }}', '{{ $item->estado }}')">
@@ -235,19 +139,13 @@
 </table>
 
 <script>
-    function store_producto() {
+    function store_combo() {
         if ($('#form_add_producto').valid()) {
             $.LoadingOverlay('show');
             formulario = $('#form_add_producto');
             var formData = new FormData(formulario[0]);
-            formData.append('categoria', $('#categoria_new').val());
-            formData.append('proveedor', $('#proveedor_new').val());
             formData.append('codigo', $('#codigo_new').val());
             formData.append('nombre', $('#nombre_new').val());
-            formData.append('unidad_medida', $('#unidad_medida_new').val());
-            formData.append('stock_minimo', $('#stock_minimo_new').val());
-            formData.append('conversion', $('#conversion_new').val());
-            formData.append('precio_compra', $('#precio_compra_new').val());
             formData.append('precio_venta', $('#precio_venta_new').val());
             formData.append('orden', $('#orden_new').val());
             formData.append('disponibles', 0);
@@ -283,19 +181,13 @@
         }
     }
 
-    function update_producto(id) {
+    function update_combo(id) {
         if ($('#form_edit_producto_' + id).valid()) {
             $.LoadingOverlay('show');
             formulario = $('#form_edit_producto_' + id);
             var formData = new FormData(formulario[0]);
-            formData.append('categoria', $('#categoria_' + id).val());
-            formData.append('proveedor', $('#proveedor_' + id).val());
             formData.append('codigo', $('#codigo_' + id).val());
             formData.append('nombre', $('#nombre_' + id).val());
-            formData.append('unidad_medida', $('#unidad_medida_' + id).val());
-            formData.append('stock_minimo', $('#stock_minimo_' + id).val());
-            formData.append('conversion', $('#conversion_' + id).val());
-            formData.append('precio_compra', $('#precio_compra_' + id).val());
             formData.append('precio_venta', $('#precio_venta_' + id).val());
             formData.append('tiene_iva', $('#tiene_iva_' + id).prop('checked'));
             formData.append('orden', $('#orden_' + id).val());
@@ -335,11 +227,11 @@
 
     function cambiar_estado_producto(p, estado) {
         mensaje = {
-            title: estado == 1 ? '<i class="fa fa-fw fa-trash"></i> Desactivar producto' :
-                '<i class="fa fa-fw fa-unlock"></i> Activar producto',
+            title: estado == 1 ? '<i class="fa fa-fw fa-trash"></i> Desactivar combo' :
+                '<i class="fa fa-fw fa-unlock"></i> Activar combo',
             mensaje: estado == 1 ?
-                '<div class="alert alert-danger text-center"><i class="fa fa-fw fa-exclamation-triangle"></i> ¿Está seguro de desactivar este producto?</div>' :
-                '<div class="alert alert-info text-center"><i class="fa fa-fw fa-exclamation-triangle"></i> ¿Está seguro de activar este producto?</div>',
+                '<div class="alert alert-danger text-center"><i class="fa fa-fw fa-exclamation-triangle"></i> ¿Está seguro de desactivar este combo?</div>' :
+                '<div class="alert alert-info text-center"><i class="fa fa-fw fa-exclamation-triangle"></i> ¿Está seguro de activar este combo?</div>',
         };
         modal_quest('modal_delete_producto', mensaje['mensaje'], mensaje['title'], true, false,
             '{{ isPC() ? '45%' : '' }}',
@@ -355,22 +247,14 @@
             });
     }
 
-    function store_categoria() {
-        mensaje = {
-            title: '<i class="fa fa-fw fa-exclamation-triangle"></i> Mensaje de confirmacion',
-            mensaje: '<div class="alert alert-info text-center" style="font-size: 16px">¿Está seguro de <b>CREAR</b> una nueva categoria?</div>',
-        };
-        modal_quest('modal_delete_producto', mensaje['mensaje'], mensaje['title'], true, false,
-            '{{ isPC() ? '50%' : '' }}',
-            function() {
-                datos = {
-                    _token: '{{ csrf_token() }}',
-                    nombre: $('#new_nombre_categoria').val(),
-                };
-                post_jquery_m('{{ url('bodega_productos/store_categoria') }}', datos, function() {
-                    cerrar_modals();
-                    listar_reporte();
-                });
-            });
+    function admin_combo(id) {
+        datos = {
+            id: id
+        }
+        get_jquery('{{ url('bodega_productos/admin_combo') }}', datos, function(retorno) {
+            modal_view('modal_admin_combo', retorno, '<i class="fa fa-fw fa-plus"></i> Formulario Cosecha',
+                true, false, '{{ isPC() ? '98%' : '' }}',
+                function() {});
+        })
     }
 </script>

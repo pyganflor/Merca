@@ -52,6 +52,13 @@
                                 </option>
                             @endforeach
                         </select>
+                        <span class="input-group-addon bg-yura_dark">
+                            Tipo
+                        </span>
+                        <select id="filtro_tipo" style="width: 100%" class="form-control" onchange="listar_reporte()">
+                            <option value="P">Producto</option>
+                            <option value="C">Combo</option>
+                        </select>
                         <span class="input-group-btn">
                             <button type="button" class="btn btn-yura_dark" onclick="listar_reporte()">
                                 <i class="fa fa-fw fa-search"></i>
