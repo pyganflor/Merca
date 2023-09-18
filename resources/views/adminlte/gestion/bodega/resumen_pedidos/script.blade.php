@@ -14,6 +14,7 @@
         };
         get_jquery('{{ url('resumen_pedidos/listar_reporte') }}', datos, function(retorno) {
             $('#div_listado').html(retorno);
+            estructura_tabla('table_descuentos');
         }, 'div_listado');
     }
 

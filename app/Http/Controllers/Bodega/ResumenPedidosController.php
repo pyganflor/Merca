@@ -41,7 +41,7 @@ class ResumenPedidosController extends Controller
         if ($request->finca != 'T')
             $usuarios = $usuarios->where('p.id_empresa', $request->finca);
         $usuarios = $usuarios->orderBy('p.fecha')
-            ->orderBy('u.nombre_completo')
+            ->orderBy('u.nombre_completo', 'asc')
             ->get();
         $listado = [];
         foreach ($usuarios as $u) {
@@ -197,7 +197,7 @@ class ResumenPedidosController extends Controller
         if ($request->finca != 'T')
             $usuarios = $usuarios->where('p.id_empresa', $request->finca);
         $usuarios = $usuarios->orderBy('p.fecha')
-            ->orderBy('u.nombre_completo')
+            ->orderBy('u.nombre_completo', 'asc')
             ->get();
         $listado = [];
         foreach ($usuarios as $u) {

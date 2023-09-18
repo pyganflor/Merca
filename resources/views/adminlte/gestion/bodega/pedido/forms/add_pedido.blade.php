@@ -77,6 +77,15 @@
                     </option>
                 @endforeach
             </select>
+            <span class="input-group-addon bg-yura_dark">
+                Tipo
+            </span>
+            <select id="tipo_catalogo" style="width: 100%" onchange="listar_catalogo()" onkeyup="listar_catalogo()"
+                class="form-control input-yura_default">
+                <option value="T">Todos</option>
+                <option value="P">Producto</option>
+                <option value="C">Combo</option>
+            </select>
         </div>
 
         <div id="div_catalogo" style="overflow-x: scroll; overflow-y: scroll; margin-top: 3px; max-height: 550px"></div>
@@ -255,6 +264,7 @@
         datos = {
             busqueda: $('#buscar_catalogo').val(),
             categoria: $('#categoria_catalogo').val(),
+            tipo: $('#tipo_catalogo').val(),
         }
         get_jquery('{{ url('pedido_bodega/listar_catalogo') }}', datos, function(retorno) {
             $('#div_catalogo').html(retorno)

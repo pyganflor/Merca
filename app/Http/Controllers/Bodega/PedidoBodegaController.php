@@ -91,8 +91,32 @@ class PedidoBodegaController extends Controller
     public function escanear_codigo_pedido(Request $request)
     {
         $pedido = PedidoBodega::find($request->codigo);
+
+        $disponible = true;
+        $mensaje = '';
+        foreach ($pedido->detalles as $det) {
+            $producto = $det->producto;
+            if ($producto->combo == 0) {
+                if ($producto->disponibles < $det->cantidad) {
+                    $disponible = false;
+                    $mensaje = 'No hay disponibilidad para el producto: "' . $producto->nombre . '" en el pedido #' . $pedido->id_pedido_bodega;
+                }
+            } else {    // producto combo
+                foreach ($producto->detalles_combo as $item) {
+                    $item_producto = $item->item;
+
+                    if ($item_producto->disponibles < $det->cantidad) {
+                        $disponible = false;
+                        $mensaje = 'No hay disponibilidad para el producto: "' . $item_producto->nombre . '" dentro del combo "' . $producto->nombre . '" en el pedido #' . $pedido->id_pedido_bodega;
+                    }
+                }
+            }
+        }
+
         return view('adminlte.gestion.bodega.pedido.forms._escanear_codigo_pedido', [
-            'pedido' => $pedido
+            'pedido' => $pedido,
+            'disponible' => $disponible,
+            'mensaje' => $mensaje,
         ]);
     }
 
@@ -106,17 +130,35 @@ class PedidoBodegaController extends Controller
                     $models_productos = [];
                     foreach ($pedido->detalles as $det) {
                         $producto = $det->producto;
-                        if ($producto->disponibles >= $det->cantidad) {
-                            $producto->disponibles -= $det->cantidad;
-                            $models_productos[] = $producto;
-                        } else {
-                            DB::rollBack();
-                            return [
-                                'success' => false,
-                                'mensaje' => '<div class="alert alert-danger text-center">' .
-                                    'No hay disponibilidad para el producto: "' . $producto->nombre . '" en el pedido #' . $pedido->id_pedido_bodega .
-                                    '</div>',
-                            ];
+                        if ($producto->combo == 0) {
+                            if ($producto->disponibles >= $det->cantidad) {
+                                $producto->disponibles -= $det->cantidad;
+                                $models_productos[] = $producto;
+                            } else {
+                                DB::rollBack();
+                                return [
+                                    'success' => false,
+                                    'mensaje' => '<div class="alert alert-danger text-center">' .
+                                        'No hay disponibilidad para el producto: "' . $producto->nombre . '" en el pedido #' . $pedido->id_pedido_bodega .
+                                        '</div>',
+                                ];
+                            }
+                        } else {    // producto combo
+                            foreach ($producto->detalles_combo as $item) {
+                                $item_producto = $item->item;
+
+                                if ($item_producto->disponibles >= $det->cantidad) {
+                                    $item_producto->disponibles -= $det->cantidad;
+                                    $models_productos[] = $item_producto;
+                                } else {
+                                    return [
+                                        'success' => false,
+                                        'mensaje' => '<div class="alert alert-danger text-center">' .
+                                            'No hay disponibilidad para el producto: "' . $item_producto->nombre . '" dentro del combo "' . $producto->nombre . '"' .
+                                            '</div>',
+                                    ];
+                                }
+                            }
                         }
                     }
                     $pedido->armado = 1;
@@ -152,8 +194,16 @@ class PedidoBodegaController extends Controller
             $q->Where('nombre', 'like', '%' . mb_strtoupper($request->busqueda) . '%')
                 ->orWhere('codigo', 'like', '%' . mb_strtoupper($request->busqueda) . '%');
         });
-        if ($request->categoria != 'T')
-            $listado = $listado->where('id_categoria_producto', $request->categoria);
+        if ($request->tipo == 'T') {
+            if ($request->categoria != 'T')
+                $listado = $listado->where('id_categoria_producto', $request->categoria);
+        } elseif ($request->tipo == 'P') {
+            $listado = $listado->where('combo', 0);
+            if ($request->categoria != 'T')
+                $listado = $listado->where('id_categoria_producto', $request->categoria);
+        } elseif ($request->tipo == 'C')
+            $listado = $listado->where('combo', 1);
+
         $listado = $listado->orderBy('orden')
             ->get();
 
@@ -390,16 +440,34 @@ class PedidoBodegaController extends Controller
             $models_productos = [];
             foreach ($pedido->detalles as $det) {
                 $producto = $det->producto;
-                if ($producto->disponibles >= $det->cantidad) {
-                    $producto->disponibles -= $det->cantidad;
-                    $models_productos[] = $producto;
-                } else {
-                    return [
-                        'success' => false,
-                        'mensaje' => '<div class="alert alert-danger text-center">' .
-                            'No hay disponibilidad para el producto: "' . $producto->nombre . '"' .
-                            '</div>',
-                    ];
+                if ($producto->combo == 0) {    // producto normal
+                    if ($producto->disponibles >= $det->cantidad) {
+                        $producto->disponibles -= $det->cantidad;
+                        $models_productos[] = $producto;
+                    } else {
+                        return [
+                            'success' => false,
+                            'mensaje' => '<div class="alert alert-danger text-center">' .
+                                'No hay disponibilidad para el producto: "' . $producto->nombre . '"' .
+                                '</div>',
+                        ];
+                    }
+                } else {    // producto combo
+                    foreach ($producto->detalles_combo as $item) {
+                        $item_producto = $item->item;
+
+                        if ($item_producto->disponibles >= $det->cantidad) {
+                            $item_producto->disponibles -= $det->cantidad;
+                            $models_productos[] = $item_producto;
+                        } else {
+                            return [
+                                'success' => false,
+                                'mensaje' => '<div class="alert alert-danger text-center">' .
+                                    'No hay disponibilidad para el producto: "' . $item_producto->nombre . '" dentro del combo "' . $producto->nombre . '"' .
+                                    '</div>',
+                            ];
+                        }
+                    }
                 }
             }
             $pedido->armado = 1;
@@ -466,21 +534,45 @@ class PedidoBodegaController extends Controller
         foreach ($pedidos as $pedido) {
             foreach ($pedido->detalles as $det) {
                 $producto = $det->producto;
-                $cantidad = $det->cantidad;
+                if ($producto->combo == 0) {    // producto normal
+                    $cantidad = $det->cantidad;
 
-                $pos_existe = -1;
-                foreach ($listado as $pos => $item) {
-                    if ($item['producto']->id_producto == $producto->id_producto) {
-                        $pos_existe = $pos;
+                    $pos_existe = -1;
+                    foreach ($listado as $pos => $item) {
+                        if ($item['producto']->id_producto == $producto->id_producto && $item['finca'] == $pedido->id_empresa) {
+                            $pos_existe = $pos;
+                        }
                     }
-                }
-                if ($pos_existe == -1) {
-                    $listado[] = [
-                        'producto' => $producto,
-                        'cantidad' => $cantidad,
-                    ];
-                } else {
-                    $listado[$pos_existe]['cantidad'] += $cantidad;
+                    if ($pos_existe == -1) {
+                        $listado[] = [
+                            'producto' => $producto,
+                            'cantidad' => $cantidad,
+                            'finca' => $pedido->id_empresa,
+                        ];
+                    } else {
+                        $listado[$pos_existe]['cantidad'] += $cantidad;
+                    }
+                } else {    // producto tipo combo
+                    foreach ($producto->detalles_combo as $item_combo) {
+                        $item_prod = $item_combo->item;
+                        $cantidad = $det->cantidad * $item_combo->unidades;
+
+                        $pos_existe = -1;
+                        foreach ($listado as $pos => $item) {
+                            if ($item['producto']->id_producto == $item_prod->id_producto && $item['finca'] == $pedido->id_empresa) {
+                                $pos_existe = $pos;
+                            }
+                        }
+                        if ($pos_existe == -1) {
+                            $listado[] = [
+                                'producto' => $item_prod,
+                                'cantidad' => $cantidad,
+                                'finca' => $pedido->id_empresa,
+                            ];
+                        } else {
+                            $listado[$pos_existe]['cantidad'] += $cantidad;
+                        }
+                    }
                 }
             }
         }
@@ -494,6 +586,8 @@ class PedidoBodegaController extends Controller
         setValueToCeldaExcel($sheet, $columnas[$col] . $row, 'Proveedor');
         $col++;
         setValueToCeldaExcel($sheet, $columnas[$col] . $row, 'Producto');
+        $col++;
+        setValueToCeldaExcel($sheet, $columnas[$col] . $row, 'Finca');
         $col++;
         setValueToCeldaExcel($sheet, $columnas[$col] . $row, 'Inventario');
         $col++;
@@ -512,6 +606,10 @@ class PedidoBodegaController extends Controller
             setColorTextToCeldaExcel($sheet, $columnas[$col] . $row, 'FFFFFF');
             $col++;
             setValueToCeldaExcel($sheet, $columnas[$col] . $row, $r['producto']->nombre);
+            setBgToCeldaExcel($sheet, $columnas[$col] . $row, '5a7177');
+            setColorTextToCeldaExcel($sheet, $columnas[$col] . $row, 'FFFFFF');
+            $col++;
+            setValueToCeldaExcel($sheet, $columnas[$col] . $row, getConfiguracionEmpresa($r['finca'])->nombre);
             setBgToCeldaExcel($sheet, $columnas[$col] . $row, '5a7177');
             setColorTextToCeldaExcel($sheet, $columnas[$col] . $row, 'FFFFFF');
             $col++;

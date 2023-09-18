@@ -116,7 +116,7 @@
                 {{ $margen }}
             </th>
             <th class="text-center" style="border-color: #9d9d9d; vertical-align: top">
-                {{ porcentaje($margen, $item->precio, 1) }}%
+                {{ porcentaje($margen, $precio_costo, 1) }}%
             </th>
             <th class="text-center" style="border-color: #9d9d9d; vertical-align: top">
                 <div class="btn-group">
