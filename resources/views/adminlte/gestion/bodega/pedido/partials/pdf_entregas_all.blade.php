@@ -27,6 +27,9 @@
                 <th class="border-1px text-center" style="width: 80px">
                     CI
                 </th>
+                <th class="border-1px text-center" style="width: 80px">
+                    Telf.
+                </th>
                 <th class="border-1px text-center" style="width: 60px">
                     Subtotal
                 </th>
@@ -72,6 +75,9 @@
                     </th>
                     <th class="border-1px">
                         {{ $usuario->username }}
+                    </th>
+                    <th class="border-1px">
+                        {{ $usuario->telefono }}
                     </th>
                     <th class="border-1px">
                         ${{ number_format($monto_subtotal, 2) }}

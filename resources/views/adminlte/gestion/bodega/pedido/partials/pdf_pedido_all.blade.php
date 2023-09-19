@@ -21,6 +21,10 @@
             <tr>
                 <th style="text-align: center" colspan="2">
                     NOTA DE ENTREGA
+                    <br>
+                    <span style="font-size: 0.8em">
+                        {{ $pedido->empresa->nombre }}
+                    </span>
                 </th>
             </tr>
             <tr>
