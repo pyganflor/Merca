@@ -104,7 +104,7 @@
                                     DESCUENTO
                                 </th>
                             @endif
-                            <th style="text-align: left; padding-left: 2px" colspan="2">
+                            <th style="text-align: left; padding-left: 2px" colspan="3">
                                 {{ explode('de ', convertDateToText($fecha_next))[1] }}
                             </th>
                             <th style="text-align: right; padding-right: 2px">
