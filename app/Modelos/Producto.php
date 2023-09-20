@@ -37,7 +37,7 @@ class Producto extends Model
     {
         $r = DB::table('detalle_combo as dc')
             ->join('producto as p', 'p.id_producto', '=', 'dc.id_item')
-            ->select(DB::raw('sum(p.precio) as cantidad'))
+            ->select(DB::raw('sum(p.precio * dc.unidades) as cantidad'))
             ->where('dc.id_producto', $this->id_producto)
             ->get()[0]->cantidad;
         return round($r, 2);
