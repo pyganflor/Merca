@@ -10,6 +10,8 @@ use Validator;
 use yura\Modelos\CategoriaProducto;
 use yura\Modelos\DetalleCombo;
 use yura\Modelos\Proveedor;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 class ProductosController extends Controller
 {
@@ -630,5 +632,112 @@ class ProductosController extends Controller
             'success' => true,
             'mensaje' => 'Se han <strong>ASIGNADO</strong> los productos al combo correctamente',
         ];
+    }
+
+    public function exportar_reporte(Request $request)
+    {
+        $spread = new Spreadsheet();
+        $this->excel_reporte($spread, $request);
+
+        $fileName = "PRODUCTOS.xlsx";
+        $writer = new Xlsx($spread);
+
+        //--------------------------- GUARDAR EL EXCEL -----------------------
+
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment; filename="' . urlencode($fileName) . '"');
+        $writer->save('php://output');
+
+        //$writer->save('/var/www/html/Dasalflor/storage/storage/excel/excel_prueba.xlsx');
+    }
+
+    public function excel_reporte($spread, $request)
+    {
+        $listado = Producto::where('estado', 1)
+            ->orderBy('orden')
+            ->get();
+
+        $columnas = getColumnasExcel();
+        $sheet = $spread->getActiveSheet();
+        $sheet->setTitle('PRODUCTOS');
+
+        $row = 1;
+        $col = 0;
+        setValueToCeldaExcel($sheet, $columnas[$col] . $row, 'CATEGORIA');
+        $col++;
+        setValueToCeldaExcel($sheet, $columnas[$col] . $row, 'PROVEEDOR');
+        $col++;
+        setValueToCeldaExcel($sheet, $columnas[$col] . $row, 'CODIGO');
+        $col++;
+        setValueToCeldaExcel($sheet, $columnas[$col] . $row, 'NOMBRE');
+        $col++;
+        setValueToCeldaExcel($sheet, $columnas[$col] . $row, 'UM');
+        $col++;
+        setValueToCeldaExcel($sheet, $columnas[$col] . $row, 'STOCK MINIMO');
+        $col++;
+        setValueToCeldaExcel($sheet, $columnas[$col] . $row, 'CONVERSION');
+        $col++;
+        setValueToCeldaExcel($sheet, $columnas[$col] . $row, 'COSTO');
+        $col++;
+        setValueToCeldaExcel($sheet, $columnas[$col] . $row, 'VENTA');
+        $col++;
+        setValueToCeldaExcel($sheet, $columnas[$col] . $row, 'IVA');
+        $col++;
+        setValueToCeldaExcel($sheet, $columnas[$col] . $row, 'MARGEN');
+        $col++;
+        setValueToCeldaExcel($sheet, $columnas[$col] . $row, '% UTILIDAD');
+        setBgToCeldaExcel($sheet, 'A' . $row . ':' . $columnas[$col] . $row, '00B388');
+        setColorTextToCeldaExcel($sheet, 'A' . $row . ':' . $columnas[$col] . $row, 'FFFFFF');
+
+        foreach ($listado as $item) {
+            if ($item->combo == 0)
+                $precio_costo = $item->precio;
+            else
+                $precio_costo = $item->getCostoCombo();
+
+            if ($item->tiene_iva) {
+                $temp = $item->precio_venta - porcentaje(12, $item->precio_venta, 2);
+                $margen = $temp - $precio_costo;
+            } else {
+                $margen = $item->precio_venta - $precio_costo;
+            }
+
+            $row++;
+            $col = 0;
+            if ($item->combo == 0)
+                setValueToCeldaExcel($sheet, $columnas[$col] . $row, $item->categoria_producto != '' ? $item->categoria_producto->nombre : '');
+            $col++;
+            if ($item->combo == 0)
+                setValueToCeldaExcel($sheet, $columnas[$col] . $row, $item->proveedor != '' ? $item->proveedor->nombre : '');
+            $col++;
+            setValueToCeldaExcel($sheet, $columnas[$col] . $row, $item->codigo);
+            $col++;
+            setValueToCeldaExcel($sheet, $columnas[$col] . $row, $item->nombre);
+            $col++;
+            if ($item->combo == 0)
+                setValueToCeldaExcel($sheet, $columnas[$col] . $row, $item->unidad_medida);
+            $col++;
+            if ($item->combo == 0)
+                setValueToCeldaExcel($sheet, $columnas[$col] . $row, $item->stock_minimo);
+            $col++;
+            if ($item->combo == 0)
+                setValueToCeldaExcel($sheet, $columnas[$col] . $row, $item->conversion);
+            $col++;
+            setValueToCeldaExcel($sheet, $columnas[$col] . $row, $precio_costo);
+            $col++;
+            setValueToCeldaExcel($sheet, $columnas[$col] . $row, $item->precio_venta);
+            $col++;
+            setValueToCeldaExcel($sheet, $columnas[$col] . $row, $item->tiene_iva == 1 ? 'SI' : 'NO');
+            $col++;
+            setValueToCeldaExcel($sheet, $columnas[$col] . $row, $margen);
+            $col++;
+            setValueToCeldaExcel($sheet, $columnas[$col] . $row, porcentaje($margen, $precio_costo, 1) . '%');
+        }
+
+        setTextCenterToCeldaExcel($sheet, 'A1:' . $columnas[$col] . $row);
+        setBorderToCeldaExcel($sheet, 'A1:' . $columnas[$col] . $row);
+
+        for ($i = 0; $i <= $col; $i++)
+            $sheet->getColumnDimension($columnas[$i])->setAutoSize(true);
     }
 }

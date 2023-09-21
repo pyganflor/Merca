@@ -12,4 +12,12 @@
             $('#div_listado').html(retorno);
         }, 'div_listado');
     }
+
+    function exportar_reporte() {
+        $.LoadingOverlay('show');
+        window.open('{{ url('bodega_productos/exportar_reporte') }}?busqueda=' + $('#filtro_busqueda').val() +
+            '&categoria=' + $('#filtro_categoria').val() +
+            '&tipo=' + $('#filtro_tipo').val(), '_blank');
+        $.LoadingOverlay('hide');
+    }
 </script>

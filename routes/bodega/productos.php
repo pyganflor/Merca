@@ -11,3 +11,4 @@ Route::post('bodega_productos/store_categoria', 'Bodega\ProductosController@stor
 Route::get('bodega_productos/admin_combo', 'Bodega\ProductosController@admin_combo');
 Route::get('bodega_productos/buscar_productos', 'Bodega\ProductosController@buscar_productos');
 Route::post('bodega_productos/store_agregar_productos', 'Bodega\ProductosController@store_agregar_productos');
+Route::get('bodega_productos/exportar_reporte', 'Bodega\ProductosController@exportar_reporte');

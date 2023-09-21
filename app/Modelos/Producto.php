@@ -28,6 +28,11 @@ class Producto extends Model
         return $this->belongsTo('\yura\Modelos\CategoriaProducto', 'id_categoria_producto');
     }
 
+    public function proveedor()
+    {
+        return $this->belongsTo('\yura\Modelos\Proveedor', 'id_proveedor');
+    }
+
     public function detalles_combo()
     {
         return $this->hasMany('\yura\Modelos\DetalleCombo', 'id_producto');
