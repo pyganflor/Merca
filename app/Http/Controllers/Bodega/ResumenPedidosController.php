@@ -8,6 +8,7 @@ use yura\Http\Controllers\Controller;
 use yura\Modelos\PedidoBodega;
 use yura\Modelos\Submenu;
 use Barryvdh\DomPDF\Facade as PDF;
+use DateTime;
 use yura\Modelos\DetallePedidoBodega;
 use yura\Modelos\FechaEntrega;
 
@@ -67,14 +68,39 @@ class ResumenPedidosController extends Controller
                     $fecha_entrega = $pedido->getFechaEntrega();
                     if ($fecha_entrega >= $request->desde && $fecha_entrega <= $request->hasta) {
                         foreach ($pedido->detalles as $det) {
-                            $precio_prod = $det->cantidad * $det->precio;
-                            if ($det->iva == true) {
-                                $monto_subtotal += $precio_prod / 1.12;
-                                $monto_total_iva += ($precio_prod / 1.12) * 0.12;
-                            } else {
-                                $monto_subtotal += $precio_prod;
+                            $valida_diferido = true;
+                            if ($det->diferido > 0) {
+                                $diferido_selected = $det->diferido;
+                                $diferido_mes_inicial = $pedido->diferido_mes_actual ? 0 : 1;
+                                $diferido_mes_final = $pedido->diferido_mes_actual ? $diferido_selected - 1 : $diferido_selected;
+
+                                $diferido_fecha_inicial = new DateTime($fecha_entrega);
+                                $diferido_fecha_inicial->modify('+' . $diferido_mes_inicial . ' month');
+                                $diferido_fecha_inicial = $diferido_fecha_inicial->format('Y-m-d');
+
+                                $diferido_fecha_final = new DateTime($fecha_entrega);
+                                $diferido_fecha_final->modify('+' . $diferido_mes_final . ' month');
+                                $diferido_fecha_final = $diferido_fecha_final->format('Y-m-d');
+
+                                if (($diferido_fecha_inicial >= $request->desde && $diferido_fecha_inicial <= $request->hasta) ||
+                                    ($diferido_fecha_final >= $request->desde && $diferido_fecha_final <= $request->hasta) ||
+                                    ($diferido_fecha_inicial <= $request->desde && $diferido_fecha_final >= $request->hasta)
+                                )
+                                    $valida_diferido = true;
+                                else
+                                    $valida_diferido = false;
                             }
-                            $monto_total += $precio_prod;
+
+                            if ($det->diferido != -1 && $valida_diferido) {
+                                $precio_prod = $det->cantidad * $det->precio;
+                                if ($det->iva == true) {
+                                    $monto_subtotal += $precio_prod / 1.12;
+                                    $monto_total_iva += ($precio_prod / 1.12) * 0.12;
+                                } else {
+                                    $monto_subtotal += $precio_prod;
+                                }
+                                $monto_total += $precio_prod;
+                            }
                         }
                     }
                 }
@@ -87,7 +113,7 @@ class ResumenPedidosController extends Controller
                     ];
             } else if ($request->tipo == 'D') { // Diferidos
                 $query_pedidos = DetallePedidoBodega::join('pedido_bodega as p', 'p.id_pedido_bodega', '=', 'detalle_pedido_bodega.id_pedido_bodega')
-                    ->select('detalle_pedido_bodega.*', 'p.fecha', 'p.id_empresa')->distinct()
+                    ->select('detalle_pedido_bodega.*', 'p.fecha', 'p.id_empresa', 'p.diferido_mes_actual')->distinct()
                     ->where('p.id_usuario', $u->id_usuario)
                     ->where('p.estado', 1)
                     ->where('p.fecha', '<=', $request->hasta)
@@ -100,30 +126,49 @@ class ResumenPedidosController extends Controller
                 $monto_total_iva = 0;
                 $monto_diferido = 0;
                 foreach ($query_pedidos as $det_ped) {
-                    $precio_prod = $det_ped->cantidad * $det_ped->precio;
-                    $diferido = $precio_prod / $det_ped->diferido;
-                    if ($det_ped->iva == true) {
-                        $subtotal = $precio_prod / 1.12;
-                        $iva = ($precio_prod / 1.12) * 0.12;
-                    } else {
-                        $subtotal = $precio_prod;
-                        $iva = 0;
-                    }
-                    $subtotal = $subtotal / $det_ped->diferido;
-                    $iva = $iva / $det_ped->diferido;
-
                     $entrega = FechaEntrega::All()
                         ->where('desde', '<=', $det_ped->fecha)
                         ->where('hasta', '>=', $det_ped->fecha)
                         ->where('id_empresa', $det_ped->id_empresa)
                         ->first();
                     $fecha_entrega = $entrega != '' ? $entrega->entrega : '';
-                    $rango_diferido = $det_ped->getRangoDiferidoByFecha($fecha_entrega);
-                    foreach ($rango_diferido as $f) {
-                        if ($f >= $request->desde && $f <= $request->hasta) {
-                            $monto_diferido += $diferido;
-                            $monto_subtotal += $subtotal;
-                            $monto_total_iva += $iva;
+
+                    $diferido_selected = $det_ped->diferido;
+                    $diferido_mes_inicial = $det_ped->diferido_mes_actual ? 0 : 1;
+                    $diferido_mes_final = $det_ped->diferido_mes_actual ? $diferido_selected - 1 : $diferido_selected;
+
+                    $diferido_fecha_inicial = new DateTime($fecha_entrega);
+                    $diferido_fecha_inicial->modify('+' . $diferido_mes_inicial . ' month');
+                    $diferido_fecha_inicial = $diferido_fecha_inicial->format('Y-m-d');
+
+                    $diferido_fecha_final = new DateTime($fecha_entrega);
+                    $diferido_fecha_final->modify('+' . $diferido_mes_final . ' month');
+                    $diferido_fecha_final = $diferido_fecha_final->format('Y-m-d');
+
+                    if (($diferido_fecha_inicial >= $request->desde && $diferido_fecha_inicial <= $request->hasta) ||
+                        ($diferido_fecha_final >= $request->desde && $diferido_fecha_final <= $request->hasta) ||
+                        ($diferido_fecha_inicial <= $request->desde && $diferido_fecha_final >= $request->hasta)
+                    ) {
+
+                        $precio_prod = $det_ped->cantidad * $det_ped->precio;
+                        $diferido = $precio_prod / $det_ped->diferido;
+                        if ($det_ped->iva == true) {
+                            $subtotal = $precio_prod / 1.12;
+                            $iva = ($precio_prod / 1.12) * 0.12;
+                        } else {
+                            $subtotal = $precio_prod;
+                            $iva = 0;
+                        }
+                        $subtotal = $subtotal / $det_ped->diferido;
+                        $iva = $iva / $det_ped->diferido;
+
+                        $rango_diferido = $det_ped->getRangoDiferidoByFecha($fecha_entrega);
+                        foreach ($rango_diferido as $f) {
+                            if ($f >= $request->desde && $f <= $request->hasta) {
+                                $monto_diferido += $diferido;
+                                $monto_subtotal += $subtotal;
+                                $monto_total_iva += $iva;
+                            }
                         }
                     }
                 }
@@ -139,7 +184,8 @@ class ResumenPedidosController extends Controller
                     ->select('detalle_pedido_bodega.*', 'p.fecha', 'p.id_empresa')->distinct()
                     ->where('p.id_usuario', $u->id_usuario)
                     ->where('p.estado', 1)
-                    ->where('p.fecha', '<=', $request->hasta);
+                    ->where('p.fecha', '<=', $request->hasta)
+                    ->where('detalle_pedido_bodega.diferido', '!=', -1);
                 if ($request->finca != 'T')
                     $query_pedidos = $query_pedidos->where('p.id_empresa', $request->finca);
                 $query_pedidos = $query_pedidos->get();

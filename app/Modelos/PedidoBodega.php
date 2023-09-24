@@ -56,14 +56,21 @@ class PedidoBodega extends Model
     {
         $monto_diferido = 0;
         $monto_total = 0;
+        $diferido_selected = 0;
         foreach ($this->detalles as $det) {
             $precio_prod = $det->cantidad * $det->precio;
             $monto_total += $precio_prod;
             if ($det->diferido > 0) {
                 $monto_diferido += $precio_prod / $det->diferido;
+                if ($diferido_selected == 0) {
+                    $diferido_selected = $det->diferido;
+                }
             }
         }
-        return round($monto_total - ($monto_diferido * 2), 2);
+        if ($diferido_selected > 0)
+            return round($monto_total - ($monto_diferido * ($diferido_selected - 1)), 2);
+        else
+            return round($monto_total, 2);
     }
 
     public function getTotalDiferido()

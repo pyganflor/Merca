@@ -74,6 +74,7 @@
             </tr>
             @php
                 $monto_diferido = 0;
+                $diferido_selected = 0;
             @endphp
             @foreach ($pedido->detalles as $det)
                 @php
@@ -89,6 +90,9 @@
                     
                     if ($det->diferido > 0) {
                         $monto_diferido += $precio_prod / $det->diferido;
+                        if ($diferido_selected == 0) {
+                            $diferido_selected = $det->diferido;
+                        }
                     }
                 @endphp
                 <tr style="font-size: 0.6em">
@@ -139,7 +143,11 @@
                         DESCUENTO
                     </th>
                 </tr>
-                @for ($m = 0; $m <= 2; $m++)
+                @php
+                    $diferido_mes_inicial = $pedido->diferido_mes_actual ? 0 : 1;
+                    $diferido_mes_final = $pedido->diferido_mes_actual ? $diferido_selected - 1 : $diferido_selected;
+                @endphp
+                @for ($m = $diferido_mes_inicial; $m <= $diferido_mes_final; $m++)
                     @php
                         $fechaObj = new DateTime($fecha);
                         $fechaObj->modify('+' . $m . ' month');

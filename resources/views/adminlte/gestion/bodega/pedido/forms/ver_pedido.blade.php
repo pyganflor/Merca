@@ -101,6 +101,12 @@
                 </th>
                 <th class="text-center th_yura_green" style="width: 110px">
                     Diferido
+                    <label for="check_diferido_mes_actual" class="mouse-hand check_diferido_mes_actual">
+                        Mes actual
+                    </label>
+                    <input type="checkbox" id="check_diferido_mes_actual"
+                        {{ $pedido->diferido_mes_actual ? 'checked' : '' }}
+                        class="mouse-hand check_diferido_mes_actual">
                 </th>
                 <th class="text-center th_yura_green" style="width: 110px">
                     Cantidad
@@ -133,6 +139,8 @@
                         <select id="input_diferido_producto_selected_{{ $producto->id_producto }}"
                             style="width: 100%" onchange="calcular_totales_pedido()">
                             <option value="0" {{ $det->diferido == 0 ? 'selected' : '' }}>No</option>
+                            <option value="-1" {{ $det->diferido == -1 ? 'selected' : '' }}>Al Contado</option>
+                            <option value="2" {{ $det->diferido == 2 ? 'selected' : '' }}>2 Meses</option>
                             <option value="3" {{ $det->diferido == 3 ? 'selected' : '' }}>3 Meses</option>
                         </select>
                     </th>
@@ -165,7 +173,7 @@
             <tr>
                 <td rowspan="5" style="text-align: right; padding-right: 20px; min-width: 320px">
                     <div class="btn-group">
-                        <button type="button" class="btn btn-yura_primary"
+                        <button type="button" class="btn btn-yura_primary" id="btn_grabar_pedido"
                             @if ($pedido->armado == 0 /*&& substr($pedido->fecha, 0, 7) == substr(hoy(), 0, 7)*/) onclick="update_pedido('{{ $pedido->id_pedido_bodega }}')"@else disabled @endif>
                             <i class="fa fa-fw fa-save"></i> ACTUALIZAR
                         </button>
@@ -282,6 +290,8 @@
                 '<select id="input_diferido_producto_selected_' + prod + '" ' +
                 'style="width: 100%; height: 30px" onchange="calcular_totales_pedido()">' +
                 '<option value="0">No</option>' +
+                '<option value="-1">Al contado</option>' +
+                '<option value="2">2 Meses</option>' +
                 '<option value="3">3 Meses</option>' +
                 '</select>' +
                 '</th>' +
@@ -363,6 +373,9 @@
         monto_total_iva = 0;
         monto_diferido = 0;
         span_contador_selected = $('.span_contador_selected');
+        diferido_selected = 0;
+        $('#btn_grabar_pedido').prop('disabled', false);
+        $('.check_diferido_mes_actual').addClass('hidden');
         for (i = 0; i < span_contador_selected.length; i++) {
             id_span = span_contador_selected[i].id;
             prod = parseInt($('#' + id_span).attr('data-id_producto'));
@@ -379,10 +392,23 @@
             }
             if (diferido > 0) {
                 monto_diferido += precio_prod / diferido;
+                $('.check_diferido_mes_actual').removeClass('hidden');
+                if (diferido_selected == 0) {
+                    diferido_selected = diferido;
+                } else if (diferido_selected > 0 && diferido_selected != diferido) {
+                    alerta(
+                        '<div class="alert alert-warning text-center">Debe escoger el mismo RANGO de MESES a DIFERIR</div>'
+                    )
+                    $('#btn_grabar_pedido').prop('disabled', true);
+                    return false;
+                }
             }
             monto_total += precio_prod;
         }
-        monto_saldo = monto_total - (monto_diferido * 2);
+        if (diferido_selected > 0)
+            monto_saldo = monto_total - (monto_diferido * (diferido_selected - 1));
+        else
+            monto_saldo = monto_total;
 
         monto_total = Math.round(monto_total * 100) / 100;
         monto_subtotal = Math.round(monto_subtotal * 100) / 100;
@@ -393,11 +419,11 @@
         $('#th_total_monto_pedido').html('$' + monto_total);
         $('#th_total_iva_pedido').html('$' + monto_total_iva);
         $('#th_total_subtotal_pedido').html('$' + monto_subtotal);
-        $('#input_monto_total').val(monto_total);
         $('#th_total_diferido_pedido').html('$' + monto_diferido);
         $('#th_total_saldo_pedido').html('$' + monto_saldo);
         $('#input_saldo_total').val(monto_saldo);
         $('#input_diferido_total').val(monto_diferido);
+        $('#input_monto_total').val(monto_total);
     }
 
     function update_pedido(ped) {
@@ -424,6 +450,7 @@
             fecha: $('#form_fecha').val(),
             finca: $('#form_finca').val(),
             usuario: $('#form_usuario').val(),
+            diferido_mes_actual: $('#check_diferido_mes_actual').prop('checked'),
             monto_total: $('#input_monto_total').val(),
             monto_saldo: $('#input_saldo_total').val(),
             detalles: JSON.stringify(detalles),

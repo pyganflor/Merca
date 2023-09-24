@@ -102,6 +102,11 @@
                 </th>
                 <th class="text-center th_yura_green" style="width: 110px">
                     Diferido
+                    <label for="check_diferido_mes_actual" class="mouse-hand check_diferido_mes_actual hidden">
+                        Mes actual
+                    </label>
+                    <input type="checkbox" id="check_diferido_mes_actual"
+                        class="mouse-hand check_diferido_mes_actual hidden">
                 </th>
                 <th class="text-center th_yura_green" style="width: 110px">
                     Cantidad
@@ -117,7 +122,8 @@
             <tr>
                 <td rowspan="5" style="text-align: right; padding-right: 20px; min-width: 320px">
                     <div class="btn-group">
-                        <button type="button" class="btn btn-yura_primary" onclick="store_pedido()">
+                        <button type="button" class="btn btn-yura_primary" onclick="store_pedido()"
+                            id="btn_grabar_pedido">
                             <i class="fa fa-fw fa-save"></i> Grabar Pedido
                         </button>
                         <button type="button" class="btn btn-yura_default" onclick="cerrar_modals(); add_pedido()">
@@ -210,6 +216,8 @@
                 '<select id="input_diferido_producto_selected_' + prod +
                 '" style="width: 100%; height: 30px" onchange="calcular_totales_pedido()">' +
                 '<option value="0">No</option>' +
+                '<option value="-1">Al contado</option>' +
+                '<option value="2">2 Meses</option>' +
                 '<option value="3">3 Meses</option>' +
                 '</select>' +
                 '</th>' +
@@ -310,7 +318,8 @@
             fecha: $('#form_fecha').val(),
             finca: $('#form_finca').val(),
             usuario: $('#form_usuario').val(),
-            monto_total: $('#input_monto_total').val(),
+            usuario: $('#form_usuario').val(),
+            diferido_mes_actual: $('#check_diferido_mes_actual').prop('checked'),
             monto_saldo: $('#input_saldo_total').val(),
             detalles: JSON.stringify(detalles),
         }
@@ -330,6 +339,9 @@
         monto_total_iva = 0;
         monto_diferido = 0;
         span_contador_selected = $('.span_contador_selected');
+        diferido_selected = 0;
+        $('#btn_grabar_pedido').prop('disabled', false);
+        $('.check_diferido_mes_actual').addClass('hidden');
         for (i = 0; i < span_contador_selected.length; i++) {
             id_span = span_contador_selected[i].id;
             prod = parseInt($('#' + id_span).attr('data-id_producto'));
@@ -346,10 +358,23 @@
             }
             if (diferido > 0) {
                 monto_diferido += precio_prod / diferido;
+                $('.check_diferido_mes_actual').removeClass('hidden');
+                if (diferido_selected == 0) {
+                    diferido_selected = diferido;
+                } else if (diferido_selected > 0 && diferido_selected != diferido) {
+                    alerta(
+                        '<div class="alert alert-warning text-center">Debe escoger el mismo RANGO de MESES a DIFERIR</div>'
+                    )
+                    $('#btn_grabar_pedido').prop('disabled', true);
+                    return false;
+                }
             }
             monto_total += precio_prod;
         }
-        monto_saldo = monto_total - (monto_diferido * 2);
+        if (diferido_selected > 0)
+            monto_saldo = monto_total - (monto_diferido * (diferido_selected - 1));
+        else
+            monto_saldo = monto_total;
 
         monto_total = Math.round(monto_total * 100) / 100;
         monto_subtotal = Math.round(monto_subtotal * 100) / 100;

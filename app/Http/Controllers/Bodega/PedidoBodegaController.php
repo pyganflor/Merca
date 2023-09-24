@@ -270,6 +270,7 @@ class PedidoBodegaController extends Controller
                 $pedido->fecha = $request->fecha;
                 $pedido->id_usuario = $request->usuario;
                 $pedido->id_empresa = $request->finca;
+                $pedido->diferido_mes_actual = $request->diferido_mes_actual == 'true' ? 1 : 0;
                 $pedido->save();
                 $pedido = PedidoBodega::All()->last();
 
@@ -320,7 +321,7 @@ class PedidoBodegaController extends Controller
         try {
             $pedido = PedidoBodega::find($request->ped);
             if (!in_array($pedido->id_usuario, [1, 2])) {
-                $monto_total = $pedido->getTotalMonto();
+                $monto_total = $pedido->getTotalMontoDiferido();
                 $usuario = $pedido->usuario;
                 $usuario->saldo += $monto_total;
                 $usuario->save();
@@ -391,12 +392,14 @@ class PedidoBodegaController extends Controller
                 $pedido_delete->delete();
 
                 $pedido = new PedidoBodega();
+                $pedido->id_pedido_bodega = $request->ped;
                 $pedido->fecha = $request->fecha;
                 $pedido->id_usuario = $request->usuario;
                 $pedido->id_empresa = $request->finca;
+                $pedido->diferido_mes_actual = $request->diferido_mes_actual == 'true' ? 1 : 0;
                 $pedido->saldo_usuario = $usuario->saldo;
                 $pedido->save();
-                $pedido = PedidoBodega::All()->last();
+                $pedido = PedidoBodega::find($request->ped);
 
                 foreach (json_decode($request->detalles) as $det) {
                     $detalle = new DetallePedidoBodega();
