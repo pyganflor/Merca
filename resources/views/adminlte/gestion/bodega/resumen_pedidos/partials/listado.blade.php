@@ -54,7 +54,7 @@
                 @if ($tipo == 'D')
                     <th class="text-center" style="border-color: #9d9d9d">
                         @foreach ($item['num_diferido'] as $pos_dif => $dif)
-                            {{ $dif + 1 }}° {{ $pos_dif > 0 ? '- ' : '' }}
+                            {{ $pos_dif > 0 ? '-' : '' }} {{ $dif + 1 }}°
                         @endforeach
                     </th>
                 @endif
