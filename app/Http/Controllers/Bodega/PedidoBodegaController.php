@@ -243,7 +243,7 @@ class PedidoBodegaController extends Controller
     {
         $listado = DB::table('usuario_finca as uf')
             ->join('usuario as u', 'u.id_usuario', '=', 'uf.id_usuario')
-            ->select('uf.id_usuario', 'u.nombre_completo', 'u.username', 'u.saldo')->distinct()
+            ->select('uf.id_usuario', 'u.nombre_completo', 'u.username', 'u.telefono', 'u.saldo')->distinct()
             ->where('uf.id_empresa', $request->finca)
             ->where('u.estado', 'A')
             ->where('u.aplica', 1)
