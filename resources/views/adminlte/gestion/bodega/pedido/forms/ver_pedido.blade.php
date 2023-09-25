@@ -138,7 +138,7 @@
                     <th class="text-center" style="border-color: #9d9d9d">
                         <select id="input_diferido_producto_selected_{{ $producto->id_producto }}"
                             style="width: 100%" onchange="calcular_totales_pedido()">
-                            <option value="0" {{ $det->diferido == 0 ? 'selected' : '' }}>No</option>
+                            <option value="0" {{ $det->diferido == 0 ? 'selected' : '' }}>Una Cuota</option>
                             <option value="-1" {{ $det->diferido == -1 ? 'selected' : '' }}>Al Contado</option>
                             <option value="2" {{ $det->diferido == 2 ? 'selected' : '' }}>2 Meses</option>
                             <option value="3" {{ $det->diferido == 3 ? 'selected' : '' }}>3 Meses</option>

@@ -215,7 +215,7 @@
                 '<th class="text-center" style="border-color: #9d9d9d">' +
                 '<select id="input_diferido_producto_selected_' + prod +
                 '" style="width: 100%; height: 30px" onchange="calcular_totales_pedido()">' +
-                '<option value="0">No</option>' +
+                '<option value="0">Una Cuota</option>' +
                 '<option value="-1">Al contado</option>' +
                 '<option value="2">2 Meses</option>' +
                 '<option value="3">3 Meses</option>' +
