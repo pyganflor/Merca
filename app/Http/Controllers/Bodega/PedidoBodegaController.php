@@ -252,7 +252,7 @@ class PedidoBodegaController extends Controller
 
         $options_usuarios = '<option value="">Seleccione</option>';
         foreach ($listado as $item) {
-            $options_usuarios .= '<option value="' . $item->id_usuario . '">' . $item->nombre_completo . ' CI:' . $item->username . ' saldo:$' . $item->saldo . '</option>';
+            $options_usuarios .= '<option value="' . $item->id_usuario . '">' . $item->nombre_completo . ' CI:' . $item->username . ' Telf:' . $item->telefono . ' saldo:$' . $item->saldo . '</option>';
         }
 
         return [
