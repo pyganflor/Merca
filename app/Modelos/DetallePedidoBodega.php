@@ -31,7 +31,9 @@ class DetallePedidoBodega extends Model
     public function getRangoDiferidoByFecha($fecha)
     {
         $fechas = [];
-        for ($m = 0; $m < $this->diferido; $m++) {
+        $diferido_mes_inicial = $this->pedido_bodega->diferido_mes_actual ? 0 : 1;
+        $diferido_mes_final = $this->pedido_bodega->diferido_mes_actual ? $this->diferido - 1 : $this->diferido;
+        for ($m = $diferido_mes_inicial; $m <= $diferido_mes_final; $m++) {
             $f = new DateTime($fecha);
             $f->modify('+' . $m . ' month');
             $f = $f->format('Y-m-d');
