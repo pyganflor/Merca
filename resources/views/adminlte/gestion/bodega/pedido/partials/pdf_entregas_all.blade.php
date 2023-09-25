@@ -51,6 +51,7 @@
                     $monto_total_iva = 0;
                     $monto_total = 0;
                     $monto_diferido = 0;
+                    $diferido_selected = 0;
                 @endphp
                 @foreach ($pedido->detalles as $det)
                     @php
@@ -66,6 +67,9 @@
                         
                         if ($det->diferido > 0) {
                             $monto_diferido += $precio_prod / $det->diferido;
+                            if ($diferido_selected == 0) {
+                                $diferido_selected = $det->diferido;
+                            }
                         }
                     @endphp
                 @endforeach
@@ -88,19 +92,24 @@
                     <th class="border-1px">
                         ${{ number_format($monto_total, 2) }}
                     </th>
-                    <th class="border-1px" style="height: 35px" rowspan="{{ $monto_diferido > 0 ? 4 : 1 }}">
+                    <th class="border-1px" style="height: 35px" rowspan="{{ $monto_diferido > 0 ? ($diferido_selected + 1) : 1 }}">
                     </th>
                 </tr>
+                @php
+                    $diferido_mes_inicial = $pedido->diferido_mes_actual ? 0 : 1;
+                    $diferido_mes_final = $pedido->diferido_mes_actual ? $diferido_selected - 1 : $diferido_selected;
+                @endphp
                 @if ($monto_diferido > 0)
-                    @for ($m = 0; $m <= 2; $m++)
+                    @for ($m = $diferido_mes_inicial; $m <= $diferido_mes_final; $m++)
                         @php
                             $fechaObj = new DateTime($fecha);
                             $fechaObj->modify('+' . $m . ' month');
                             $fecha_next = $fechaObj->format('Y-m-d');
                         @endphp
                         <tr style="font-size: 0.6em">
-                            @if ($m == 0)
-                                <th class="border-1px" style="text-align: center;" colspan="2" rowspan="3">
+                            @if ($m == $diferido_mes_inicial)
+                                <th class="border-1px" style="text-align: center;" colspan="2"
+                                    rowspan="{{ $diferido_selected }}">
                                     DESCUENTO
                                 </th>
                             @endif
