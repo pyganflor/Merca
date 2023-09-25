@@ -16,6 +16,11 @@
             <th class="th_yura_green padding_lateral_5" style="width: 50px">
                 Total
             </th>
+            @if ($tipo == 'D')
+                <th class="th_yura_green padding_lateral_5" style="width: 60px">
+                    #Pago
+                </th>
+            @endif
         </tr>
     </thead>
     @php
@@ -46,6 +51,13 @@
                 <th class="padding_lateral_5" style="border-color: #9d9d9d">
                     ${{ number_format($item['total'], 2) }}
                 </th>
+                @if ($tipo == 'D')
+                    <th class="text-center" style="border-color: #9d9d9d">
+                        @foreach ($item['num_diferido'] as $pos_dif => $dif)
+                            {{ $dif + 1 }}° {{ $pos_dif > 0 ? '- ' : '' }}
+                        @endforeach
+                    </th>
+                @endif
             </tr>
         @endforeach
     </tbody>
@@ -62,5 +74,9 @@
         <th class="th_yura_green padding_lateral_5">
             ${{ number_format($monto_total, 2) }}
         </th>
+        @if ($tipo == 'D')
+            <th class="th_yura_green padding_lateral_5">
+            </th>
+        @endif
     </tr>
 </table>

@@ -64,6 +64,7 @@ class ResumenPedidosController extends Controller
                 $monto_subtotal = 0;
                 $monto_total_iva = 0;
                 $monto_total = 0;
+                $num_diferido = [];
                 foreach ($pedidos as $pedido) {
                     $fecha_entrega = $pedido->getFechaEntrega();
                     if ($fecha_entrega >= $request->desde && $fecha_entrega <= $request->hasta) {
@@ -110,6 +111,7 @@ class ResumenPedidosController extends Controller
                         'subtotal' => $monto_subtotal,
                         'total_iva' => $monto_total_iva,
                         'total' => $monto_total,
+                        'num_diferido' => $num_diferido,
                     ];
             } else if ($request->tipo == 'D') { // Diferidos
                 $query_pedidos = DetallePedidoBodega::join('pedido_bodega as p', 'p.id_pedido_bodega', '=', 'detalle_pedido_bodega.id_pedido_bodega')
@@ -125,6 +127,7 @@ class ResumenPedidosController extends Controller
                 $monto_subtotal = 0;
                 $monto_total_iva = 0;
                 $monto_diferido = 0;
+                $num_diferido = [];
                 foreach ($query_pedidos as $det_ped) {
                     $entrega = FechaEntrega::All()
                         ->where('desde', '<=', $det_ped->fecha)
@@ -163,11 +166,13 @@ class ResumenPedidosController extends Controller
                         $iva = $iva / $det_ped->diferido;
 
                         $rango_diferido = $det_ped->getRangoDiferidoByFecha($fecha_entrega);
-                        foreach ($rango_diferido as $f) {
+                        foreach ($rango_diferido as $pos_f => $f) {
                             if ($f >= $request->desde && $f <= $request->hasta) {
                                 $monto_diferido += $diferido;
                                 $monto_subtotal += $subtotal;
                                 $monto_total_iva += $iva;
+
+                                $num_diferido[] = $pos_f;
                             }
                         }
                     }
@@ -178,6 +183,7 @@ class ResumenPedidosController extends Controller
                         'subtotal' => $monto_subtotal,
                         'total_iva' => $monto_total_iva,
                         'total' => $monto_diferido,
+                        'num_diferido' => $num_diferido,
                     ];
             } else if ($request->tipo == 'N') { // NO Diferidos
                 $query_pedidos = DetallePedidoBodega::join('pedido_bodega as p', 'p.id_pedido_bodega', '=', 'detalle_pedido_bodega.id_pedido_bodega')
@@ -193,6 +199,7 @@ class ResumenPedidosController extends Controller
                 $monto_subtotal = 0;
                 $monto_total_iva = 0;
                 $monto_no_diferido = 0;
+                $num_diferido = [];
                 foreach ($query_pedidos as $det_ped) {
                     if ($det_ped->diferido == null || $det_ped->diferido == 0) {
                         $precio_prod = $det_ped->cantidad * $det_ped->precio;
@@ -223,6 +230,7 @@ class ResumenPedidosController extends Controller
                         'subtotal' => $monto_subtotal,
                         'total_iva' => $monto_total_iva,
                         'total' => $monto_no_diferido,
+                        'num_diferido' => $num_diferido,
                     ];
             }
         }
