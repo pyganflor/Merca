@@ -49,11 +49,11 @@
                         {{ convertDateToText($item->fecha) }}
                     </small>
                     <br>
-                    <small class="span_contador_productos color_text-yura_danger" title="Costo">
-                        ${{ number_format($costo, 2) }}
-                    </small>
-                    <small class="span_contador_monto color_text-yura_primary" title="Venta">
+                    <small class="span_contador_productos color_text-yura_primary" title="Venta">
                         ${{ number_format($venta, 2) }}
+                    </small>
+                    <small class="span_contador_monto color_text-yura_danger" title="Costo">
+                        ${{ number_format($costo, 2) }}
                     </small>
                 </span>
             </div>
