@@ -42,6 +42,11 @@
             <th class="border-1px text-center" style="width: 50px">
                 Total
             </th>
+            @if ($datos['tipo'] == 'D')
+                <th class="border-1px text-center" style="width: 50px">
+                    #Pago
+                </th>
+            @endif
         </tr>
         @foreach ($datos['listado'] as $pos_ped => $item)
             @php
@@ -65,6 +70,13 @@
                 <th class="border-1px">
                     ${{ number_format($item['total'], 2) }}
                 </th>
+                @if ($datos['tipo'] == 'D')
+                    <th class="border-1px">
+                        @foreach ($item['num_diferido'] as $pos_dif => $dif)
+                            {{ $pos_dif > 0 ? '-' : '' }} {{ $dif + 1 }}°
+                        @endforeach
+                    </th>
+                @endif
             </tr>
         @endforeach
         <tr style="font-size: 0.7em">
@@ -80,6 +92,10 @@
             <th class="border-1px text-center">
                 ${{ number_format($monto_total, 2) }}
             </th>
+            @if ($datos['tipo'] == 'D')
+                <th class="border-1px text-center">
+                </th>
+            @endif
         </tr>
     </table>
 </div>
