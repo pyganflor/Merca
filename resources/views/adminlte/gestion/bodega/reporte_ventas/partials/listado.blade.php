@@ -48,6 +48,12 @@
             <th class="th_yura_green padding_lateral_5" style="width: 50px">
                 Venta x Persona
             </th>
+            <th class="th_yura_green padding_lateral_5" style="width: 50px">
+                Total Personas
+            </th>
+            <th class="th_yura_green padding_lateral_5" style="width: 50px">
+                % Personas
+            </th>
         </tr>
     </thead>
     <tbody>
@@ -57,6 +63,7 @@
             $total_costos_pendientes = 0;
             $total_venta_pendientes = 0;
             $total_personas = 0;
+            $total_all_personas = 0;
         @endphp
         @foreach ($listado as $item)
             @php
@@ -75,6 +82,7 @@
                 $total_costos_pendientes += $item['costos_pendientes'];
                 $total_venta_pendientes += $item['venta_pendientes'];
                 $total_personas += $personas;
+                $total_all_personas += $item['total_personas'];
             @endphp
             <tr onmouseover="$(this).addClass('bg-yura_dark')" onmouseleave="$(this).removeClass('bg-yura_dark')">
                 <th class="padding_lateral_5" style="border-color: #9d9d9d">
@@ -121,6 +129,12 @@
                 </th>
                 <th class="padding_lateral_5" style="border-color: #9d9d9d">
                     ${{ number_format($total_venta / $personas, 2) }}
+                </th>
+                <th class="text-center" style="border-color: #9d9d9d">
+                    {{ $item['total_personas'] }}
+                </th>
+                <th class="text-center" style="border-color: #9d9d9d">
+                    {{ porcentaje($personas, $item['total_personas'], 1) }}%
                 </th>
             </tr>
         @endforeach
@@ -180,6 +194,12 @@
         </th>
         <th class="padding_lateral_5 th_yura_green">
             ${{ number_format($total_venta / $total_personas, 2) }}
+        </th>
+        <th class="text-center th_yura_green">
+            {{ $total_all_personas }}
+        </th>
+        <th class="text-center th_yura_green">
+            {{ porcentaje($total_personas, $total_all_personas, 1) }}%
         </th>
     </tr>
 </table>

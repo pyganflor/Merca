@@ -64,6 +64,15 @@ class ReporteVentasController extends Controller
                     }
                     if (!in_array($pedido->id_usuario, $personas))
                         $personas[] = $pedido->id_usuario;
+                    $all_personas = DB::table('usuario as u')
+                        ->join('usuario_finca as uf', 'uf.id_usuario', '=', 'u.id_usuario')
+                        ->select('uf.id_usuario')->distinct()
+                        ->where('uf.id_empresa', $f->id_empresa)
+                        ->whereNotIn('uf.id_usuario', [1, 2])
+                        ->where('u.estado', 'A')
+                        ->where('u.aplica', 1)
+                        ->get();
+                    $total_personas = count($all_personas);
                 }
             }
             if (count($personas) > 0)
@@ -74,6 +83,7 @@ class ReporteVentasController extends Controller
                     'venta_armados' => $venta_armados,
                     'venta_pendientes' => $venta_pendientes,
                     'personas' => $personas,
+                    'total_personas' => $total_personas,
                 ];
         }
 
@@ -133,6 +143,15 @@ class ReporteVentasController extends Controller
                     }
                     if (!in_array($pedido->id_usuario, $personas))
                         $personas[] = $pedido->id_usuario;
+                    $all_personas = DB::table('usuario as u')
+                        ->join('usuario_finca as uf', 'uf.id_usuario', '=', 'u.id_usuario')
+                        ->select('uf.id_usuario')->distinct()
+                        ->where('uf.id_empresa', $f->id_empresa)
+                        ->whereNotIn('uf.id_usuario', [1, 2])
+                        ->where('u.estado', 'A')
+                        ->where('u.aplica', 1)
+                        ->get();
+                    $total_personas = count($all_personas);
                 }
             }
             if (count($personas) > 0)
@@ -143,6 +162,7 @@ class ReporteVentasController extends Controller
                     'venta_armados' => $venta_armados,
                     'venta_pendientes' => $venta_pendientes,
                     'personas' => $personas,
+                    'total_personas' => $total_personas,
                 ];
         }
 
@@ -181,6 +201,10 @@ class ReporteVentasController extends Controller
         setValueToCeldaExcel($sheet, $columnas[$col] . $row, 'Personas');
         $col++;
         setValueToCeldaExcel($sheet, $columnas[$col] . $row, 'Venta x Persona');
+        $col++;
+        setValueToCeldaExcel($sheet, $columnas[$col] . $row, 'Total Personas');
+        $col++;
+        setValueToCeldaExcel($sheet, $columnas[$col] . $row, '% Personas');
 
         setBgToCeldaExcel($sheet, 'A' . $row . ':' . $columnas[$col] . $row, '00B388');
         setColorTextToCeldaExcel($sheet, 'A' . $row . ':' . $columnas[$col] . $row, 'FFFFFF');
@@ -190,6 +214,7 @@ class ReporteVentasController extends Controller
         $total_costos_pendientes = 0;
         $total_venta_pendientes = 0;
         $total_personas = 0;
+        $total_all_personas = 0;
         foreach ($listado as $item) {
             $margen_armados = $item['venta_armados'] - $item['costos_armados'];
             $utilidad_armados = porcentaje($margen_armados, $item['costos_armados'], 1);
@@ -206,6 +231,7 @@ class ReporteVentasController extends Controller
             $total_costos_pendientes += $item['costos_pendientes'];
             $total_venta_pendientes += $item['venta_pendientes'];
             $total_personas += $personas;
+            $total_all_personas += $item['total_personas'];
 
             $row++;
             $col = 0;
@@ -238,6 +264,10 @@ class ReporteVentasController extends Controller
             setValueToCeldaExcel($sheet, $columnas[$col] . $row, $personas);
             $col++;
             setValueToCeldaExcel($sheet, $columnas[$col] . $row, round($total_venta / $personas, 2));
+            $col++;
+            setValueToCeldaExcel($sheet, $columnas[$col] . $row, $item['total_personas']);
+            $col++;
+            setValueToCeldaExcel($sheet, $columnas[$col] . $row, porcentaje($personas, $item['total_personas'], 1) . '%');
         }
 
         $margen_armados = $total_venta_armados - $total_costos_armados;
@@ -280,6 +310,10 @@ class ReporteVentasController extends Controller
         setValueToCeldaExcel($sheet, $columnas[$col] . $row, $total_personas);
         $col++;
         setValueToCeldaExcel($sheet, $columnas[$col] . $row, round($total_venta / $total_personas, 2));
+        $col++;
+        setValueToCeldaExcel($sheet, $columnas[$col] . $row, $total_all_personas);
+        $col++;
+        setValueToCeldaExcel($sheet, $columnas[$col] . $row, porcentaje($total_personas, $total_all_personas, 1) . '%');
 
         setBgToCeldaExcel($sheet, 'A' . $row . ':' . $columnas[$col] . $row, '00B388');
         setColorTextToCeldaExcel($sheet, 'A' . $row . ':' . $columnas[$col] . $row, 'FFFFFF');
