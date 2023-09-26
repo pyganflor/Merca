@@ -94,4 +94,18 @@ class PedidoBodega extends Model
             ->first();
         return $entrega != '' ? $entrega->entrega : '';
     }
+
+    public function getCostos()
+    {
+        $r = 0;
+        foreach ($this->detalles as $det) {
+            $producto = $det->producto;
+            if ($producto->combo == 0) {    // producto normal
+                $r += $producto->precio * $det->cantidad;
+            } else {    // producto tipo combo
+                $r += $producto->getCostoCombo() * $det->cantidad;
+            }
+        }
+        return round($r, 2);
+    }
 }
