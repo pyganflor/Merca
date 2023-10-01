@@ -46,7 +46,7 @@ class ResetearSaldosUsuario extends Command
         dump('<<<<< ! >>>>> Ejecutando comando "resetear:saldos" <<<<< ! >>>>>');
         Log::info('<<<<< ! >>>>> Ejecutando comando "resetear:saldos" <<<<< ! >>>>>');
 
-        $hoy = '2023-10-01';
+        $hoy = hoy();
         $primerDiaMes = date("Y-m-01", strtotime($hoy));
         $ultimoDiaMes = date("Y-m-t", strtotime($hoy));
 
