@@ -133,10 +133,54 @@ class PedidoBodegaController extends Controller
                     $models_productos = [];
                     foreach ($pedido->detalles as $det) {
                         $producto = $det->producto;
-                        if ($producto->combo == 0) {
+                        if ($producto->combo == 0) {    // producto normal
                             if ($producto->disponibles >= $det->cantidad) {
                                 $producto->disponibles -= $det->cantidad;
                                 $models_productos[] = $producto;
+
+                                /* SALIDA_BODEGA */
+                                $salida = new SalidaBodega();
+                                $salida->id_producto = $det->id_producto;
+                                $salida->fecha = hoy();
+                                $salida->cantidad = $det->cantidad;
+                                $salida->save();
+                                $salida = SalidaBodega::All()->last();
+                                bitacora('salida_bodega', $salida->id_salida_bodega, 'I', 'SALIDA A BODEGA de ' . $det->cantidad . ' UNIDADES de ' . $producto->nombre);
+
+                                /* SACAR DEL INVENTARIO */
+                                $inventarios = InventarioBodega::where('disponibles', '>', 0)
+                                    ->where('id_producto', '=', $det->id_producto)
+                                    ->orderBy('fecha_ingreso', 'asc')
+                                    ->orderBy('fecha_registro', 'asc')
+                                    ->get();
+
+                                $meta = $det->cantidad;
+                                foreach ($inventarios as $model) {
+                                    if ($meta >= 0) {
+                                        $disponible = $model->disponibles;
+                                        if ($meta >= $disponible) {
+                                            $meta = $meta - $disponible;
+                                            $usados = $disponible;
+                                            $disponible = 0;
+                                        } else {
+                                            $disponible = $disponible - $meta;
+                                            $usados = $meta;
+                                            $meta = 0;
+                                        }
+
+                                        $model->disponibles = $disponible;
+                                        $model->save();
+
+                                        bitacora('inventario_bodega', $model->id_inventario_bodega, 'U', 'SACAR de la BODEGA');
+
+                                        $salida_inventario = new SalidaInventarioBodega();
+                                        $salida_inventario->id_salida_bodega =  $salida->id_salida_bodega;
+                                        $salida_inventario->id_inventario_bodega =  $model->id_inventario_bodega;
+                                        $salida_inventario->id_pedido_bodega =  $pedido->id_pedido_bodega;
+                                        $salida_inventario->cantidad =  $usados;
+                                        $salida_inventario->save();
+                                    }
+                                }
                             } else {
                                 DB::rollBack();
                                 return [
@@ -153,6 +197,49 @@ class PedidoBodegaController extends Controller
                                 if ($item_producto->disponibles >= $det->cantidad) {
                                     $item_producto->disponibles -= $det->cantidad;
                                     $models_productos[] = $item_producto;
+
+                                    /* SALIDA_BODEGA */
+                                    $salida = new SalidaBodega();
+                                    $salida->id_producto = $item_producto->id_producto;
+                                    $salida->fecha = hoy();
+                                    $salida->cantidad = $det->cantidad;
+                                    $salida->save();
+                                    $salida = SalidaBodega::All()->last();
+                                    bitacora('salida_bodega', $salida->id_salida_bodega, 'I', 'SALIDA A BODEGA de ' . $det->cantidad . ' UNIDADES de ' . $item_producto->nombre);
+
+                                    /* SACAR DEL INVENTARIO */
+                                    $inventarios = InventarioBodega::where('disponibles', '>', 0)
+                                        ->where('id_producto', '=', $item_producto->id_producto)
+                                        ->orderBy('fecha_ingreso', 'asc')
+                                        ->orderBy('fecha_registro', 'asc')
+                                        ->get();
+
+                                    $meta = $det->cantidad;
+                                    foreach ($inventarios as $model) {
+                                        if ($meta >= 0) {
+                                            $disponible = $model->disponibles;
+                                            if ($meta >= $disponible) {
+                                                $meta = $meta - $disponible;
+                                                $usados = $disponible;
+                                                $disponible = 0;
+                                            } else {
+                                                $disponible = $disponible - $meta;
+                                                $usados = $meta;
+                                                $meta = 0;
+                                            }
+
+                                            $model->disponibles = $disponible;
+                                            $model->save();
+
+                                            bitacora('inventario_bodega', $model->id_inventario_bodega, 'U', 'SACAR de la BODEGA');
+
+                                            $salida_inventario = new SalidaInventarioBodega();
+                                            $salida_inventario->id_salida_bodega = $salida->id_salida_bodega;
+                                            $salida_inventario->id_inventario_bodega = $model->id_inventario_bodega;
+                                            $salida_inventario->cantidad = $usados;
+                                            $salida_inventario->save();
+                                        }
+                                    }
                                 } else {
                                     return [
                                         'success' => false,
@@ -521,7 +608,7 @@ class PedidoBodegaController extends Controller
 
                             /* SACAR DEL INVENTARIO */
                             $inventarios = InventarioBodega::where('disponibles', '>', 0)
-                                ->where('id_producto', '=', $det->id_producto)
+                                ->where('id_producto', '=', $item_producto->id_producto)
                                 ->orderBy('fecha_ingreso', 'asc')
                                 ->orderBy('fecha_registro', 'asc')
                                 ->get();
