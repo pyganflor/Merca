@@ -7,9 +7,11 @@ use Illuminate\Http\Request;
 use yura\Http\Controllers\Controller;
 use yura\Modelos\CategoriaProducto;
 use yura\Modelos\IngresoBodega;
+use yura\Modelos\InventarioBodega;
 use yura\Modelos\Producto;
 use yura\Modelos\Proveedor;
 use yura\Modelos\SalidaBodega;
+use yura\Modelos\SalidaInventarioBodega;
 use yura\Modelos\Sector;
 use yura\Modelos\Submenu;
 
@@ -33,7 +35,7 @@ class MovimientosBodegaController extends Controller
             $q->Where('nombre', 'like', '%' . mb_strtoupper($request->busqueda) . '%')
                 ->orWhere('codigo', 'like', '%' . mb_strtoupper($request->busqueda) . '%');
         })
-        ->where('combo', 0);
+            ->where('combo', 0);
         if ($request->categoria != 'T')
             $listado = $listado->where('id_categoria_producto', $request->categoria);
         $listado = $listado->orderBy('orden')
@@ -46,7 +48,8 @@ class MovimientosBodegaController extends Controller
 
     public function add_ingresos(Request $request)
     {
-        $listado = Producto::orderBy('orden')
+        $listado = Producto::where('combo', 0)
+            ->orderBy('orden')
             ->get();
         $proveedores = Proveedor::where('estado', 1)
             ->orderBy('nombre')
@@ -74,10 +77,21 @@ class MovimientosBodegaController extends Controller
                 $ingreso->fecha = $request->fecha;
                 $ingreso->cantidad = $d->unidades;
                 $ingreso->precio = $d->precio;
-                $ingreso->id_empresa = getFincaActiva();
                 $ingreso->save();
                 $ingreso = IngresoBodega::All()->last();
                 bitacora('ingreso_bodega', $ingreso->id_ingreso_bodega, 'I', 'INGRESO A BODEGA de ' . $d->unidades . ' UNIDADES de ' . $producto->nombre);
+
+                /* INVENTARIO_BODEGA */
+                $inventario = new InventarioBodega();
+                $inventario->id_producto = $d->id_prod;
+                $inventario->fecha_ingreso = $request->fecha;
+                $inventario->cantidad = $d->unidades;
+                $inventario->disponibles = $d->unidades;
+                $inventario->precio = $d->precio;
+                $inventario->id_ingreso_bodega = $ingreso->id_ingreso_bodega;
+                $inventario->save();
+                $inventario = InventarioBodega::All()->last();
+                bitacora('inventario_bodega', $inventario->id_inventario_bodega, 'I', 'INVENTARIO de BODEGA de ' . $d->unidades . ' UNIDADES de ' . $producto->nombre);
             }
 
             DB::commit();
@@ -100,7 +114,8 @@ class MovimientosBodegaController extends Controller
 
     public function add_salidas(Request $request)
     {
-        $listado = Producto::orderBy('orden')
+        $listado = Producto::where('combo', 0)
+            ->orderBy('orden')
             ->get();
         $empresas = DB::table('configuracion_empresa')
             ->where('proveedor', 0)
@@ -124,14 +139,48 @@ class MovimientosBodegaController extends Controller
                     $producto->save();
                     bitacora('producto', $producto->id_producto, 'U', 'SALIDA DE BODEGA de ' . $d->unidades . ' UNIDADES');
 
-                    /* INGRESO_BODEGA */
-                    $ingreso = new SalidaBodega();
-                    $ingreso->id_producto = $d->id_prod;
-                    $ingreso->fecha = $request->fecha;
-                    $ingreso->cantidad = $d->unidades;
-                    $ingreso->save();
-                    $ingreso = SalidaBodega::All()->last();
-                    bitacora('salida_bodega', $ingreso->id_salida_bodega, 'I', 'SALIDA A BODEGA de ' . $d->unidades . ' UNIDADES de ' . $producto->nombre);
+                    /* SALIDA_BODEGA */
+                    $salida = new SalidaBodega();
+                    $salida->id_producto = $d->id_prod;
+                    $salida->fecha = $request->fecha;
+                    $salida->cantidad = $d->unidades;
+                    $salida->save();
+                    $salida = SalidaBodega::All()->last();
+                    bitacora('salida_bodega', $salida->id_salida_bodega, 'I', 'SALIDA A BODEGA de ' . $d->unidades . ' UNIDADES de ' . $producto->nombre);
+
+                    /* SACAR DEL INVENTARIO */
+                    $inventarios = InventarioBodega::where('disponibles', '>', 0)
+                        ->where('id_producto', '=', $d->id_prod)
+                        ->orderBy('fecha_ingreso', 'asc')
+                        ->orderBy('fecha_registro', 'asc')
+                        ->get();
+
+                    $meta = $d->unidades;
+                    foreach ($inventarios as $model) {
+                        if ($meta >= 0) {
+                            $disponible = $model->disponibles;
+                            if ($meta >= $disponible) {
+                                $meta = $meta - $disponible;
+                                $usados = $disponible;
+                                $disponible = 0;
+                            } else {
+                                $disponible = $disponible - $meta;
+                                $usados = $meta;
+                                $meta = 0;
+                            }
+
+                            $model->disponibles = $disponible;
+                            $model->save();
+
+                            bitacora('inventario_bodega', $model->id_inventario_bodega, 'U', 'SACAR de la BODEGA');
+
+                            $salida_inventario = new SalidaInventarioBodega();
+                            $salida_inventario->id_salida_bodega =  $salida->id_salida_bodega;
+                            $salida_inventario->id_inventario_bodega =  $model->id_inventario_bodega;
+                            $salida_inventario->cantidad =  $usados;
+                            $salida_inventario->save();
+                        }
+                    }
                 } else {
                     DB::rollBack();
                     $success = false;
