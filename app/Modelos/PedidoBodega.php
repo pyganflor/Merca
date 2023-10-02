@@ -98,13 +98,21 @@ class PedidoBodega extends Model
     public function getCostos()
     {
         $r = 0;
-        foreach ($this->detalles as $det) {
-            $producto = $det->producto;
-            if ($producto->combo == 0) {    // producto normal
-                $r += $producto->precio * $det->cantidad;
-            } else {    // producto tipo combo
-                $r += $producto->getCostoCombo() * $det->cantidad;
+        if ($this->armado == 0 || $this->getFechaEntrega() < '2023-10-03') {   // sin armar
+            foreach ($this->detalles as $det) {
+                $producto = $det->producto;
+                if ($producto->combo == 0) {    // producto normal
+                    $r += $producto->precio * $det->cantidad;
+                } else {    // producto tipo combo
+                    $r += $producto->getCostoCombo() * $det->cantidad;
+                }
             }
+        } else {    // armado
+            $r = DB::table('salida_inventario_bodega as s')
+                ->join('inventario_bodega as i', 'i.id_inventario_bodega', '=', 's.id_inventario_bodega')
+                ->select(DB::raw('sum(s.cantidad * i.precio) as cantidad'))
+                ->where('s.id_pedido_bodega', $this->id_pedido_bodega)
+                ->get()[0]->cantidad;
         }
         return round($r, 2);
     }

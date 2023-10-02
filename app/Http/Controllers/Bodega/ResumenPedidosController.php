@@ -44,6 +44,7 @@ class ResumenPedidosController extends Controller
         $usuarios = $usuarios->orderBy('p.fecha')
             ->orderBy('u.nombre_completo', 'asc')
             ->get();
+
         $listado = [];
         foreach ($usuarios as $u) {
             if ($request->tipo == 'T') {    // total Venta
@@ -105,6 +106,7 @@ class ResumenPedidosController extends Controller
                         }
                     }
                 }
+
                 if ($monto_total > 0)
                     $listado[] = [
                         'usuario' => $u,
