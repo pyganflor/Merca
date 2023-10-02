@@ -1192,10 +1192,16 @@ class ComandoDev extends Command
 
     function caca()
     {
-        $semanas = Semana::where('id_variedad', 518)
-            ->where('codigo', '>=', 2201)
+        $productos = Producto::where('estado', 1)
             ->get();
-        foreach ($semanas as $sem)
-            jobActualizarSemProyPerenne::dispatch($sem->codigo, 518, 2)->onQueue('proy_cosecha')->onConnection('sync');
+        foreach ($productos as $pos => $producto) {
+            dump('prod: ' . ($pos + 1) . '/' . count($productos));
+            $disponibles = DB::table('inventario_bodega')
+                ->select(DB::raw('sum(disponibles) as cant'))
+                ->where('id_producto', $producto->id_producto)
+                ->get()[0]->cant;
+            $producto->disponibles = $disponibles != '' ? $disponibles : 0;
+            $producto->save();
+        }
     }
 }
