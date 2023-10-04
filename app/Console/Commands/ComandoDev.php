@@ -1156,31 +1156,48 @@ class ComandoDev extends Command
             $activeSheetData = $document->getActiveSheet()->toArray(null, true, true, true);
 
             foreach ($activeSheetData as $pos_row => $row) {
-                if ($row['A'] != '') {
+                if ($row['B'] != '' && $pos_row > 1) {
                     dump('usuario: ' . $pos_row . '/' . count($activeSheetData));
-                    $fecha_ingreso = $row['C'];
-                    $dias_activo = difFechas(hoy(), $fecha_ingreso)->days;
-                    $aplica = 0;
-                    if ($dias_activo >= 90 && $row['D'] == 1)
-                        $aplica = 1;
-                    $passw = Hash::make(str_limit(mb_strtoupper(espacios($row['B'])), 250));
+                    $usuario = Usuario::All()
+                        ->where('username', str_limit(mb_strtolower(espacios($row['C'])), 250))
+                        ->first();
+                    if ($usuario == '') {
+                        dump('NEW');
+                        $fecha_ingreso = $row['D'];
+                        $dias_activo = difFechas(hoy(), $fecha_ingreso)->days;
+                        $aplica = 0;
+                        if ($dias_activo >= 90)
+                            $aplica = 1;
+                        $passw = Hash::make(str_limit(mb_strtoupper(espacios($row['C'])), 250));
 
-                    $usuario = new Usuario();
-                    $usuario->estado = 'A';
-                    $usuario->id_rol = 23;
-                    $usuario->aplica = $aplica;
-                    $usuario->cupo_disponible = 40;
-                    $usuario->saldo = $aplica ? 40 : 0;
-                    $usuario->password = $passw;
-                    $usuario->nombre_completo = str_limit(mb_strtoupper(espacios($row['A'])), 250);
-                    $usuario->username = str_limit(mb_strtolower(espacios($row['B'])), 250);
-                    $usuario->save();
-                    $usuario = Usuario::All()->last();
+                        $usuario = new Usuario();
+                        $usuario->estado = 'A';
+                        $usuario->id_rol = 23;
+                        $usuario->aplica = $aplica;
+                        $usuario->cupo_disponible = 40;
+                        $usuario->saldo = $aplica ? 40 : 0;
+                        $usuario->password = $passw;
+                        $usuario->nombre_completo = str_limit(mb_strtoupper(espacios($row['B'])), 250);
+                        $usuario->username = str_limit(mb_strtolower(espacios($row['C'])), 250);
+                        $usuario->save();
+                        $usuario = Usuario::All()->last();
 
-                    $usuario_finca = new UsuarioFinca();
-                    $usuario_finca->id_usuario = $usuario->id_usuario;
-                    $usuario_finca->id_empresa = 2;
-                    $usuario_finca->save();
+                        $usuario_finca = new UsuarioFinca();
+                        $usuario_finca->id_usuario = $usuario->id_usuario;
+                        $usuario_finca->id_empresa = 10;
+                        $usuario_finca->save();
+                    } /*else {
+                        $usuario_finca = UsuarioFinca::All()
+                            ->where('id_usuario', $usuario->id_usuario)
+                            ->where('id_empresa', 10)
+                            ->first();
+                        if ($usuario_finca == '') {
+                            $usuario_finca = new UsuarioFinca();
+                            $usuario_finca->id_usuario = $usuario->id_usuario;
+                            $usuario_finca->id_empresa = 10;
+                            $usuario_finca->save();
+                        }
+                    }*/
                 }
             }
             //unlink($url);
