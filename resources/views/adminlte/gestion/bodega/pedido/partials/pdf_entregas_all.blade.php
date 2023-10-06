@@ -1,4 +1,4 @@
-    <div style="position: relative; left: -20px; width: 655px">
+    <div style="position: relative; left: -20px; top: -30px; width: 695px">
         <table class="text-center" style="width: 100%">
             <tr>
                 <th style="text-align: center" colspan="2">
