@@ -56,7 +56,14 @@
                 @foreach ($pedido->detalles as $det)
                     @php
                         $producto = $det->producto;
-                        $precio_prod = $det->cantidad * $det->precio;
+                        if ($producto->peso == 0) {
+                            $precio_prod = $det->cantidad * $det->precio;
+                        } else {
+                            $precio_prod = 0;
+                            foreach ($det->etiquetas_peso as $e) {
+                                $precio_prod += $e->peso * $e->precio_venta;
+                            }
+                        }
                         if ($det->iva == true) {
                             $monto_subtotal += $precio_prod / 1.12;
                             $monto_total_iva += ($precio_prod / 1.12) * 0.12;
@@ -64,7 +71,7 @@
                             $monto_subtotal += $precio_prod;
                         }
                         $monto_total += $precio_prod;
-                        
+
                         if ($det->diferido > 0) {
                             $monto_diferido += $precio_prod / $det->diferido;
                             if ($diferido_selected == 0) {
@@ -92,7 +99,8 @@
                     <th class="border-1px">
                         ${{ number_format($monto_total, 2) }}
                     </th>
-                    <th class="border-1px" style="height: 35px" rowspan="{{ $monto_diferido > 0 ? ($diferido_selected + 1) : 1 }}">
+                    <th class="border-1px" style="height: 35px"
+                        rowspan="{{ $monto_diferido > 0 ? $diferido_selected + 1 : 1 }}">
                     </th>
                 </tr>
                 @php

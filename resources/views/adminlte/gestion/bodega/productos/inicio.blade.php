@@ -56,8 +56,9 @@
                             Tipo
                         </span>
                         <select id="filtro_tipo" style="width: 100%" class="form-control" onchange="listar_reporte()">
-                            <option value="P">Producto</option>
+                            <option value="N">Producto</option>
                             <option value="C">Combo</option>
+                            <option value="P">Peso</option>
                         </select>
                         <span class="input-group-btn">
                             <button type="button" class="btn btn-yura_dark" onclick="listar_reporte()">

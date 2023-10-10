@@ -82,9 +82,9 @@
             </span>
             <select id="tipo_catalogo" style="width: 100%" onchange="listar_catalogo()" onkeyup="listar_catalogo()"
                 class="form-control input-yura_default">
-                <option value="T">Todos</option>
-                <option value="P">Producto</option>
+                <option value="N">Producto</option>
                 <option value="C">Combo</option>
+                <option value="P">Peso</option>
             </select>
         </div>
 
@@ -102,11 +102,18 @@
                 </th>
                 <th class="text-center th_yura_green" style="width: 110px">
                     Diferido
-                    <label for="check_diferido_mes_actual" class="mouse-hand check_diferido_mes_actual hidden">
+                    <label for="check_diferido_mes_actual" class="mouse-hand check_diferido_mes_actual">
                         Mes actual
                     </label>
                     <input type="checkbox" id="check_diferido_mes_actual"
-                        class="mouse-hand check_diferido_mes_actual hidden">
+                        class="mouse-hand check_diferido_mes_actual">
+                    <select id="input_all_diferido_producto_selected" style="width: 100%; color: black !important"
+                        onchange="$('.input_diferido_producto_selected').val($(this).val())">
+                        <option value="0">Una Cuota</option>
+                        <option value="-1">Al contado</option>
+                        <option value="2">2 Meses</option>
+                        <option value="3">3 Meses</option>
+                    </select>
                 </th>
                 <th class="text-center th_yura_green" style="width: 110px">
                     Cantidad
@@ -214,7 +221,7 @@
                 '</th>' +
                 '<th class="text-center" style="border-color: #9d9d9d">' +
                 '<select id="input_diferido_producto_selected_' + prod +
-                '" style="width: 100%; height: 30px" onchange="calcular_totales_pedido()">' +
+                '" class="input_diferido_producto_selected" style="width: 100%; height: 30px" onchange="calcular_totales_pedido()">' +
                 '<option value="0">Una Cuota</option>' +
                 '<option value="-1">Al contado</option>' +
                 '<option value="2">2 Meses</option>' +
@@ -341,7 +348,6 @@
         span_contador_selected = $('.span_contador_selected');
         diferido_selected = 0;
         $('#btn_grabar_pedido').prop('disabled', false);
-        $('.check_diferido_mes_actual').addClass('hidden');
         for (i = 0; i < span_contador_selected.length; i++) {
             id_span = span_contador_selected[i].id;
             prod = parseInt($('#' + id_span).attr('data-id_producto'));
@@ -358,7 +364,6 @@
             }
             if (diferido > 0) {
                 monto_diferido += precio_prod / diferido;
-                $('.check_diferido_mes_actual').removeClass('hidden');
                 if (diferido_selected == 0) {
                     diferido_selected = diferido;
                 } else if (diferido_selected > 0 && diferido_selected != diferido) {

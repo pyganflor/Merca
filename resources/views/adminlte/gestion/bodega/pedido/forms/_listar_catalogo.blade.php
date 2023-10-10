@@ -30,7 +30,11 @@
                     </span>
                 </td>
                 <td class="text-center" style="border-color: #9d9d9d">
-                    <b>${{ number_format($item->precio_venta, 2) }}</b><sup>{{ $item->tiene_iva ? '+IVA' : '' }}</sup>
+                    @if ($item->peso == 1)
+                        <b>?</b><sup>{{ $item->tiene_iva ? '+IVA' : '' }}</sup>
+                    @else
+                        <b>${{ number_format($item->precio_venta, 2) }}</b><sup>{{ $item->tiene_iva ? '+IVA' : '' }}</sup>
+                    @endif
                 </td>
                 <td class="text-center" style="border-color: #9d9d9d">
                     <span class="text-left span_descriptivo_{{ $item->id_producto }}">
@@ -40,7 +44,7 @@
                                 <i class="fa fa-fw fa-minus"></i>
                             </button>
                             <button type="button" class="btn btn-sm btn-yura_dark"
-                                data-precio_venta="{{ $item->precio_venta }}" data-iva="{{ $item->tiene_iva }}"
+                                data-precio_venta="{{ $item->peso == 1 ? 0 : $item->precio_venta }}" data-iva="{{ $item->tiene_iva }}"
                                 id="btn_catalogo_{{ $item->id_producto }}">
                                 0
                             </button>

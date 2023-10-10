@@ -29,12 +29,13 @@ class ProductosController extends Controller
 
     public function listar_reporte(Request $request)
     {
-        if ($request->tipo == 'P') { //productos normales
+        if ($request->tipo == 'N') { //productos normales
             $listado = Producto::Where(function ($q) use ($request) {
                 $q->Where('nombre', 'like', '%' . mb_strtoupper($request->busqueda) . '%')
                     ->orWhere('codigo', 'like', '%' . mb_strtoupper($request->busqueda) . '%');
             })
-                ->where('combo', 0);
+                ->where('combo', 0)
+                ->where('peso', 0);
             if ($request->categoria != 'T')
                 $listado = $listado->where('id_categoria_producto', $request->categoria);
             $listado = $listado->orderBy('orden')
@@ -51,16 +52,42 @@ class ProductosController extends Controller
                 'categorias' => $categorias,
                 'proveedores' => $proveedores,
             ]);
-        } else { //productos combos
+        }
+        if ($request->tipo == 'C') { //productos combos
             $listado = Producto::Where(function ($q) use ($request) {
                 $q->Where('nombre', 'like', '%' . mb_strtoupper($request->busqueda) . '%')
                     ->orWhere('codigo', 'like', '%' . mb_strtoupper($request->busqueda) . '%');
             })
                 ->where('combo', 1)
+                ->where('peso', 0)
                 ->orderBy('orden')
                 ->get();
             return view('adminlte.gestion.bodega.productos.partials.listado_combos', [
                 'listado' => $listado,
+            ]);
+        }
+        if ($request->tipo == 'P') { //productos de peso
+            $listado = Producto::Where(function ($q) use ($request) {
+                $q->Where('nombre', 'like', '%' . mb_strtoupper($request->busqueda) . '%')
+                    ->orWhere('codigo', 'like', '%' . mb_strtoupper($request->busqueda) . '%');
+            })
+                ->where('combo', 0)
+                ->where('peso', 1);
+            if ($request->categoria != 'T')
+                $listado = $listado->where('id_categoria_producto', $request->categoria);
+            $listado = $listado->orderBy('orden')
+                ->get();
+
+            $categorias = CategoriaProducto::where('estado', 1)
+                ->orderBy('nombre')
+                ->get();
+            $proveedores = Proveedor::where('estado', 1)
+                ->orderBy('nombre')
+                ->get();
+            return view('adminlte.gestion.bodega.productos.partials.listado_peso', [
+                'listado' => $listado,
+                'categorias' => $categorias,
+                'proveedores' => $proveedores,
             ]);
         }
     }
@@ -103,6 +130,7 @@ class ProductosController extends Controller
             $model->precio = $request->precio_compra;
             $model->precio_venta = $request->precio_venta;
             $model->orden = $request->orden;
+            $model->peso = isset($request->peso) ? $request->peso : 0;
             $model->save();
             $model = Producto::All()->last();
 

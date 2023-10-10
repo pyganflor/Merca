@@ -79,7 +79,14 @@
         @foreach ($pedido->detalles as $det)
             @php
                 $producto = $det->producto;
-                $precio_prod = $det->cantidad * $det->precio;
+                if ($producto->peso == 0) {
+                    $precio_prod = $det->cantidad * $det->precio;
+                } else {
+                    $precio_prod = 0;
+                    foreach ($det->etiquetas_peso as $e) {
+                        $precio_prod += $e->peso * $e->precio_venta;
+                    }
+                }
                 if ($det->iva == true) {
                     $monto_subtotal += $precio_prod / 1.12;
                     $monto_total_iva += ($precio_prod / 1.12) * 0.12;
@@ -87,7 +94,7 @@
                     $monto_subtotal += $precio_prod;
                 }
                 $monto_total += $precio_prod;
-                
+
                 if ($det->diferido > 0) {
                     $monto_diferido += $precio_prod / $det->diferido;
                     if ($diferido_selected == 0) {
@@ -109,6 +116,22 @@
                     ${{ number_format($precio_prod, 2) }}
                 </th>
             </tr>
+            @foreach ($det->etiquetas_peso as $pos_etiqueta => $e)
+                <tr style="font-size: 0.6em">
+                    <th class="border-1px" style="text-align: left; padding-left: 2px">
+                        {{ $pos_etiqueta + 1 }}°
+                    </th>
+                    <th class="border-1px text-center">
+                        ${{ number_format($e->precio_venta, 2) }}
+                    </th>
+                    <th class="border-1px text-center">
+                        {{ $e->peso }}{{ $producto->unidad_medida }}
+                    </th>
+                    <th class="border-1px" style="text-align: right; padding-right: 2px">
+                        ${{ number_format($e->peso * $e->precio_venta, 2) }}
+                    </th>
+                </tr>
+            @endforeach
         @endforeach
         <tr style="font-size: 0.6em">
             <th style="text-align: left; padding-right: 2px" colspan="2">

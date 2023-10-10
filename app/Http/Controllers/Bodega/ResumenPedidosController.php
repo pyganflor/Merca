@@ -94,14 +94,27 @@ class ResumenPedidosController extends Controller
                             }
 
                             if ($det->diferido != -1 && $valida_diferido) {
-                                $precio_prod = $det->cantidad * $det->precio;
-                                if ($det->iva == true) {
-                                    $monto_subtotal += $precio_prod / 1.12;
-                                    $monto_total_iva += ($precio_prod / 1.12) * 0.12;
-                                } else {
-                                    $monto_subtotal += $precio_prod;
+                                if ($det->producto->peso == 0) {    // producto que no es de peso
+                                    $precio_prod = $det->cantidad * $det->precio;
+                                    if ($det->iva == true) {
+                                        $monto_subtotal += $precio_prod / 1.12;
+                                        $monto_total_iva += ($precio_prod / 1.12) * 0.12;
+                                    } else {
+                                        $monto_subtotal += $precio_prod;
+                                    }
+                                    $monto_total += $precio_prod;
+                                } else {    // producto tipo peso
+                                    foreach ($det->etiquetas_peso as $e) {
+                                        $precio_prod = $e->peso * $e->precio_venta;
+                                        if ($det->iva == true) {
+                                            $monto_subtotal += $precio_prod / 1.12;
+                                            $monto_total_iva += ($precio_prod / 1.12) * 0.12;
+                                        } else {
+                                            $monto_subtotal += $precio_prod;
+                                        }
+                                        $monto_total += $precio_prod;
+                                    }
                                 }
-                                $monto_total += $precio_prod;
                             }
                         }
                     }
@@ -154,8 +167,14 @@ class ResumenPedidosController extends Controller
                         ($diferido_fecha_final >= $request->desde && $diferido_fecha_final <= $request->hasta) ||
                         ($diferido_fecha_inicial <= $request->desde && $diferido_fecha_final >= $request->hasta)
                     ) {
-
-                        $precio_prod = $det_ped->cantidad * $det_ped->precio;
+                        if ($det_ped->producto->peso == 0) {    // producto que no es tipo peso
+                            $precio_prod = $det_ped->cantidad * $det_ped->precio;
+                        } else {    // producto tipo peso
+                            $precio_prod = 0;
+                            foreach ($det_ped->etiquetas_peso as $e) {
+                                $precio_prod += $e->peso * $e->precio_venta;
+                            }
+                        }
                         $diferido = $precio_prod / $det_ped->diferido;
                         if ($det_ped->iva == true) {
                             $subtotal = $precio_prod / 1.12;
@@ -205,7 +224,14 @@ class ResumenPedidosController extends Controller
                 $num_diferido = [];
                 foreach ($query_pedidos as $det_ped) {
                     if ($det_ped->diferido == null || $det_ped->diferido == 0) {
-                        $precio_prod = $det_ped->cantidad * $det_ped->precio;
+                        if ($det_ped->producto->peso == 0) {    // producto que no es tipo peso
+                            $precio_prod = $det_ped->cantidad * $det_ped->precio;
+                        } else {    // producto tipo peso
+                            $precio_prod = 0;
+                            foreach ($det_ped->etiquetas_peso as $e) {
+                                $precio_prod += $e->peso * $e->precio_venta;
+                            }
+                        }
                         if ($det_ped->iva == true) {
                             $subtotal = $precio_prod / 1.12;
                             $iva = ($precio_prod / 1.12) * 0.12;
@@ -305,18 +331,32 @@ class ResumenPedidosController extends Controller
                             }
 
                             if ($det->diferido != -1 && $valida_diferido) {
-                                $precio_prod = $det->cantidad * $det->precio;
-                                if ($det->iva == true) {
-                                    $monto_subtotal += $precio_prod / 1.12;
-                                    $monto_total_iva += ($precio_prod / 1.12) * 0.12;
-                                } else {
-                                    $monto_subtotal += $precio_prod;
+                                if ($det->producto->peso == 0) {    // producto que no es de peso
+                                    $precio_prod = $det->cantidad * $det->precio;
+                                    if ($det->iva == true) {
+                                        $monto_subtotal += $precio_prod / 1.12;
+                                        $monto_total_iva += ($precio_prod / 1.12) * 0.12;
+                                    } else {
+                                        $monto_subtotal += $precio_prod;
+                                    }
+                                    $monto_total += $precio_prod;
+                                } else {    // producto tipo peso
+                                    foreach ($det->etiquetas_peso as $e) {
+                                        $precio_prod = $e->peso * $e->precio_venta;
+                                        if ($det->iva == true) {
+                                            $monto_subtotal += $precio_prod / 1.12;
+                                            $monto_total_iva += ($precio_prod / 1.12) * 0.12;
+                                        } else {
+                                            $monto_subtotal += $precio_prod;
+                                        }
+                                        $monto_total += $precio_prod;
+                                    }
                                 }
-                                $monto_total += $precio_prod;
                             }
                         }
                     }
                 }
+
                 if ($monto_total > 0)
                     $listado[] = [
                         'usuario' => $u,
@@ -364,8 +404,14 @@ class ResumenPedidosController extends Controller
                         ($diferido_fecha_final >= $request->desde && $diferido_fecha_final <= $request->hasta) ||
                         ($diferido_fecha_inicial <= $request->desde && $diferido_fecha_final >= $request->hasta)
                     ) {
-
-                        $precio_prod = $det_ped->cantidad * $det_ped->precio;
+                        if ($det_ped->producto->peso == 0) {    // producto que no es tipo peso
+                            $precio_prod = $det_ped->cantidad * $det_ped->precio;
+                        } else {    // producto tipo peso
+                            $precio_prod = 0;
+                            foreach ($det_ped->etiquetas_peso as $e) {
+                                $precio_prod += $e->peso * $e->precio_venta;
+                            }
+                        }
                         $diferido = $precio_prod / $det_ped->diferido;
                         if ($det_ped->iva == true) {
                             $subtotal = $precio_prod / 1.12;
@@ -415,7 +461,14 @@ class ResumenPedidosController extends Controller
                 $num_diferido = [];
                 foreach ($query_pedidos as $det_ped) {
                     if ($det_ped->diferido == null || $det_ped->diferido == 0) {
-                        $precio_prod = $det_ped->cantidad * $det_ped->precio;
+                        if ($det_ped->producto->peso == 0) {    // producto que no es tipo peso
+                            $precio_prod = $det_ped->cantidad * $det_ped->precio;
+                        } else {    // producto tipo peso
+                            $precio_prod = 0;
+                            foreach ($det_ped->etiquetas_peso as $e) {
+                                $precio_prod += $e->peso * $e->precio_venta;
+                            }
+                        }
                         if ($det_ped->iva == true) {
                             $subtotal = $precio_prod / 1.12;
                             $iva = ($precio_prod / 1.12) * 0.12;

@@ -28,6 +28,11 @@ class DetallePedidoBodega extends Model
         return $this->belongsTo('\yura\Modelos\Producto', 'id_producto');
     }
 
+    public function etiquetas_peso()
+    {
+        return $this->hasMany('\yura\Modelos\EtiquetaPeso', 'id_detalle_pedido_bodega');
+    }
+
     public function getRangoDiferidoByFecha($fecha)
     {
         $fechas = [];

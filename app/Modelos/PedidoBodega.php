@@ -43,11 +43,28 @@ class PedidoBodega extends Model
             ->get()[0]->cantidad;
     }
 
+    public function tieneProductoPeso()
+    {
+        $r = DB::table('detalle_pedido_bodega as d')
+            ->join('producto as p', 'p.id_producto', '=', 'd.id_producto')
+            ->select(DB::raw('count(*) as cantidad'))
+            ->where('d.id_pedido_bodega', $this->id_pedido_bodega)
+            ->where('p.peso', 1)
+            ->get()[0]->cantidad;
+        dd($r);
+    }
+
     public function getTotalMonto()
     {
         $monto = 0;
         foreach ($this->detalles as $det) {
-            $monto += $det->cantidad * $det->precio;
+            if ($det->producto->peso == 0)  // producto que no es de peso
+                $monto += $det->cantidad * $det->precio;
+            else {    // producto tipo peso
+                foreach ($det->etiquetas_peso as $e) {
+                    $monto += $e->peso * $e->precio_venta;
+                }
+            }
         }
         return round($monto, 2);
     }
@@ -58,12 +75,25 @@ class PedidoBodega extends Model
         $monto_total = 0;
         $diferido_selected = 0;
         foreach ($this->detalles as $det) {
-            $precio_prod = $det->cantidad * $det->precio;
-            $monto_total += $precio_prod;
-            if ($det->diferido > 0) {
-                $monto_diferido += $precio_prod / $det->diferido;
-                if ($diferido_selected == 0) {
-                    $diferido_selected = $det->diferido;
+            if ($det->producto->peso == 0) {    // producto que no es de peso
+                $precio_prod = $det->cantidad * $det->precio;
+                $monto_total += $precio_prod;
+                if ($det->diferido > 0) {
+                    $monto_diferido += $precio_prod / $det->diferido;
+                    if ($diferido_selected == 0) {
+                        $diferido_selected = $det->diferido;
+                    }
+                }
+            } else {    // producto tipo peso
+                foreach ($det->etiquetas_peso as $e) {
+                    $precio_prod = $e->peso * $e->precio_venta;
+                    $monto_total += $precio_prod;
+                    if ($det->diferido > 0) {
+                        $monto_diferido += $precio_prod / $det->diferido;
+                        if ($diferido_selected == 0) {
+                            $diferido_selected = $det->diferido;
+                        }
+                    }
                 }
             }
         }
@@ -77,9 +107,18 @@ class PedidoBodega extends Model
     {
         $monto_diferido = 0;
         foreach ($this->detalles as $det) {
-            $precio_prod = $det->cantidad * $det->precio;
-            if ($det->diferido > 0) {
-                $monto_diferido += $precio_prod / $det->diferido;
+            if ($det->producto->peso == 0) {    // producto que no es de peso
+                $precio_prod = $det->cantidad * $det->precio;
+                if ($det->diferido > 0) {
+                    $monto_diferido += $precio_prod / $det->diferido;
+                }
+            } else {    // producto tipo peso
+                foreach ($det->etiquetas_peso as $e) {
+                    $precio_prod = $e->peso * $e->precio_venta;
+                    if ($det->diferido > 0) {
+                        $monto_diferido += $precio_prod / $det->diferido;
+                    }
+                }
             }
         }
         return round($monto_diferido, 2);
@@ -101,18 +140,34 @@ class PedidoBodega extends Model
         if ($this->armado == 0 || $this->getFechaEntrega() < '2023-10-03') {   // sin armar
             foreach ($this->detalles as $det) {
                 $producto = $det->producto;
-                if ($producto->combo == 0) {    // producto normal
-                    $r += $producto->precio * $det->cantidad;
-                } else {    // producto tipo combo
-                    $r += $producto->getCostoCombo() * $det->cantidad;
+                if ($producto->peso == 0) { // producto que no es de peso
+                    if ($producto->combo == 0) {    // producto normal
+                        $r += $producto->precio * $det->cantidad;
+                    } else {    // producto tipo combo
+                        $r += $producto->getCostoCombo() * $det->cantidad;
+                    }
+                } else {    // producto tipo peso
+                    foreach ($det->etiquetas_peso as $e) {
+                        $r += $e->inventario_bodega->precio;
+                    }
                 }
             }
         } else {    // armado
+            /* PRODUCTOS QUE NO SON TIPO PESO */
             $r = DB::table('salida_inventario_bodega as s')
                 ->join('inventario_bodega as i', 'i.id_inventario_bodega', '=', 's.id_inventario_bodega')
                 ->select(DB::raw('sum(s.cantidad * i.precio) as cantidad'))
                 ->where('s.id_pedido_bodega', $this->id_pedido_bodega)
                 ->get()[0]->cantidad;
+            /* PRODUCTOS QUE SI SON TIPO PESO */
+            foreach ($this->detalles as $det) {
+                $producto = $det->producto;
+                if ($producto->peso == 1) {
+                    foreach ($det->etiquetas_peso as $e) {
+                        $r += $e->inventario_bodega->precio;
+                    }
+                }
+            }
         }
         return round($r, 2);
     }
