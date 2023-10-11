@@ -132,6 +132,7 @@ Route::group(['middleware' => 'autenticacion'], function () {
             include 'bodega/proveedores.php';
             include 'bodega/reporte_ventas.php';
             include 'bodega/etiquetar_peso.php';
+            include 'bodega/ranking_productos.php';
 
             /* ========================== FACTURACIÓN ========================*/
             /*include 'facturacion/tipo_comprobante.php';

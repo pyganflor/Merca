@@ -9,20 +9,18 @@
             desde: $('#filtro_desde').val(),
             hasta: $('#filtro_hasta').val(),
             finca: $('#filtro_finca').val(),
-            tipo: $('#filtro_tipo').val(),
         };
-        get_jquery('{{ url('resumen_pedidos/listar_reporte') }}', datos, function(retorno) {
+        get_jquery('{{ url('ranking_productos/listar_reporte') }}', datos, function(retorno) {
             $('#div_listado').html(retorno);
-            estructura_tabla('table_descuentos');
-        }, 'div_listado');
+            estructura_tabla('tabla_ranking');
+        });
     }
 
-    function exportar_reporte() {
+    /*function exportar_reporte() {
         $.LoadingOverlay('show');
-        window.open('{{ url('resumen_pedidos/exportar_reporte') }}?desde=' + $('#filtro_desde').val() +
-            '&tipo=' + $('#filtro_tipo').val() +
+        window.open('{{ url('ranking_productos/exportar_reporte') }}?desde=' + $('#filtro_desde').val() +
             '&hasta=' + $('#filtro_hasta').val() +
             '&finca=' + $('#filtro_finca').val(), '_blank');
         $.LoadingOverlay('hide');
-    }
+    }*/
 </script>

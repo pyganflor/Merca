@@ -21,6 +21,7 @@ use PHPExcel_Style_Fill;
 use PHPExcel_Style_Border;
 use PHPExcel_Style_Color;
 use PHPExcel_Style_Alignment;
+use yura\Modelos\PedidoBodega;
 use yura\Modelos\UsuarioFinca;
 
 class UsuarioController extends Controller
@@ -637,5 +638,16 @@ class UsuarioController extends Controller
             'success' => true,
             'mensaje' => 'Se ha guardado la información satisfactoriamente'
         ];
+    }
+
+    public function historial_pedidos(Request $request)
+    {
+        $listado = PedidoBodega::where('id_usuario', $request->user)
+            ->orderBy('fecha', 'asc')
+            ->get();
+
+        return view('adminlte.gestion.usuarios.partials.historial_pedidos', [
+            'listado' => $listado,
+        ]);
     }
 }

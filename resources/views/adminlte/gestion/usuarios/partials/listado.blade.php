@@ -24,7 +24,7 @@
                     <th class="text-center th_yura_green">
                         APLICA
                     </th>
-                    <th class="text-center th_yura_green">
+                    <th class="text-center th_yura_green" style="width: 110px">
                         OPCIONES
                     </th>
                 </tr>
@@ -68,6 +68,14 @@
                                 id="btn_view_usuario_{{ $item->id_usuario }}">
                                 <i class="fa fa-fw fa-eye" style="color: black"></i>
                             </button>
+                            <button type="button" class="btn btn-xs btn-yura_primary text-white" title="Fincas"
+                                onclick="config_user_finca('{{ $item->id_usuario }}')">
+                                <i class="fa fa-fw fa-leaf"></i>
+                            </button>
+                            <button type="button" class="btn btn-xs btn-yura_dark" title="Historial de Pedidos"
+                                onclick="historial_pedidos('{{ $item->id_usuario }}')">
+                                <i class="fa fa-fw fa-gift"></i>
+                            </button>
                             @if (getUsuario($item->id_usuario)->rol()->tipo == 'S')
                                 <button type="button" class="btn btn-xs btn-yura_danger"
                                     title="{{ $item->estado == 'A' ? 'Desactivar' : 'Activar' }}"
@@ -77,10 +85,6 @@
                                         style="color: black" id="icon_usuarios_{{ $item->id_usuario }}"></i>
                                 </button>
                             @endif
-                            <button type="button" class="btn btn-xs btn-yura_primary text-white" title="Fincas"
-                                onclick="config_user_finca('{{ $item->id_usuario }}')">
-                                <i class="fa fa-fw fa-leaf"></i>
-                            </button>
                         </div>
                     </td>
                 </tr>
@@ -102,5 +106,15 @@
                 '<i class="fa fa-fw fa-leaf"></i> Configurar las fincas del usuario', true, false, '45%');
         });
         $.LoadingOverlay('hide');
+    }
+
+    function historial_pedidos(user) {
+        datos = {
+            user: user
+        };
+        get_jquery('{{ url('usuarios/historial_pedidos') }}', datos, function(retorno) {
+            modal_view('modal-view_historial_pedidos', retorno,
+                '<i class="fa fa-fw fa-leaf"></i> Historial de Pedidos', true, false, '75%');
+        });
     }
 </script>
