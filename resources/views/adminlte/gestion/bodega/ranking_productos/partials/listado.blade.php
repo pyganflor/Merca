@@ -7,22 +7,22 @@
             <th class="th_yura_green padding_lateral_5" style="width: 80px">
                 Cantidad
             </th>
-            <th class="th_yura_green padding_lateral_5" style="width: 60px">
+            <th class="th_yura_green padding_lateral_5" style="width: 80px">
                 Subtotal
             </th>
-            <th class="th_yura_green padding_lateral_5" style="width: 40px">
+            <th class="th_yura_green padding_lateral_5" style="width: 80px">
                 Iva
             </th>
-            <th class="th_yura_green padding_lateral_5" style="width: 50px">
+            <th class="th_yura_green padding_lateral_5" style="width: 80px">
                 Total
             </th>
-            <th class="th_yura_green padding_lateral_5" style="width: 50px">
+            <th class="th_yura_green padding_lateral_5" style="width: 80px">
                 Costos
             </th>
-            <th class="th_yura_green padding_lateral_5" style="width: 50px">
+            <th class="th_yura_green padding_lateral_5" style="width: 80px">
                 Margen
             </th>
-            <th class="th_yura_green padding_lateral_5" style="width: 50px">
+            <th class="th_yura_green padding_lateral_5" style="width: 80px">
                 Utilidad
             </th>
         </tr>
