@@ -33,8 +33,7 @@
                 $margen_total = $item['monto_total'] - $item['costo_total'];
                 $utilidad_total = porcentaje($margen_total, $item['costo_total'], 1);
             @endphp
-            <tr onmouseover="$(this).addClass('bg-yura_dark')" onmouseleave="$(this).removeClass('bg-yura_dark')"
-                style="background-color: {{ $pos % 2 == 0 ? 'beige' : '' }}">
+            <tr onmouseover="$(this).addClass('bg-yura_dark')" onmouseleave="$(this).removeClass('bg-yura_dark')">
                 <th class="padding_lateral_5" style="border-color: #9d9d9d">
                     {{ $item['producto']->nombre }}
                 </th>
