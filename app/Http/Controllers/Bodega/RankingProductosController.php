@@ -6,6 +6,7 @@ use DB;
 use Illuminate\Http\Request;
 use yura\Http\Controllers\Controller;
 use yura\Modelos\DetallePedidoBodega;
+use yura\Modelos\Producto;
 use yura\Modelos\Submenu;
 
 class RankingProductosController extends Controller
@@ -30,14 +31,13 @@ class RankingProductosController extends Controller
 
     public function listar_reporte(Request $request)
     {
-        $productos = DB::table('producto as prod')
-            ->join('detalle_pedido_bodega as d', 'd.id_producto', '=', 'prod.id_producto')
+        $productos = Producto::join('detalle_pedido_bodega as d', 'd.id_producto', '=', 'producto.id_producto')
             ->join('pedido_bodega as p', 'p.id_pedido_bodega', '=', 'd.id_pedido_bodega')
-            ->select('prod.nombre', 'd.id_producto', 'prod.peso', 'prod.combo', 'prod.precio')->distinct()
+            ->select('producto.*')->distinct()
             ->where('p.fecha', '<=', $request->hasta);
         if ($request->finca != 'T')
             $productos = $productos->where('p.id_empresa', $request->finca);
-        $productos = $productos->orderBy('prod.nombre')
+        $productos = $productos->orderBy('producto.nombre')
             ->get();
 
         $listado = [];
