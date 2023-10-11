@@ -55,6 +55,7 @@ class RankingProductosController extends Controller
             $monto_total_iva = 0;
             $monto_total = 0;
             $costo_total = 0;
+            $fechas_entregado = [];
             foreach ($detalles_pedido as $det_ped) {
                 $pedido = $det_ped->pedido_bodega;
                 $fecha_entrega = $pedido->getFechaEntrega();
@@ -105,6 +106,8 @@ class RankingProductosController extends Controller
                                 ->get()[0]->cantidad;
                         }
                     }
+                    if (!in_array($fecha_entrega, $fechas_entregado))
+                        $fechas_entregado[] = $fecha_entrega;
                 }
             }
 
@@ -116,6 +119,7 @@ class RankingProductosController extends Controller
                     'monto_total_iva' => $monto_total_iva,
                     'monto_total' => $monto_total,
                     'costo_total' => $costo_total,
+                    'fechas_entregado' => $fechas_entregado,
                 ];
             }
         }

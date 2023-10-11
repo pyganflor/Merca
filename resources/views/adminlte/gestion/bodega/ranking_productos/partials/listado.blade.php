@@ -32,10 +32,25 @@
             @php
                 $margen_total = $item['monto_total'] - $item['costo_total'];
                 $utilidad_total = porcentaje($margen_total, $item['costo_total'], 1);
+                $list_fechas = '';
+                foreach ($item['fechas_entregado'] as $f) {
+                    $list_fechas .= explode(' del ', convertDateToText($f))[0] . '<br>';
+                }
             @endphp
             <tr onmouseover="$(this).addClass('bg-yura_dark')" onmouseleave="$(this).removeClass('bg-yura_dark')">
-                <th class="padding_lateral_5" style="border-color: #9d9d9d">
+                <th class="padding_lateral_5" style="border-color: #9d9d9d" data-toggle="tooltip" data-placement="top">
                     {{ $item['producto']->nombre }}
+                    <button class="btn btn-xs btn-yura_dark listado_fechas_{{ $pos }} pull-right" title="Ver Fechas"
+                        onclick="$('.listado_fechas_{{ $pos }}').toggleClass('hidden')">
+                        <i class="fa fa-fw fa-calendar"></i>
+                    </button>
+                    <ul class="pull-right hidden listado_fechas_{{ $pos }} mouse-hand" onclick="$('.listado_fechas_{{ $pos }}').toggleClass('hidden')">
+                        @foreach ($item['fechas_entregado'] as $f)
+                            <li class="padding_lateral_5">
+                                {{ explode(' del ', convertDateToText($f))[0] }}
+                            </li>
+                        @endforeach
+                    </ul>
                 </th>
                 <th class="padding_lateral_5" style="border-color: #9d9d9d">
                     {{ $item['cantidad'] }}
