@@ -12,4 +12,12 @@
             $('#div_listado').html(retorno);
         }, 'div_listado');
     }
+
+    function admin_entrega_finca() {
+        datos = {
+        };
+        get_jquery('{{ url('fecha_entrega/admin_entrega_finca') }}', datos, function(retorno) {
+            $('#div_listado').html(retorno);
+        }, 'div_listado');
+    }
 </script>

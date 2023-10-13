@@ -17,6 +17,7 @@ class PedidoBodega extends Model
         'estado',
         'fecha',
         'id_empresa',
+        'finca_nomina',
         'estado',
     ];
 
@@ -28,6 +29,11 @@ class PedidoBodega extends Model
     public function empresa()
     {
         return $this->belongsTo('\yura\Modelos\ConfiguracionEmpresa', 'id_empresa');
+    }
+
+    public function getFincaNomina()
+    {
+        return $this->belongsTo('\yura\Modelos\ConfiguracionEmpresa', 'finca_nomina');
     }
 
     public function detalles()

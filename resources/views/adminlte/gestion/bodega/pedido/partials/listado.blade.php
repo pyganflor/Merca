@@ -42,10 +42,16 @@
                     @endif
                     {{ $item->usuario->nombre_completo }}
                     <br>
-                    <em>{{ $item->empresa->nombre }}</em>
+                    <small title="Entrega">
+                        <i class="fa fa-fw fa-arrow-right color_text-yura_danger"></i>
+                        {{ $item->empresa->nombre }}
+                    </small>
+                    <small title="Nomina">
+                        <i class="fa fa-fw fa-file color_text-yura_danger"></i>
+                        {{ $item->getFincaNomina->nombre }}
+                    </small>
                     <br>
                     <small title="Fecha de Toma">
-                        <i class="fa fa-fw fa-arrow-right color_text-yura_primary"></i>
                         {{ convertDateToText($item->fecha) }}
                     </small>
                     <br>

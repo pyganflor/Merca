@@ -13,7 +13,22 @@
             <td class="text-center" style="border-color: #9d9d9d; min-width: 260px">
                 <div class="input-group">
                     <span class="input-group-addon bg-yura_dark">
-                        Finca
+                        Finca Nomina
+                    </span>
+                    <select id="form_finca_nomina" style="width: 100%" class="form-control">
+                        @foreach ($fincas as $f)
+                            <option value="{{ $f->id_empresa }}"
+                                {{ $f->id_empresa == $pedido->finca_nomina ? 'selected' : '' }}>
+                                {{ $f->nombre }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+            </td>
+            <td class="text-center" style="border-color: #9d9d9d; min-width: 260px">
+                <div class="input-group">
+                    <span class="input-group-addon bg-yura_dark">
+                        Finca de Entrega
                     </span>
                     <select id="form_finca" style="width: 100%" class="form-control" onchange="seleccionar_finca()">
                         @foreach ($fincas as $f)
@@ -448,6 +463,7 @@
             _token: '{{ csrf_token() }}',
             ped: ped,
             fecha: $('#form_fecha').val(),
+            finca_nomina: $('#form_finca_nomina').val(),
             finca: $('#form_finca').val(),
             usuario: $('#form_usuario').val(),
             diferido_mes_actual: $('#check_diferido_mes_actual').prop('checked'),

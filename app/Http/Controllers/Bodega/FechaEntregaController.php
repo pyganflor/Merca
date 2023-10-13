@@ -127,4 +127,52 @@ class FechaEntregaController extends Controller
             'mensaje' => $msg,
         ];
     }
+    public function copiar_fechas(Request $request)
+    {
+        $fincas = getAllFincas();
+
+        return view('adminlte.gestion.bodega.fecha_entrega.forms.copiar_fechas', [
+            'fincas' => $fincas,
+        ]);
+    }
+
+    public function store_copiar_fechas(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            foreach (json_decode($request->data_fincas) as $f) {
+                foreach (json_decode($request->data_entregas) as $e) {
+                    $entrega = FechaEntrega::find($e);
+                    $existe = FechaEntrega::All()
+                        ->where('entrega', $entrega->entrega)
+                        ->where('id_empresa', $f)
+                        ->first();
+                    if ($existe == '') {
+                        $model = new FechaEntrega();
+                        $model->desde = $entrega->desde;
+                        $model->hasta = $entrega->hasta;
+                        $model->entrega = $entrega->entrega;
+                        $model->id_empresa = $f;
+                        $model->save();
+                    }
+                }
+            }
+
+            $success = true;
+            $msg = 'Se ha <b>CREADO</b> la fecha de entrega correctamente';
+
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            $success = false;
+            $msg = '<div class="alert alert-danger text-center">' .
+                '<p> Ha ocurrido un problema al guardar la informacion al sistema</p>' .
+                '<p>' . $e->getMessage() . ' ' . $e->getFile() . ' ' . $e->getLine() . '</p>'
+                . '</div>';
+        }
+        return [
+            'success' => $success,
+            'mensaje' => $msg,
+        ];
+    }
 }

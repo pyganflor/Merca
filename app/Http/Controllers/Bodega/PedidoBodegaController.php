@@ -366,6 +366,7 @@ class PedidoBodegaController extends Controller
                 $pedido = new PedidoBodega();
                 $pedido->fecha = $request->fecha;
                 $pedido->id_usuario = $request->usuario;
+                $pedido->finca_nomina = $request->finca_nomina;
                 $pedido->id_empresa = $request->finca;
                 $pedido->diferido_mes_actual = $request->diferido_mes_actual == 'true' ? 1 : 0;
                 $pedido->save();
@@ -499,6 +500,7 @@ class PedidoBodegaController extends Controller
                     $pedido->fecha = $request->fecha;
                     $pedido->id_usuario = $request->usuario;
                     $pedido->id_empresa = $request->finca;
+                    $pedido->finca_nomina = $request->finca_nomina;
                     $pedido->diferido_mes_actual = $request->diferido_mes_actual == 'true' ? 1 : 0;
                     $pedido->saldo_usuario = $usuario->saldo;
                     $pedido->save();

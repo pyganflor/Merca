@@ -40,7 +40,7 @@ class ResumenPedidosController extends Controller
             ->where('p.estado', 1)
             ->where('p.fecha', '<=', $request->hasta);
         if ($request->finca != 'T')
-            $usuarios = $usuarios->where('p.id_empresa', $request->finca);
+            $usuarios = $usuarios->where('p.finca_nomina', $request->finca);
         $usuarios = $usuarios->orderBy('p.fecha')
             ->orderBy('u.nombre_completo', 'asc')
             ->get();
@@ -52,7 +52,7 @@ class ResumenPedidosController extends Controller
                     ->where('estado', 1)
                     ->where('fecha', '<=', $request->hasta);
                 if ($request->finca != 'T')
-                    $query_pedidos = $query_pedidos->where('id_empresa', $request->finca);
+                    $query_pedidos = $query_pedidos->where('finca_nomina', $request->finca);
                 $query_pedidos = $query_pedidos->get();
 
                 $pedidos = [];
@@ -130,13 +130,13 @@ class ResumenPedidosController extends Controller
                     ];
             } else if ($request->tipo == 'D') { // Diferidos
                 $query_pedidos = DetallePedidoBodega::join('pedido_bodega as p', 'p.id_pedido_bodega', '=', 'detalle_pedido_bodega.id_pedido_bodega')
-                    ->select('detalle_pedido_bodega.*', 'p.fecha', 'p.id_empresa', 'p.diferido_mes_actual')->distinct()
+                    ->select('detalle_pedido_bodega.*', 'p.fecha', 'p.finca_nomina', 'p.diferido_mes_actual')->distinct()
                     ->where('p.id_usuario', $u->id_usuario)
                     ->where('p.estado', 1)
                     ->where('p.fecha', '<=', $request->hasta)
                     ->where('detalle_pedido_bodega.diferido', '>', 0);
                 if ($request->finca != 'T')
-                    $query_pedidos = $query_pedidos->where('p.id_empresa', $request->finca);
+                    $query_pedidos = $query_pedidos->where('p.finca_nomina', $request->finca);
                 $query_pedidos = $query_pedidos->get();
 
                 $monto_subtotal = 0;
@@ -209,14 +209,15 @@ class ResumenPedidosController extends Controller
                     ];
             } else if ($request->tipo == 'N') { // NO Diferidos
                 $query_pedidos = DetallePedidoBodega::join('pedido_bodega as p', 'p.id_pedido_bodega', '=', 'detalle_pedido_bodega.id_pedido_bodega')
-                    ->select('detalle_pedido_bodega.*', 'p.fecha', 'p.id_empresa')->distinct()
+                    ->select('detalle_pedido_bodega.*', 'p.fecha', 'p.finca_nomina')->distinct()
                     ->where('p.id_usuario', $u->id_usuario)
                     ->where('p.estado', 1)
                     ->where('p.fecha', '<=', $request->hasta)
                     ->where('detalle_pedido_bodega.diferido', '!=', -1);
                 if ($request->finca != 'T')
-                    $query_pedidos = $query_pedidos->where('p.id_empresa', $request->finca);
+                    $query_pedidos = $query_pedidos->where('p.finca_nomina', $request->finca);
                 $query_pedidos = $query_pedidos->get();
+                dd($query_pedidos);
 
                 $monto_subtotal = 0;
                 $monto_total_iva = 0;

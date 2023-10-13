@@ -13,6 +13,20 @@
             <td class="text-center" style="border-color: #9d9d9d; min-width: 260px">
                 <div class="input-group">
                     <span class="input-group-addon bg-yura_dark">
+                        Finca Nomina
+                    </span>
+                    <select id="form_finca_nomina" style="width: 100%" class="form-control">
+                        @foreach ($fincas as $f)
+                            <option value="{{ $f->id_empresa }}">
+                                {{ $f->nombre }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+            </td>
+            <td class="text-center" style="border-color: #9d9d9d; min-width: 260px">
+                <div class="input-group">
+                    <span class="input-group-addon bg-yura_dark">
                         Finca
                     </span>
                     <select id="form_finca" style="width: 100%" class="form-control" onchange="seleccionar_finca()">
@@ -323,6 +337,7 @@
         datos = {
             _token: '{{ csrf_token() }}',
             fecha: $('#form_fecha').val(),
+            finca_nomina: $('#form_finca_nomina').val(),
             finca: $('#form_finca').val(),
             usuario: $('#form_usuario').val(),
             usuario: $('#form_usuario').val(),

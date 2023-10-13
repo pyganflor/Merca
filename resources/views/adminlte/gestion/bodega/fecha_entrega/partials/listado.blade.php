@@ -2,6 +2,10 @@
     <table class="table-striped table-bordered" style="width: 100%; border: 1px solid #9d9d9d">
         <tr id="tr_fija_top_0">
             <th class="text-center th_yura_green">
+                <input type="checkbox" onclick="$('.check_entrega').prop('checked', $(this).prop('checked'))"
+                    class="mouse-hand">
+            </th>
+            <th class="text-center th_yura_green">
                 DESDE
             </th>
             <th class="text-center th_yura_green">
@@ -14,13 +18,21 @@
                 FINCA
             </th>
             <th class="text-center th_yura_green" style="width: 60px">
-                <button type="button" class="btn btn-xs btn-yura_default"
-                    onclick="$('#tr_new_fecha').removeClass('hidden'); $('#desde_new').focus()">
-                    <i class="fa fa-fw fa-plus"></i>
-                </button>
+                <div class="btn-group">
+                    <button type="button" class="btn btn-xs btn-yura_default" title="Agregar Fecha"
+                        onclick="$('#tr_new_fecha').removeClass('hidden'); $('#desde_new').focus()">
+                        <i class="fa fa-fw fa-plus"></i>
+                    </button>
+                    <button type="button" class="btn btn-xs btn-yura_dark" onclick="copiar_fechas()"
+                        title="Copiar Fechas Seleccionadas">
+                        <i class="fa fa-fw fa-copy"></i>
+                    </button>
+                </div>
             </th>
         </tr>
         <tr id="tr_new_fecha" class="hidden">
+            <th class="text-center" style="border-color: #9d9d9d">
+            </th>
             <th class="text-center" style="border-color: #9d9d9d">
                 <input type="date" style="width: 100%" class="text-center bg-yura_dark" id="desde_new"
                     name="desde_new" placeholder="Desde" required value="{{ hoy() }}">
@@ -50,6 +62,10 @@
         </tr>
         @foreach ($listado as $item)
             <tr>
+                <th class="text-center" style="border-color: #9d9d9d">
+                    <input type="checkbox" id="check_entrega_{{ $item->id_fecha_entrega }}"
+                        class="check_entrega mouse-hand" data-id="{{ $item->id_fecha_entrega }}">
+                </th>
                 <th class="text-center" style="border-color: #9d9d9d">
                     <input type="date" style="width: 100%" class="text-center"
                         id="desde_{{ $item->id_fecha_entrega }}" value="{{ $item->desde }}" required>
@@ -154,5 +170,16 @@
                     listar_reporte();
                 });
             });
+    }
+
+    function copiar_fechas() {
+        datos = {
+        }
+        get_jquery('{{ url('fecha_entrega/copiar_fechas') }}', datos, function(retorno) {
+            modal_view('modal_copiar_fechas', retorno,
+                '<i class="fa fa-fw fa-shopping-cart"></i> Seleccione la(s) Finca(s)',
+                true, false, '{{ isPC() ? '50%' : '' }}',
+                function() {});
+        });
     }
 </script>
