@@ -418,18 +418,29 @@ class PedidoBodegaController extends Controller
         DB::beginTransaction();
         try {
             $pedido = PedidoBodega::find($request->ped);
-            if (!in_array($pedido->id_usuario, [1, 2])) {
-                $monto_total = $pedido->getTotalMontoDiferido();
-                $usuario = $pedido->usuario;
-                $usuario->saldo += $monto_total;
-                $usuario->save();
+            $tiene_etiquetas_peso = DB::table('etiqueta_peso as e')
+                ->join('detalle_pedido_bodega as d', 'd.id_detalle_pedido_bodega', '=', 'e.id_detalle_pedido_bodega')
+                ->select('e.id_etiqueta_peso')->distinct()
+                ->where('d.id_pedido_bodega', $pedido->id_pedido_bodega)
+                ->get();
+            if (count($tiene_etiquetas_peso) == 0) {
+                if (!in_array($pedido->id_usuario, [1, 2])) {
+                    $monto_total = $pedido->getTotalMontoDiferido();
+                    $usuario = $pedido->usuario;
+                    $usuario->saldo += $monto_total;
+                    $usuario->save();
+                }
+                $pedido->delete();
+
+                $success = true;
+                $msg = 'Se ha <b>CANCELADO</b> el pedido correctamente';
+                DB::commit();
+            } else {
+                DB::rollBack();
+                $success = false;
+                $msg = '<div class="alert alert-danger text-center">' .
+                    'Este pedido (<b>TIENE ETIQUETAS DE PESO</b>) asignadas. Comuniquese con el administrador</div>';
             }
-            $pedido->delete();
-
-            $success = true;
-            $msg = 'Se ha <b>CANCELADO</b> el pedido correctamente';
-
-            DB::commit();
         } catch (\Exception $e) {
             DB::rollBack();
             $success = false;
@@ -679,7 +690,6 @@ class PedidoBodegaController extends Controller
             $pedido->save();
 
             if ($tiene_peso) {
-                
             }
 
             foreach ($models_productos as $p) {
