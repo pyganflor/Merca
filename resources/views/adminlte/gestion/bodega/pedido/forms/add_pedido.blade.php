@@ -304,7 +304,7 @@
     function seleccionar_finca() {
         datos = {
             _token: '{{ csrf_token() }}',
-            finca: $('#form_finca').val()
+            finca: $('#form_finca_nomina').val()
         }
         $('#form_usuario').LoadingOverlay('show');
         $.post('{{ url('pedido_bodega/seleccionar_finca') }}', datos, function(retorno) {
