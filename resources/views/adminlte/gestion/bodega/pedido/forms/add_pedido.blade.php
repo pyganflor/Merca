@@ -17,7 +17,8 @@
                     </span>
                     <select id="form_finca" style="width: 100%" class="form-control">
                         @foreach ($fincas as $f)
-                            <option value="{{ $f->id_empresa }}">
+                            <option value="{{ $f->id_empresa }}"
+                                {{ $f->id_empresa == $finca_selected ? 'selected' : '' }}>
                                 {{ $f->nombre }}
                             </option>
                         @endforeach
