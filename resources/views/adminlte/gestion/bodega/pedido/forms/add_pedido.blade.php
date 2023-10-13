@@ -27,7 +27,7 @@
             <td class="text-center" style="border-color: #9d9d9d; min-width: 260px">
                 <div class="input-group">
                     <span class="input-group-addon bg-yura_dark">
-                        Finca
+                        Finca de Entrega
                     </span>
                     <select id="form_finca" style="width: 100%" class="form-control" onchange="seleccionar_finca()">
                         @foreach ($fincas as $f)
