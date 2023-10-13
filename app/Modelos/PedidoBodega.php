@@ -154,7 +154,7 @@ class PedidoBodega extends Model
                     }
                 } else {    // producto tipo peso
                     foreach ($det->etiquetas_peso as $e) {
-                        $r += $e->inventario_bodega->precio;
+                        $r += $e->inventario_bodega->precio * $e->peso;
                     }
                 }
             }
@@ -170,7 +170,7 @@ class PedidoBodega extends Model
                 $producto = $det->producto;
                 if ($producto->peso == 1) {
                     foreach ($det->etiquetas_peso as $e) {
-                        $r += $e->inventario_bodega->precio;
+                        $r += $e->inventario_bodega->precio * $e->peso;
                     }
                 }
             }
