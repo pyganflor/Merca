@@ -124,7 +124,7 @@
                     <input type="checkbox" id="check_diferido_mes_actual"
                         class="mouse-hand check_diferido_mes_actual">
                     <select id="input_all_diferido_producto_selected" style="width: 100%; color: black !important"
-                        onchange="$('.input_diferido_producto_selected').val($(this).val())">
+                        onchange="$('.input_diferido_producto_selected').val($(this).val()); calcular_totales_pedido();">
                         <option value="0">Una Cuota</option>
                         <option value="-1">Al contado</option>
                         <option value="2">2 Meses</option>
