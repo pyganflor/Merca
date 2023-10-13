@@ -131,6 +131,7 @@ class PedidoBodegaController extends Controller
                 $pedido = PedidoBodega::find($data);
                 if ($pedido->armado == 0) {
                     $models_productos = [];
+                    $tiene_peso = false;
                     foreach ($pedido->detalles as $det) {
                         $producto = $det->producto;
                         if ($producto->peso == 0) { // producto que no es tipo peso
@@ -251,6 +252,8 @@ class PedidoBodegaController extends Controller
                                     }
                                 }
                             }
+                        } else {
+                            $tiene_peso = true;
                         }
                     }
                     $pedido->armado = 1;
@@ -258,6 +261,27 @@ class PedidoBodegaController extends Controller
 
                     foreach ($models_productos as $p) {
                         $p->save();
+                    }
+
+                    if ($tiene_peso) {
+                        $monto_saldo = $pedido->getTotalMontoDiferido();
+                        $usuario = $pedido->usuario;
+                        if ($usuario->saldo >= $monto_saldo || in_array($usuario->id_usuario, [1, 2])) {
+                            $usuario->saldo -= $monto_saldo;
+                            $usuario->save();
+                            $pedido->saldo_usuario = $usuario->saldo;
+                            $pedido->save();
+                        } else {
+                            DB::rollBack();
+                            $success = false;
+                            $msg = '<div class="alert alert-danger text-center">' .
+                                'El Usuario no tiene cupo disponible (<b>$' . $usuario->saldo . ' actualmente</b>)</div>';
+
+                            return [
+                                'success' => $success,
+                                'mensaje' => $msg,
+                            ];
+                        }
                     }
                 }
             }
@@ -689,16 +713,33 @@ class PedidoBodegaController extends Controller
             $pedido->armado = 1;
             $pedido->save();
 
-            if ($tiene_peso) {
-            }
-
             foreach ($models_productos as $p) {
                 $p->save();
             }
 
+            if ($tiene_peso) {
+                $monto_saldo = $pedido->getTotalMontoDiferido();
+                $usuario = $pedido->usuario;
+                if ($usuario->saldo >= $monto_saldo || in_array($usuario->id_usuario, [1, 2])) {
+                    $usuario->saldo -= $monto_saldo;
+                    $usuario->save();
+                    $pedido->saldo_usuario = $usuario->saldo;
+                    $pedido->save();
+                } else {
+                    DB::rollBack();
+                    $success = false;
+                    $msg = '<div class="alert alert-danger text-center">' .
+                        'El Usuario no tiene cupo disponible (<b>$' . $usuario->saldo . ' actualmente</b>)</div>';
+
+                    return [
+                        'success' => $success,
+                        'mensaje' => $msg,
+                    ];
+                }
+            }
+
             $success = true;
             $msg = 'Se ha <b>ARMADO</b> el pedido correctamente';
-
             DB::commit();
         } catch (\Exception $e) {
             DB::rollBack();

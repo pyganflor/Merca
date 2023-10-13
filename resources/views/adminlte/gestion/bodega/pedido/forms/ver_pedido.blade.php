@@ -390,7 +390,7 @@
         span_contador_selected = $('.span_contador_selected');
         diferido_selected = 0;
         $('#btn_grabar_pedido').prop('disabled', false);
-        $('.check_diferido_mes_actual').addClass('hidden');
+        //$('.check_diferido_mes_actual').addClass('hidden');
         for (i = 0; i < span_contador_selected.length; i++) {
             id_span = span_contador_selected[i].id;
             prod = parseInt($('#' + id_span).attr('data-id_producto'));
@@ -407,7 +407,7 @@
             }
             if (diferido > 0) {
                 monto_diferido += precio_prod / diferido;
-                $('.check_diferido_mes_actual').removeClass('hidden');
+                //$('.check_diferido_mes_actual').removeClass('hidden');
                 if (diferido_selected == 0) {
                     diferido_selected = diferido;
                 } else if (diferido_selected > 0 && diferido_selected != diferido) {
