@@ -551,6 +551,7 @@ class PedidoBodegaController extends Controller
         try {
             $pedido = PedidoBodega::find($request->ped);
             $models_productos = [];
+            $tiene_peso = false;
             foreach ($pedido->detalles as $det) {
                 $producto = $det->producto;
                 if ($producto->peso == 0) { // producto que no es tipo peso
@@ -670,10 +671,16 @@ class PedidoBodegaController extends Controller
                             }
                         }
                     }
+                } else {
+                    $tiene_peso = true;
                 }
             }
             $pedido->armado = 1;
             $pedido->save();
+
+            if ($tiene_peso) {
+                
+            }
 
             foreach ($models_productos as $p) {
                 $p->save();
