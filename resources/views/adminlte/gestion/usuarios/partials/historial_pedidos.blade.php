@@ -6,6 +6,9 @@
                     FECHA de ENTREGA
                 </th>
                 <th class="padding_lateral_5 th_yura_green" style="width: 130px">
+                    FINCA de Nomina
+                </th>
+                <th class="padding_lateral_5 th_yura_green" style="width: 130px">
                     FINCA de ENTREGA
                 </th>
                 <th class="text-center th_yura_green" style="width: 60px">
@@ -16,6 +19,9 @@
                 </th>
                 <th class="text-center th_yura_green" style="width: 60px">
                     TOTAL
+                </th>
+                <th class="text-center th_yura_green" style="width: 60px">
+                    DESCUENTO
                 </th>
                 <th class="text-center th_yura_green" style="width: 60px">
                 </th>
@@ -52,6 +58,9 @@
                     {{ convertDateToText($pedido->getFechaEntrega()) }}
                 </th>
                 <th style="border-color: #9d9d9d" class="padding_lateral_5">
+                    {{ $pedido->getFincaNomina->nombre }}
+                </th>
+                <th style="border-color: #9d9d9d" class="padding_lateral_5">
                     {{ $pedido->empresa->nombre }}
                 </th>
                 <th style="border-color: #9d9d9d" class="text-center">
@@ -62,6 +71,9 @@
                 </th>
                 <th style="border-color: #9d9d9d" class="text-center">
                     ${{ round($monto_total, 2) }}
+                </th>
+                <th style="border-color: #9d9d9d" class="text-center">
+                    ${{ round($pedido->getTotalMontoDiferido(), 2) }}
                 </th>
                 <th style="border-color: #9d9d9d" class="text-center">
                     <div class="btn-group">

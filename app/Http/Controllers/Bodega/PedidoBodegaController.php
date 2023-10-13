@@ -386,7 +386,12 @@ class PedidoBodegaController extends Controller
         DB::beginTransaction();
         try {
             $usuario = getUsuario($request->usuario);
-            if ($usuario->saldo >= $request->monto_saldo || in_array($request->usuario, [1, 2])) {
+            $al_contado = false;
+            foreach (json_decode($request->detalles) as $det) {
+                if ($det->diferido == -1)
+                    $al_contado = true;
+            }
+            if ($usuario->saldo >= $request->monto_saldo || $al_contado || in_array($request->usuario, [1, 2])) {
                 $pedido = new PedidoBodega();
                 $pedido->fecha = $request->fecha;
                 $pedido->id_usuario = $request->usuario;
@@ -407,12 +412,12 @@ class PedidoBodegaController extends Controller
                     $detalle->save();
                 }
 
-                if (!in_array($request->usuario, [1, 2])) {
+                if (!in_array($request->usuario, [1, 2]) && !$al_contado) {
                     $usuario->saldo -= $request->monto_saldo;
                     $usuario->save();
-                    $pedido->saldo_usuario = $usuario->saldo;
-                    $pedido->save();
                 }
+                $pedido->saldo_usuario = $usuario->saldo;
+                $pedido->save();
 
                 $success = true;
                 $msg = 'Se ha <b>CREADO</b> el pedido correctamente';
