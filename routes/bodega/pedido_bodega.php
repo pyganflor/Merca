@@ -20,3 +20,4 @@ Route::get('pedido_bodega/escanear_codigo_pedido', 'Bodega\PedidoBodegaControlle
 Route::post('pedido_bodega/store_armar_pedidos', 'Bodega\PedidoBodegaController@store_armar_pedidos');
 Route::post('pedido_bodega/devolver_pedido', 'Bodega\PedidoBodegaController@devolver_pedido');
 Route::get('pedido_bodega/modal_contabilidad', 'Bodega\PedidoBodegaController@modal_contabilidad');
+Route::get('pedido_bodega/descargar_contabilidad', 'Bodega\PedidoBodegaController@descargar_contabilidad');

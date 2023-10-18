@@ -54,13 +54,11 @@
                     </td>
                     <td>
                         <div class="input-group">
-                            <div class="input-group">
-                                <span class="input-group-addon bg-yura_dark">
-                                    Entrega
-                                </span>
-                                <input type="date" id="filtro_entrega" style="width: 100%"
-                                    class="form-control text-center" value="{{ hoy() }}">
-                            </div>
+                            <span class="input-group-addon bg-yura_dark">
+                                Entrega
+                            </span>
+                            <input type="date" id="filtro_entrega" style="width: 100%" class="form-control text-center"
+                                value="{{ hoy() }}">
                             <span class="input-group-btn">
                                 <button type="button" class="btn btn-yura_dark" onclick="listar_reporte()" title="Buscar">
                                     <i class="fa fa-fw fa-search"></i>
