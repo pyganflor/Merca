@@ -16,6 +16,7 @@ use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Barryvdh\DomPDF\Facade as PDF;
 use Picqer\Barcode\BarcodeGeneratorHTML;
+use yura\Modelos\EtiquetaPeso;
 use yura\Modelos\InventarioBodega;
 use yura\Modelos\Proveedor;
 use yura\Modelos\SalidaBodega;
@@ -89,6 +90,11 @@ class PedidoBodegaController extends Controller
     public function get_armar_pedido(Request $request)
     {
         return view('adminlte.gestion.bodega.pedido.forms.get_armar_pedido', []);
+    }
+
+    public function modal_contabilidad(Request $request)
+    {
+        return view('adminlte.gestion.bodega.pedido.forms.modal_contabilidad', []);
     }
 
     public function escanear_codigo_pedido(Request $request)
@@ -401,6 +407,7 @@ class PedidoBodegaController extends Controller
                 $pedido->save();
                 $pedido = PedidoBodega::All()->last();
 
+                $tiene_peso = false;
                 foreach (json_decode($request->detalles) as $det) {
                     $detalle = new DetallePedidoBodega();
                     $detalle->id_pedido_bodega = $pedido->id_pedido_bodega;
@@ -410,9 +417,13 @@ class PedidoBodegaController extends Controller
                     $detalle->diferido = $det->diferido;
                     $detalle->iva = $det->iva;
                     $detalle->save();
+
+                    $producto = Producto::find($det->producto);
+                    if ($producto->peso == 1)
+                        $tiene_peso = true;
                 }
 
-                if (!in_array($request->usuario, [1, 2]) && !$al_contado) {
+                if (!in_array($request->usuario, [1, 2]) && !$al_contado && !$tiene_peso) {
                     $usuario->saldo -= $request->monto_saldo;
                     $usuario->save();
                 }
@@ -454,10 +465,13 @@ class PedidoBodegaController extends Controller
                 ->get();
             if (count($tiene_etiquetas_peso) == 0) {
                 if (!in_array($pedido->id_usuario, [1, 2])) {
-                    $monto_total = $pedido->getTotalMontoDiferido();
-                    $usuario = $pedido->usuario;
-                    $usuario->saldo += $monto_total;
-                    $usuario->save();
+                    $tieneProductoPeso = $pedido->tieneProductoPeso();
+                    if (!$tieneProductoPeso) {
+                        $monto_total = $pedido->getTotalMontoDiferido();
+                        $usuario = $pedido->usuario;
+                        $usuario->saldo += $monto_total;
+                        $usuario->save();
+                    }
                 }
                 $pedido->delete();
 
@@ -514,17 +528,28 @@ class PedidoBodegaController extends Controller
             $usuario = $pedido_delete->usuario;
             $valida_saldo = true;
             if (!in_array($pedido_delete->id_usuario, [1, 2])) {
-                $monto_total_anterior = $pedido_delete->getTotalMontoDiferido();
-                $saldo_anterior = $usuario->saldo;
-                $usuario->saldo += $monto_total_anterior;
-
-                if ($usuario->saldo >= $request->monto_saldo) {
-                    $usuario->saldo -= $request->monto_saldo;
+                $tiene_peso = $pedido_delete->tieneProductoPeso();
+                if (!$tiene_peso) {
+                    $monto_total_anterior = $pedido_delete->getTotalMontoDiferido();
+                    $saldo_anterior = $usuario->saldo;
+                    $usuario->saldo += $monto_total_anterior;
                     $usuario->save();
-                    $valida_saldo = true;
-                } else {
-                    $valida_saldo = false;
                 }
+
+                $tiene_peso = false;
+                foreach (json_decode($request->detalles) as $det) {
+                    $producto = Producto::find($det->producto);
+                    if ($producto->peso == 1)
+                        $tiene_peso = true;
+                }
+                if (!$tiene_peso)
+                    if ($usuario->saldo >= $request->monto_saldo) {
+                        $usuario->saldo -= $request->monto_saldo;
+                        $usuario->save();
+                        $valida_saldo = true;
+                    } else {
+                        $valida_saldo = false;
+                    }
             }
             if ($valida_saldo) {
                 $tiene_etiquetas_peso = DB::table('etiqueta_peso as e')
@@ -745,6 +770,73 @@ class PedidoBodegaController extends Controller
 
             $success = true;
             $msg = 'Se ha <b>ARMADO</b> el pedido correctamente';
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            $success = false;
+            $msg = '<div class="alert alert-danger text-center">' .
+                '<p> Ha ocurrido un problema al guardar la informacion al sistema</p>' .
+                '<p>' . $e->getMessage() . ' ' . $e->getFile() . ' ' . $e->getLine() . '</p>'
+                . '</div>';
+        }
+        return [
+            'success' => $success,
+            'mensaje' => $msg,
+        ];
+    }
+
+    public function devolver_pedido(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            $pedido = PedidoBodega::find($request->ped);
+            $pedido->armado = 0;
+            $pedido->save();
+
+            /* PRODUCTOS QUE NO SON TIPO PESO */
+            $salidas_inv = SalidaInventarioBodega::where('id_pedido_bodega', $pedido->id_pedido_bodega)
+                ->get();
+            foreach ($salidas_inv as $salida_inv) {
+                $cantidad = $salida_inv->cantidad;
+                $inventario = $salida_inv->inventario_bodega;
+                $inventario->disponibles += $cantidad;
+                $inventario->save();
+                $producto = $inventario->producto;
+                $producto->disponibles += $cantidad;
+                $producto->save();
+                $salida_bodega = $salida_inv->salida_bodega;
+                $salida_bodega->delete();
+            }
+            SalidaInventarioBodega::where('id_pedido_bodega', $pedido->id_pedido_bodega)
+                ->delete();
+
+            /* PRODUCTOS QUE SON TIPO PESO */
+            $etiquetas_peso = EtiquetaPeso::join('detalle_pedido_bodega as d', 'd.id_detalle_pedido_bodega', '=', 'etiqueta_peso.id_detalle_pedido_bodega')
+                ->select('etiqueta_peso.*')->distinct()
+                ->where('d.id_pedido_bodega', $pedido->id_pedido_bodega)
+                ->get();
+            foreach ($etiquetas_peso as $pos_e => $e) {
+                if ($pos_e == 0 && !in_array($pedido->id_usuario, [1, 2])) {
+                    $monto_saldo = $pedido->getTotalMontoDiferido();
+                    $usuario = $pedido->usuario;
+                    $usuario->saldo += $monto_saldo;
+                    $usuario->save();
+                }
+                $cantidad = 1;
+                $inventario = $e->inventario_bodega;
+                $inventario->disponibles += $cantidad;
+                $inventario->save();
+                $producto = $inventario->producto;
+                $producto->disponibles += $cantidad;
+                $producto->save();
+            }
+            EtiquetaPeso::join('detalle_pedido_bodega as d', 'd.id_detalle_pedido_bodega', '=', 'etiqueta_peso.id_detalle_pedido_bodega')
+                ->select('etiqueta_peso.*')->distinct()
+                ->where('d.id_pedido_bodega', $pedido->id_pedido_bodega)
+                ->delete();
+
+            $success = true;
+            $msg = 'Se ha <b>DEVUELTO</b> el pedido correctamente';
             DB::commit();
         } catch (\Exception $e) {
             DB::rollBack();

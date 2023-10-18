@@ -30,7 +30,8 @@
                     <span class="input-group-addon bg-yura_dark">
                         Finca Nomina
                     </span>
-                    <select id="form_finca_nomina" style="width: 100%" class="form-control" onchange="seleccionar_finca()">
+                    <select id="form_finca_nomina" style="width: 100%" class="form-control"
+                        onchange="seleccionar_finca()">
                         @foreach ($fincas as $f)
                             <option value="{{ $f->id_empresa }}"
                                 {{ $f->id_empresa == $pedido->finca_nomina ? 'selected' : '' }}>
@@ -201,6 +202,11 @@
                                 <button type="button" class="btn btn-yura_dark"
                                     onclick="armar_pedido('{{ $pedido->id_pedido_bodega }}')">
                                     <i class="fa fa-fw fa-gift"></i> ARMAR
+                                </button>
+                            @else
+                                <button type="button" class="btn btn-yura_dark"
+                                    onclick="devolver_pedido('{{ $pedido->id_pedido_bodega }}')">
+                                    <i class="fa fa-fw fa-gift"></i> DEVOLVER
                                 </button>
                             @endif
                             <button type="button" class="btn btn-yura_default"
@@ -492,6 +498,23 @@
                 ped: ped,
             };
             post_jquery_m('pedido_bodega/armar_pedido', datos, function() {
+                cerrar_modals();
+                listar_reporte();
+            });
+        })
+    }
+
+    function devolver_pedido(ped) {
+        texto =
+            "<div class='alert alert-warning text-center' style='font-size: 16px'>¿Desea <b>DEVOLVER</b> el pedido?</div>" +
+            "</div>";
+
+        modal_quest('modal_devolver_pedido', texto, 'DEVOLVER pedido', true, false, '40%', function() {
+            datos = {
+                _token: '{{ csrf_token() }}',
+                ped: ped,
+            };
+            post_jquery_m('pedido_bodega/devolver_pedido', datos, function() {
                 cerrar_modals();
                 listar_reporte();
             });

@@ -37,6 +37,16 @@
         });
     }
 
+    function modal_contabilidad() {
+        datos = {}
+        get_jquery('{{ url('pedido_bodega/modal_contabilidad') }}', datos, function(retorno) {
+            modal_view('modal_modal_contabilidad', retorno,
+                '<i class="fa fa-fw fa-shopping-cart"></i> Exportar archivo de contabilidad',
+                true, false, '{{ isPC() ? '70%' : '' }}',
+                function() {});
+        });
+    }
+
     function seleccionar_finca_filtro() {
         datos = {
             _token: '{{ csrf_token() }}',

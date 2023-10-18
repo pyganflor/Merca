@@ -28,6 +28,7 @@ use Storage as Almacenamiento;
 //use PHPExcel_IOFactory;
 use \PhpOffice\PhpSpreadsheet\IOFactory as IOFactory;
 use yura\Modelos\Planta;
+use yura\Modelos\Proveedor;
 use yura\Modelos\Sector;
 use yura\Modelos\Usuario;
 
@@ -1209,16 +1210,7 @@ class ComandoDev extends Command
 
     function caca()
     {
-        $productos = Producto::where('estado', 1)
-            ->get();
-        foreach ($productos as $pos => $producto) {
-            dump('prod: ' . ($pos + 1) . '/' . count($productos));
-            $disponibles = DB::table('inventario_bodega')
-                ->select(DB::raw('sum(disponibles) as cant'))
-                ->where('id_producto', $producto->id_producto)
-                ->get()[0]->cant;
-            $producto->disponibles = $disponibles != '' ? $disponibles : 0;
-            $producto->save();
-        }
+        $r = Proveedor::where('estado', 1)->get()->last();
+        dd($r);
     }
 }

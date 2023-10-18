@@ -57,7 +57,7 @@ class PedidoBodega extends Model
             ->where('d.id_pedido_bodega', $this->id_pedido_bodega)
             ->where('p.peso', 1)
             ->get()[0]->cantidad;
-        dd($r);
+        return $r > 0 ? true : false;
     }
 
     public function getTotalMonto()

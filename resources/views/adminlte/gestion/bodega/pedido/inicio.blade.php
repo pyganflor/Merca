@@ -40,8 +40,7 @@
                             <span class="input-group-addon bg-yura_dark span-input-group-yura-fixed">
                                 Finca
                             </span>
-                            <select id="filtro_finca" style="width: 100%" class="form-control"
-                                onchange="seleccionar_finca_filtro()">
+                            <select id="filtro_finca" style="width: 100%" class="form-control">
                                 @if (count($fincas) > 1)
                                     <option value="T">Todas mis fincas</option>
                                 @endif
@@ -57,28 +56,36 @@
                         <div class="input-group">
                             <div class="input-group">
                                 <span class="input-group-addon bg-yura_dark">
-                                    Fecha de Entrega
+                                    Entrega
                                 </span>
-                                <select id="filtro_entrega" style="width: 100%" class="form-control"></select>
+                                <input type="date" id="filtro_entrega" style="width: 100%"
+                                    class="form-control text-center" value="{{ hoy() }}">
                             </div>
                             <span class="input-group-btn">
-                                <button type="button" class="btn btn-yura_dark" onclick="listar_reporte()">
+                                <button type="button" class="btn btn-yura_dark" onclick="listar_reporte()" title="Buscar">
                                     <i class="fa fa-fw fa-search"></i>
                                 </button>
-                                <button type="button" class="btn btn-yura_primary" onclick="add_pedido()">
-                                    <i class="fa fa-fw fa-shopping-cart"></i> Pedido
+                                <button type="button" class="btn btn-yura_primary" onclick="add_pedido()"
+                                    title="Agregar Pedido">
+                                    <i class="fa fa-fw fa-shopping-cart"></i>
                                 </button>
-                                <button type="button" class="btn btn-yura_dark" onclick="get_armar_pedido()">
-                                    <i class="fa fa-fw fa-gift"></i> Armado
+                                <button type="button" class="btn btn-yura_dark" onclick="get_armar_pedido()"
+                                    title="Armar Pedidos">
+                                    <i class="fa fa-fw fa-gift"></i>
                                 </button>
-                                <button type="button" class="btn btn-yura_default" onclick="exportar_resumen_pedidos()">
-                                    <i class="fa fa-fw fa-file-excel-o"></i> Compra
+                                <button type="button" class="btn btn-yura_default" onclick="exportar_resumen_pedidos()"
+                                    title="Exportar archivo de Compras">
+                                    <i class="fa fa-fw fa-file-excel-o"></i>
                                 </button>
                                 <button type="button" class="btn btn-yura_default" onclick="imprimir_pedidos_all()">
                                     <i class="fa fa-fw fa-print"></i> Etiquetas
                                 </button>
                                 <button type="button" class="btn btn-yura_default" onclick="imprimir_entregas_all()">
                                     <i class="fa fa-fw fa-print"></i> Entregas
+                                </button>
+                                <button type="button" class="btn btn-yura_dark" onclick="modal_contabilidad()"
+                                    title="Exportar archivo de contabilidad">
+                                    <i class="fa fa-fw fa-credit-card"></i>
                                 </button>
                             </span>
                         </div>
