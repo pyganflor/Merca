@@ -86,14 +86,14 @@ class RankingProductosController extends Controller
                             }
                         } else {    // producto tipo peso
                             foreach ($det_ped->etiquetas_peso as $e) {
-                                $costo_total += $e->inventario_bodega->precio;
+                                $costo_total += $e->inventario_bodega->precio * $e->peso;
                             }
                         }
                     } else {    // armado
                         if ($producto->peso == 1) {
                             /* PRODUCTOS QUE SI SON TIPO PESO */
                             foreach ($det_ped->etiquetas_peso as $e) {
-                                $costo_total += $e->inventario_bodega->precio;
+                                $costo_total += $e->inventario_bodega->precio * $e->peso;
                             }
                         } else {
                             /* PRODUCTOS QUE NO SON TIPO PESO */
