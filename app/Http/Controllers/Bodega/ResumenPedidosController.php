@@ -11,6 +11,8 @@ use Barryvdh\DomPDF\Facade as PDF;
 use DateTime;
 use yura\Modelos\DetallePedidoBodega;
 use yura\Modelos\FechaEntrega;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 class ResumenPedidosController extends Controller
 {
@@ -272,16 +274,33 @@ class ResumenPedidosController extends Controller
 
     public function exportar_reporte(Request $request)
     {
+        $spread = new Spreadsheet();
+        $this->excel_reporte($spread, $request);
+
+        $fileName = "Descuentos.xlsx";
+        $writer = new Xlsx($spread);
+
+        //--------------------------- GUARDAR EL EXCEL -----------------------
+
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment; filename="' . urlencode($fileName) . '"');
+        $writer->save('php://output');
+
+        //$writer->save('/var/www/html/Dasalflor/storage/storage/excel/excel_prueba.xlsx');
+    }
+    public function excel_reporte($spread, $request)
+    {
         $usuarios = DB::table('pedido_bodega as p')
             ->join('usuario as u', 'u.id_usuario', '=', 'p.id_usuario')
             ->select('p.id_usuario', 'u.nombre_completo', 'u.username')->distinct()
             ->where('p.estado', 1)
             ->where('p.fecha', '<=', $request->hasta);
         if ($request->finca != 'T')
-            $usuarios = $usuarios->where('p.id_empresa', $request->finca);
+            $usuarios = $usuarios->where('p.finca_nomina', $request->finca);
         $usuarios = $usuarios->orderBy('p.fecha')
             ->orderBy('u.nombre_completo', 'asc')
             ->get();
+
         $listado = [];
         foreach ($usuarios as $u) {
             if ($request->tipo == 'T') {    // total Venta
@@ -289,7 +308,7 @@ class ResumenPedidosController extends Controller
                     ->where('estado', 1)
                     ->where('fecha', '<=', $request->hasta);
                 if ($request->finca != 'T')
-                    $query_pedidos = $query_pedidos->where('id_empresa', $request->finca);
+                    $query_pedidos = $query_pedidos->where('finca_nomina', $request->finca);
                 $query_pedidos = $query_pedidos->get();
 
                 $pedidos = [];
@@ -367,13 +386,13 @@ class ResumenPedidosController extends Controller
                     ];
             } else if ($request->tipo == 'D') { // Diferidos
                 $query_pedidos = DetallePedidoBodega::join('pedido_bodega as p', 'p.id_pedido_bodega', '=', 'detalle_pedido_bodega.id_pedido_bodega')
-                    ->select('detalle_pedido_bodega.*', 'p.fecha', 'p.id_empresa', 'p.diferido_mes_actual')->distinct()
+                    ->select('detalle_pedido_bodega.*', 'p.fecha', 'p.id_empresa', 'p.finca_nomina', 'p.diferido_mes_actual')->distinct()
                     ->where('p.id_usuario', $u->id_usuario)
                     ->where('p.estado', 1)
                     ->where('p.fecha', '<=', $request->hasta)
                     ->where('detalle_pedido_bodega.diferido', '>', 0);
                 if ($request->finca != 'T')
-                    $query_pedidos = $query_pedidos->where('p.id_empresa', $request->finca);
+                    $query_pedidos = $query_pedidos->where('p.finca_nomina', $request->finca);
                 $query_pedidos = $query_pedidos->get();
 
                 $monto_subtotal = 0;
@@ -446,13 +465,13 @@ class ResumenPedidosController extends Controller
                     ];
             } else if ($request->tipo == 'N') { // NO Diferidos
                 $query_pedidos = DetallePedidoBodega::join('pedido_bodega as p', 'p.id_pedido_bodega', '=', 'detalle_pedido_bodega.id_pedido_bodega')
-                    ->select('detalle_pedido_bodega.*', 'p.fecha', 'p.id_empresa')->distinct()
+                    ->select('detalle_pedido_bodega.*', 'p.fecha', 'p.id_empresa', 'p.finca_nomina')->distinct()
                     ->where('p.id_usuario', $u->id_usuario)
                     ->where('p.estado', 1)
                     ->where('p.fecha', '<=', $request->hasta)
                     ->where('detalle_pedido_bodega.diferido', '!=', -1);
                 if ($request->finca != 'T')
-                    $query_pedidos = $query_pedidos->where('p.id_empresa', $request->finca);
+                    $query_pedidos = $query_pedidos->where('p.finca_nomina', $request->finca);
                 $query_pedidos = $query_pedidos->get();
 
                 $monto_subtotal = 0;
@@ -515,7 +534,100 @@ class ResumenPedidosController extends Controller
             'tipo_reporte' => $tipo_reporte,
             'tipo' => $request->tipo,
         ];
-        return PDF::loadView('adminlte.gestion.bodega.resumen_pedidos.partials.pdf_reporte', compact('datos'))
-            ->setPaper(array(0, 0, 750, 530), 'landscape')->stream();
+
+        $columnas = getColumnasExcel();
+        $sheet = $spread->getActiveSheet();
+        $sheet->setTitle('Descuentos ' . $datos['finca']->nombre);
+
+        $row = 1;
+        $col = 0;
+        setValueToCeldaExcel($sheet, $columnas[$col] . $row, 'RESUMEN de DESCUENTOS ' . $datos['tipo_reporte'] . ' "' . $datos['finca']->nombre . '"');
+        $sheet->mergeCells('A' . $row . ':G' . $row);
+        setBgToCeldaExcel($sheet, 'A' . $row . ':' . $columnas[$col] . $row, '00B388');
+        setColorTextToCeldaExcel($sheet, 'A' . $row . ':' . $columnas[$col] . $row, 'FFFFFF');
+        $row++;
+        $col = 0;
+        setValueToCeldaExcel($sheet, $columnas[$col] . $row, convertDateToText($datos['desde']) . ' - ' . convertDateToText($datos['hasta']));
+        $sheet->mergeCells('A' . $row . ':G' . $row);
+        setBgToCeldaExcel($sheet, 'A' . $row . ':' . $columnas[$col] . $row, '00B388');
+        setColorTextToCeldaExcel($sheet, 'A' . $row . ':' . $columnas[$col] . $row, 'FFFFFF');
+        $row++;
+        $col = 0;
+        setValueToCeldaExcel($sheet, $columnas[$col] . $row, 'BENCHMARKET S.A.S. RUC 1793209142001');
+        $sheet->mergeCells('A' . $row . ':G' . $row);
+        setBgToCeldaExcel($sheet, 'A' . $row . ':' . $columnas[$col] . $row, '00B388');
+        setColorTextToCeldaExcel($sheet, 'A' . $row . ':' . $columnas[$col] . $row, 'FFFFFF');
+
+        $monto_subtotal = 0;
+        $monto_total_iva = 0;
+        $monto_total = 0;
+        $row++;
+        $col = 0;
+        setValueToCeldaExcel($sheet, $columnas[$col] . $row, 'Finca');
+        $col++;
+        setValueToCeldaExcel($sheet, $columnas[$col] . $row, 'Cliente');
+        $col++;
+        setValueToCeldaExcel($sheet, $columnas[$col] . $row, 'CI');
+        $col++;
+        setValueToCeldaExcel($sheet, $columnas[$col] . $row, 'Subtotal');
+        $col++;
+        setValueToCeldaExcel($sheet, $columnas[$col] . $row, 'Iva');
+        $col++;
+        setValueToCeldaExcel($sheet, $columnas[$col] . $row, 'Total');
+        if ($datos['tipo'] == 'D') {
+            $col++;
+            setValueToCeldaExcel($sheet, $columnas[$col] . $row, '#Pago');
+        }
+        setBgToCeldaExcel($sheet, 'A' . $row . ':' . $columnas[$col] . $row, '00B388');
+        setColorTextToCeldaExcel($sheet, 'A' . $row . ':' . $columnas[$col] . $row, 'FFFFFF');
+        foreach ($datos['listado'] as $pos_ped => $item) {
+            $monto_subtotal += $item['subtotal'];
+            $monto_total_iva += $item['total_iva'];
+            $monto_total += $item['total'];
+
+            $row++;
+            $col = 0;
+            setValueToCeldaExcel($sheet, $columnas[$col] . $row, $datos['finca']->nombre);
+            $col++;
+            setValueToCeldaExcel($sheet, $columnas[$col] . $row, $item['usuario']->nombre_completo);
+            $col++;
+            setValueToCeldaExcel($sheet, $columnas[$col] . $row, $item['usuario']->username);
+            $col++;
+            setValueToCeldaExcel($sheet, $columnas[$col] . $row, round($item['subtotal'], 2));
+            $col++;
+            setValueToCeldaExcel($sheet, $columnas[$col] . $row, round($item['total_iva'], 2));
+            $col++;
+            setValueToCeldaExcel($sheet, $columnas[$col] . $row, round($item['total'], 2));
+            if ($datos['tipo'] == 'D') {
+                $pagos = '';
+                foreach ($item['num_diferido'] as $pos_dif => $dif) {
+                    $pagos .= $pos_dif > 0 ? '-' : '';
+                    $pagos .= $dif + 1 . '°';
+                }
+                $col++;
+                setValueToCeldaExcel($sheet, $columnas[$col] . $row, $pagos);
+            }
+        }
+        $row++;
+        $col = 0;
+        setValueToCeldaExcel($sheet, $columnas[$col] . $row, 'TOTALES');
+        $col += 3;
+        setValueToCeldaExcel($sheet, $columnas[$col] . $row, round($monto_subtotal, 2));
+        $col++;
+        setValueToCeldaExcel($sheet, $columnas[$col] . $row, round($monto_total_iva, 2));
+        $col++;
+        setValueToCeldaExcel($sheet, $columnas[$col] . $row, round($monto_total, 2));
+        $col++;
+        setBgToCeldaExcel($sheet, 'A' . $row . ':' . $columnas[$col] . $row, '00B388');
+        setColorTextToCeldaExcel($sheet, 'A' . $row . ':' . $columnas[$col] . $row, 'FFFFFF');
+
+        setTextCenterToCeldaExcel($sheet, 'A1:' . $columnas[$col] . $row);
+        setBorderToCeldaExcel($sheet, 'A1:' . $columnas[$col] . $row);
+
+        for ($i = 0; $i <= $col; $i++)
+            $sheet->getColumnDimension($columnas[$i])->setAutoSize(true);
+
+        /*return PDF::loadView('adminlte.gestion.bodega.resumen_pedidos.partials.pdf_reporte', compact('datos'))
+            ->setPaper(array(0, 0, 750, 530), 'landscape')->stream();*/
     }
 }
