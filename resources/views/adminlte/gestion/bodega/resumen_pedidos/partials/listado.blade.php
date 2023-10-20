@@ -1,6 +1,6 @@
 <table class="table-bordered" style="width: 100%; border: 1px solid #9d9d9d" id="table_descuentos">
     <thead>
-        <tr>
+        <tr class="tr_fija_top_0">
             <th class="th_yura_green padding_lateral_5">
                 Cliente
             </th>
@@ -61,7 +61,7 @@
             </tr>
         @endforeach
     </tbody>
-    <tr>
+    <tr class="tr_fija_bottom_0">
         <th class="th_yura_green padding_lateral_5" colspan="2">
             TOTALES
         </th>
