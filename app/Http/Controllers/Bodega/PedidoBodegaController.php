@@ -815,8 +815,7 @@ class PedidoBodegaController extends Controller
                 $producto = $inventario->producto;
                 $producto->disponibles += $cantidad;
                 $producto->save();
-                $salida_bodega = $salida_inv->salida_bodega;
-                $salida_bodega->delete();
+                SalidaBodega::destroy($salida_inv->id_salida_bodega);
             }
             SalidaInventarioBodega::where('id_pedido_bodega', $pedido->id_pedido_bodega)
                 ->delete();
