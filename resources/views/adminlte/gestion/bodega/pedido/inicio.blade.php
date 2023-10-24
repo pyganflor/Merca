@@ -32,65 +32,76 @@
 
     <!-- Main content -->
     <section class="content">
-        <div style="overflow-x: scroll">
-            <table style="width: 100%">
-                <tr>
-                    <td>
-                        <div class="input-group">
-                            <span class="input-group-addon bg-yura_dark span-input-group-yura-fixed">
-                                Finca
-                            </span>
-                            <select id="filtro_finca" style="width: 100%" class="form-control">
-                                @if (count($fincas) > 1)
-                                    <option value="T">Todas mis fincas</option>
-                                @endif
-                                @foreach ($fincas as $f)
-                                    <option value="{{ $f->id_empresa }}">
-                                        {{ $f->nombre }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="input-group">
-                            <span class="input-group-addon bg-yura_dark">
-                                Entrega
-                            </span>
-                            <input type="date" id="filtro_entrega" style="width: 100%" class="form-control text-center"
-                                value="{{ hoy() }}">
-                            <span class="input-group-btn">
-                                <button type="button" class="btn btn-yura_dark" onclick="listar_reporte()" title="Buscar">
-                                    <i class="fa fa-fw fa-search"></i>
-                                </button>
-                                <button type="button" class="btn btn-yura_primary" onclick="add_pedido()"
-                                    title="Agregar Pedido">
-                                    <i class="fa fa-fw fa-shopping-cart"></i>
-                                </button>
-                                <button type="button" class="btn btn-yura_dark" onclick="get_armar_pedido()"
-                                    title="Armar Pedidos">
-                                    <i class="fa fa-fw fa-gift"></i>
-                                </button>
-                                <button type="button" class="btn btn-yura_default" onclick="exportar_resumen_pedidos()"
-                                    title="Exportar archivo de Compras">
-                                    <i class="fa fa-fw fa-file-excel-o"></i>
-                                </button>
-                                <button type="button" class="btn btn-yura_default" onclick="imprimir_pedidos_all()">
-                                    <i class="fa fa-fw fa-print"></i> Etiquetas
-                                </button>
-                                <button type="button" class="btn btn-yura_default" onclick="imprimir_entregas_all()">
-                                    <i class="fa fa-fw fa-print"></i> Entregas
-                                </button>
-                                <button type="button" class="btn btn-yura_dark" onclick="modal_contabilidad()"
-                                    title="Exportar archivo de contabilidad">
-                                    <i class="fa fa-fw fa-credit-card"></i>
-                                </button>
-                            </span>
-                        </div>
-                    </td>
-                </tr>
-            </table>
-        </div>
+        <table style="width: 100%">
+            <tr>
+                <td>
+                    <div class="input-group">
+                        <span class="input-group-addon bg-yura_dark span-input-group-yura-fixed">
+                            Finca
+                        </span>
+                        <select id="filtro_finca" style="width: 100%" class="form-control">
+                            @if (count($fincas) > 1)
+                                <option value="T">Todas mis fincas</option>
+                            @endif
+                            @foreach ($fincas as $f)
+                                <option value="{{ $f->id_empresa }}">
+                                    {{ $f->nombre }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                </td>
+                <td>
+                    <div class="input-group">
+                        <span class="input-group-addon bg-yura_dark">
+                            Entrega
+                        </span>
+                        <input type="date" id="filtro_entrega" style="width: 100%" class="form-control text-center"
+                            value="{{ hoy() }}">
+                        <span class="input-group-btn">
+                            <button type="button" class="btn btn-yura_dark" onclick="listar_reporte()" title="Buscar">
+                                <i class="fa fa-fw fa-search"></i>
+                            </button>
+                            <button type="button" class="btn btn-yura_primary" onclick="add_pedido()"
+                                title="Agregar Pedido">
+                                <i class="fa fa-fw fa-shopping-cart"></i>
+                            </button>
+                            <button type="button" class="btn btn-yura_dark" onclick="get_armar_pedido()"
+                                title="Armar Pedidos">
+                                <i class="fa fa-fw fa-gift"></i>
+                            </button>
+                            <button type="button" class="btn btn-yura_default" onclick="exportar_resumen_pedidos()"
+                                title="Exportar archivo de Compras">
+                                <i class="fa fa-fw fa-file-excel-o"></i>
+                            </button>
+                            <button type="button" class="btn btn-yura_default" onclick="imprimir_pedidos_all()" title="Etiquetas">
+                                <i class="fa fa-fw fa-print"></i>
+                            </button>
+                            <button type="button" class="btn btn-yura_dark" onclick="modal_contabilidad()"
+                                title="Exportar archivo de contabilidad">
+                                <i class="fa fa-fw fa-credit-card"></i>
+                            </button>
+                            <button type="button" class="btn btn-yura_default dropdown-toggle" data-toggle="dropdown"
+                                aria-expanded="true">
+                                Entregas
+                            </button>
+                            <div class="dropdown-menu dropdown-menu-right">
+                                <li>
+                                    <a class="dropdown-item" href="javascript:void(0)" onclick="imprimir_entregas_all()">
+                                        Productos normales
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="javascript:void(0)" onclick="imprimir_entregas_peso_all()">
+                                        Pollo
+                                    </a>
+                                </li>
+                            </div>
+                        </span>
+                    </div>
+                </td>
+            </tr>
+        </table>
 
         <div id="div_listado" style="margin-top: 5px">
         </div>

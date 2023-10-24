@@ -91,4 +91,13 @@
             $.LoadingOverlay('hide');
         }
     }
+
+    function imprimir_entregas_peso_all() {
+        if ($('#filtro_finca').val() != 'T') {
+            $.LoadingOverlay('show');
+            window.open('{{ url('pedido_bodega/imprimir_entregas_peso_all') }}?entrega=' + $('#filtro_entrega').val() +
+                '&finca=' + $('#filtro_finca').val(), '_blank');
+            $.LoadingOverlay('hide');
+        }
+    }
 </script>

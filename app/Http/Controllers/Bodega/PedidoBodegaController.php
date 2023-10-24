@@ -1035,14 +1035,50 @@ class PedidoBodegaController extends Controller
     public function imprimir_entregas_all(Request $request)
     {
         $barCode = new BarcodeGeneratorHTML();
-        $query = PedidoBodega::where('estado', 1);
+        $query = PedidoBodega::join('detalle_pedido_bodega as d', 'd.id_pedido_bodega', '=', 'pedido_bodega.id_pedido_bodega')
+            ->join('producto as p', 'p.id_producto', '=', 'd.id_producto')
+            ->select('pedido_bodega.*')->distinct()
+            ->where('pedido_bodega.estado', 1)
+            ->where('p.peso', 0);
         if ($request->finca != 'T')
-            $query = $query->where('id_empresa', $request->finca);
+            $query = $query->where('pedido_bodega.id_empresa', $request->finca);
         if (!in_array(session('id_usuario'), [1, 2]))
-            $query = $query->where('id_usuario', session('id_usuario'));
-        $query = $query->orderBy('fecha')
-            ->orderBy('id_empresa')
-            ->orderBy('id_usuario')
+            $query = $query->where('pedido_bodega.id_usuario', session('id_usuario'));
+        $query = $query->orderBy('pedido_bodega.fecha')
+            ->orderBy('pedido_bodega.id_empresa')
+            ->orderBy('pedido_bodega.id_usuario')
+            ->get();
+        $pedidos = [];
+        foreach ($query as $q) {
+            $fecha_entrega = $q->getFechaEntrega();
+            if ($fecha_entrega == $request->entrega) {
+                $pedidos[] = $q;
+            }
+        }
+        $datos = [
+            'pedidos' => $pedidos,
+            'fecha' => $request->entrega,
+            'finca' => getConfiguracionEmpresa($request->finca),
+        ];
+        return PDF::loadView('adminlte.gestion.bodega.pedido.partials.pdf_entregas_all', compact('datos', 'barCode'))
+            ->setPaper(array(0, 0, 800, 560), 'landscape')->stream();
+    }
+
+    public function imprimir_entregas_peso_all(Request $request)
+    {
+        $barCode = new BarcodeGeneratorHTML();
+        $query = PedidoBodega::join('detalle_pedido_bodega as d', 'd.id_pedido_bodega', '=', 'pedido_bodega.id_pedido_bodega')
+            ->join('producto as p', 'p.id_producto', '=', 'd.id_producto')
+            ->select('pedido_bodega.*')->distinct()
+            ->where('pedido_bodega.estado', 1)
+            ->where('p.peso', 1);
+        if ($request->finca != 'T')
+            $query = $query->where('pedido_bodega.id_empresa', $request->finca);
+        if (!in_array(session('id_usuario'), [1, 2]))
+            $query = $query->where('pedido_bodega.id_usuario', session('id_usuario'));
+        $query = $query->orderBy('pedido_bodega.fecha')
+            ->orderBy('pedido_bodega.id_empresa')
+            ->orderBy('pedido_bodega.id_usuario')
             ->get();
         $pedidos = [];
         foreach ($query as $q) {
