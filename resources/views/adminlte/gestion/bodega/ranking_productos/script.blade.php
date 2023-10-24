@@ -16,11 +16,11 @@
         });
     }
 
-    /*function exportar_reporte() {
+    function exportar_reporte() {
         $.LoadingOverlay('show');
         window.open('{{ url('ranking_productos/exportar_reporte') }}?desde=' + $('#filtro_desde').val() +
             '&hasta=' + $('#filtro_hasta').val() +
             '&finca=' + $('#filtro_finca').val(), '_blank');
         $.LoadingOverlay('hide');
-    }*/
+    }
 </script>

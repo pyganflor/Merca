@@ -288,6 +288,7 @@ class ResumenPedidosController extends Controller
 
         //$writer->save('/var/www/html/Dasalflor/storage/storage/excel/excel_prueba.xlsx');
     }
+    
     public function excel_reporte($spread, $request)
     {
         $usuarios = DB::table('pedido_bodega as p')

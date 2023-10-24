@@ -70,6 +70,9 @@
                                 <button type="button" class="btn btn-yura_dark" onclick="listar_reporte()">
                                     <i class="fa fa-fw fa-search"></i> Buscar
                                 </button>
+                                <button type="button" class="btn btn-yura_default" onclick="exportar_reporte()">
+                                    <i class="fa fa-fw fa-file-excel-o"></i> Exportar
+                                </button>
                             </span>
                         </div>
                     </td>
