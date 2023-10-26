@@ -42,6 +42,7 @@ class RankingProductosController extends Controller
         $productos = $productos->orderBy('producto.nombre')
             ->get();
 
+        $total_ventas = 0;
         $listado = [];
         foreach ($productos as $producto) {
             $detalles_pedido = DetallePedidoBodega::join('pedido_bodega as p', 'p.id_pedido_bodega', '=', 'detalle_pedido_bodega.id_pedido_bodega')
@@ -123,11 +124,13 @@ class RankingProductosController extends Controller
                     'costo_total' => $costo_total,
                     'fechas_entregado' => $fechas_entregado,
                 ];
+                $total_ventas += $monto_total;
             }
         }
 
         return view('adminlte.gestion.bodega.ranking_productos.partials.listado', [
-            'listado' => $listado
+            'listado' => $listado,
+            'total_ventas' => $total_ventas,
         ]);
     }
 
@@ -161,6 +164,7 @@ class RankingProductosController extends Controller
             ->get();
 
         $listado = [];
+        $total_ventas = 0;
         foreach ($productos as $producto) {
             $detalles_pedido = DetallePedidoBodega::join('pedido_bodega as p', 'p.id_pedido_bodega', '=', 'detalle_pedido_bodega.id_pedido_bodega')
                 ->select('detalle_pedido_bodega.*')->distinct()
@@ -241,6 +245,7 @@ class RankingProductosController extends Controller
                     'costo_total' => $costo_total,
                     'fechas_entregado' => $fechas_entregado,
                 ];
+                $total_ventas += $monto_total;
             }
         }
 
@@ -266,19 +271,22 @@ class RankingProductosController extends Controller
         $col++;
         setValueToCeldaExcel($sheet, $columnas[$col] . $row, 'Utilidad');
         $col++;
-        setValueToCeldaExcel($sheet, $columnas[$col] . $row, 'Fechas');
+        setValueToCeldaExcel($sheet, $columnas[$col] . $row, 'Utilidad Ventas');
         setBgToCeldaExcel($sheet, 'A' . $row . ':' . $columnas[$col] . $row, '00B388');
         setColorTextToCeldaExcel($sheet, 'A' . $row . ':' . $columnas[$col] . $row, 'FFFFFF');
+
+        $total_cantidad = 0;
+        $total_subtotal = 0;
+        $total_iva = 0;
+        $total_costos = 0;
         foreach ($listado as $pos => $item) {
             $margen_total = $item['monto_total'] - $item['costo_total'];
             $utilidad_total = porcentaje($margen_total, $item['costo_total'], 1);
-            $list_fechas = '';
-            foreach ($item['fechas_entregado'] as $pos_f => $f) {
-                if ($pos_f > 0)
-                    $list_fechas .=  '|' . explode(' del ', convertDateToText($f))[0];
-                else
-                    $list_fechas .=  explode(' del ', convertDateToText($f))[0];
-            }
+            $utilidad_ventas = porcentaje($margen_total, $total_ventas, 1);
+            $total_cantidad += $item['cantidad'];
+            $total_subtotal += $item['monto_subtotal'];
+            $total_iva += $item['monto_total_iva'];
+            $total_costos += $item['costo_total'];
 
             $row++;
             $col = 0;
@@ -298,8 +306,33 @@ class RankingProductosController extends Controller
             $col++;
             setValueToCeldaExcel($sheet, $columnas[$col] . $row, round($utilidad_total, 2));
             $col++;
-            setValueToCeldaExcel($sheet, $columnas[$col] . $row, $list_fechas);
+            setValueToCeldaExcel($sheet, $columnas[$col] . $row, round($utilidad_ventas, 2));
         }
+        $margen_total = $total_ventas - $total_costos;
+        $utilidad_total = porcentaje($margen_total, $total_costos, 1);
+        $utilidad_ventas = porcentaje($margen_total, $total_ventas, 1);
+
+        $row++;
+        $col = 0;
+        setValueToCeldaExcel($sheet, $columnas[$col] . $row, 'Totales');
+        $col++;
+        setValueToCeldaExcel($sheet, $columnas[$col] . $row, $total_cantidad);
+        $col++;
+        setValueToCeldaExcel($sheet, $columnas[$col] . $row, round($total_subtotal, 2));
+        $col++;
+        setValueToCeldaExcel($sheet, $columnas[$col] . $row, round($total_iva, 2));
+        $col++;
+        setValueToCeldaExcel($sheet, $columnas[$col] . $row, round($total_ventas, 2));
+        $col++;
+        setValueToCeldaExcel($sheet, $columnas[$col] . $row, round($total_costos, 2));
+        $col++;
+        setValueToCeldaExcel($sheet, $columnas[$col] . $row, round($margen_total, 2));
+        $col++;
+        setValueToCeldaExcel($sheet, $columnas[$col] . $row, round($utilidad_total, 2));
+        $col++;
+        setValueToCeldaExcel($sheet, $columnas[$col] . $row, round($utilidad_ventas, 2));
+        setBgToCeldaExcel($sheet, 'A' . $row . ':' . $columnas[$col] . $row, '00B388');
+        setColorTextToCeldaExcel($sheet, 'A' . $row . ':' . $columnas[$col] . $row, 'FFFFFF');
 
         setTextCenterToCeldaExcel($sheet, 'A1:' . $columnas[$col] . $row);
         setBorderToCeldaExcel($sheet, 'A1:' . $columnas[$col] . $row);

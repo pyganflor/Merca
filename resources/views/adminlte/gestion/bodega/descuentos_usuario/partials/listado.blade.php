@@ -1,3 +1,7 @@
+<legend style="font-size: 1.2em; margin-bottom: 5px" class="text-center">
+    Descuentos de <b>{{ $usuario->nombre_completo }}</b> fecha
+    <b>{{ explode(' del ', convertDateToText(hoy()))[0] }}</b>
+</legend>
 <table class="table-bordered" style="width: 100%; border: 1px solid #9d9d9d" id="table_descuentos">
     <thead>
         <tr class="tr_fija_top_0">
@@ -7,16 +11,19 @@
             <th class="th_yura_green padding_lateral_5">
                 Producto
             </th>
-            <th class="th_yura_green padding_lateral_5" style="width: 60px">
+            <th class="th_yura_green padding_lateral_5" style="width: 70px">
                 Subtotal
             </th>
-            <th class="th_yura_green padding_lateral_5" style="width: 40px">
+            <th class="th_yura_green padding_lateral_5" style="width: 70px">
                 Iva
             </th>
-            <th class="th_yura_green padding_lateral_5" style="width: 50px">
-                Total
+            <th class="th_yura_green padding_lateral_5" style="width: 70px">
+                Monto Unitario
             </th>
-            <th class="th_yura_green padding_lateral_5" style="width: 60px">
+            <th class="th_yura_green padding_lateral_5" style="width: 70px">
+                Monto Total
+            </th>
+            <th class="th_yura_green padding_lateral_5" style="width: 80px">
                 #Pago
             </th>
         </tr>
@@ -24,6 +31,7 @@
     @php
         $monto_subtotal = 0;
         $monto_total_iva = 0;
+        $monto_unitario = 0;
         $monto_total = 0;
     @endphp
     <tbody>
@@ -32,13 +40,17 @@
                 $producto = $item->producto;
                 $precio_prod = 0;
                 if ($producto->peso == 1) {
-                    foreach($item->etiquetas_peso as $e){
+                    foreach ($item->etiquetas_peso as $e) {
                         $precio_prod += $e->peso * $e->precio_venta;
                     }
                 } else {
                     $precio_prod = $item->cantidad * $item->precio;
                 }
-                $diferido = $precio_prod / $item->diferido;
+                if ($item->diferido == 0 || $item->diferido == null) {
+                    $monto_pedido = $precio_prod;
+                } else {
+                    $monto_pedido = $precio_prod / $item->diferido;
+                }
                 if ($item->iva == true) {
                     $subtotal = $precio_prod / 1.12;
                     $iva = ($precio_prod / 1.12) * 0.12;
@@ -46,12 +58,17 @@
                     $subtotal = $precio_prod;
                     $iva = 0;
                 }
-                $subtotal = $subtotal / $item->diferido;
-                $iva = $iva / $item->diferido;
+                if ($item->diferido > 0) {
+                    $subtotal = $subtotal / $item->diferido;
+                    $iva = $iva / $item->diferido;
+                }
 
                 $monto_subtotal += $subtotal;
                 $monto_total_iva += $iva;
-                $monto_total += $diferido;
+                $monto_unitario += $monto_pedido;
+                if ($item->diferido > 0) {
+                    $monto_total += $monto_pedido * count($item->pagos_pendientes);
+                }
             @endphp
             <tr onmouseover="$(this).addClass('bg-yura_dark')" onmouseleave="$(this).removeClass('bg-yura_dark')">
                 <th class="padding_lateral_5" style="border-color: #9d9d9d">
@@ -67,10 +84,27 @@
                     ${{ number_format($iva, 2) }}
                 </th>
                 <th class="padding_lateral_5" style="border-color: #9d9d9d">
-                    ${{ number_format($diferido, 2) }}
+                    ${{ number_format($monto_pedido, 2) }}
+                </th>
+                <th class="padding_lateral_5" style="border-color: #9d9d9d">
+                    @if ($item->diferido > 0)
+                        ${{ number_format($monto_pedido * count($item->pagos_pendientes), 2) }}
+                    @else
+                        ${{ number_format($monto_pedido, 2) }}
+                    @endif
                 </th>
                 <th class="text-center" style="border-color: #9d9d9d">
-                    {{ $item->num_pago }}°
+                    @if ($item->diferido > 0)
+                        @foreach ($item->pagos_pendientes as $pos_p => $p)
+                            @if ($pos_p == 0)
+                                {{ $p }}°
+                            @else
+                                | {{ $p }}°
+                            @endif
+                        @endforeach
+                    @else
+                        <small><em>No Dif.</em></small>
+                    @endif
                 </th>
             </tr>
         @endforeach
@@ -84,6 +118,9 @@
         </th>
         <th class="th_yura_green padding_lateral_5">
             ${{ number_format($monto_total_iva, 2) }}
+        </th>
+        <th class="th_yura_green padding_lateral_5">
+            ${{ number_format($monto_unitario, 2) }}
         </th>
         <th class="th_yura_green padding_lateral_5">
             ${{ number_format($monto_total, 2) }}
