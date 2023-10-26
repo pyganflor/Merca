@@ -35,12 +35,13 @@
         <div style="overflow-x: scroll">
             <table style="width: 100%">
                 <tr>
-                    <td>
+                    <td style="width: 30%">
                         <div class="input-group">
                             <span class="input-group-addon bg-yura_dark span-input-group-yura-fixed">
                                 Finca
                             </span>
-                            <select id="filtro_finca" style="width: 100%" class="form-control">
+                            <select id="filtro_finca" style="width: 100%" class="form-control"
+                                onchange="seleccionar_finca_filtro()">
                                 @foreach ($fincas as $f)
                                     <option value="{{ $f->id_empresa }}">
                                         {{ $f->nombre }}
@@ -49,33 +50,12 @@
                             </select>
                         </div>
                     </td>
-                    <td>
+                    <td style="width: 70%">
                         <div class="input-group">
                             <span class="input-group-addon bg-yura_dark">
-                                Desde
+                                Usuario
                             </span>
-                            <input type="date" id="filtro_desde" style="width: 100%" class="form-control"
-                                value="{{ date('Y-m-01', strtotime(hoy())) }}">
-                        </div>
-                    </td>
-                    <td>
-                        <div class="input-group">
-                            <span class="input-group-addon bg-yura_dark">
-                                Hasta
-                            </span>
-                            <input type="date" id="filtro_hasta" style="width: 100%" class="form-control"
-                                value="{{ hoy() }}">
-                        </div>
-                    </td>
-                    <td>
-                        <div class="input-group">
-                            <span class="input-group-addon bg-yura_dark">
-                                Tipo
-                            </span>
-                            <select class="form-control" id="filtro_tipo" style="width: 100%">
-                                <option value="T">Total Ventas</option>
-                                <option value="D">Diferidos</option>
-                                <option value="N">NO Diferidos</option>
+                            <select class="form-control" id="filtro_usuario" style="width: 100%">
                             </select>
                             <span class="input-group-btn">
                                 <button type="button" class="btn btn-yura_dark" onclick="listar_reporte()">
@@ -107,9 +87,13 @@
             left: 0;
             z-index: 9;
         }
+
+        .select2-selection {
+            height: 34px !important;
+        }
     </style>
 @endsection
 
 @section('script_final')
-    @include('adminlte.gestion.bodega.resumen_pedidos.script')
+    @include('adminlte.gestion.bodega.descuentos_usuario.script')
 @endsection

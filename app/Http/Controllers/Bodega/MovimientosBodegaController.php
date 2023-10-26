@@ -78,7 +78,9 @@ class MovimientosBodegaController extends Controller
                 $ingreso->cantidad = $d->unidades;
                 $ingreso->precio = $d->precio;
                 $ingreso->save();
-                $ingreso = IngresoBodega::All()->last();
+                $ingreso->id_ingreso_bodega = DB::table('ingreso_bodega')
+                    ->select(DB::raw('max(id_ingreso_bodega) as id'))
+                    ->get()[0]->id;
                 bitacora('ingreso_bodega', $ingreso->id_ingreso_bodega, 'I', 'INGRESO A BODEGA de ' . $d->unidades . ' UNIDADES de ' . $producto->nombre);
 
                 /* INVENTARIO_BODEGA */
@@ -90,7 +92,9 @@ class MovimientosBodegaController extends Controller
                 $inventario->precio = $d->precio;
                 $inventario->id_ingreso_bodega = $ingreso->id_ingreso_bodega;
                 $inventario->save();
-                $inventario = InventarioBodega::All()->last();
+                $inventario->id_inventario_bodega = DB::table('inventario_bodega')
+                    ->select(DB::raw('max(id_inventario_bodega) as id'))
+                    ->get()[0]->id;
                 bitacora('inventario_bodega', $inventario->id_inventario_bodega, 'I', 'INVENTARIO de BODEGA de ' . $d->unidades . ' UNIDADES de ' . $producto->nombre);
             }
 
@@ -145,7 +149,9 @@ class MovimientosBodegaController extends Controller
                     $salida->fecha = $request->fecha;
                     $salida->cantidad = $d->unidades;
                     $salida->save();
-                    $salida = SalidaBodega::All()->last();
+                    $salida->id_salida_bodega = DB::table('salida_bodega')
+                        ->select(DB::raw('max(id_salida_bodega) as id'))
+                        ->get()[0]->id;
                     bitacora('salida_bodega', $salida->id_salida_bodega, 'I', 'SALIDA A BODEGA de ' . $d->unidades . ' UNIDADES de ' . $producto->nombre);
 
                     /* SACAR DEL INVENTARIO */
@@ -177,7 +183,7 @@ class MovimientosBodegaController extends Controller
                             $salida_inventario = new SalidaInventarioBodega();
                             $salida_inventario->id_salida_bodega =  $salida->id_salida_bodega;
                             $salida_inventario->id_inventario_bodega =  $model->id_inventario_bodega;
-                            $salida_inventario->cantidad =  $usados;
+                            $salida_inventario->cantidad = $usados;
                             $salida_inventario->save();
                         }
                     }
