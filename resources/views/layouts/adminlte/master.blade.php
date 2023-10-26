@@ -1086,7 +1086,7 @@
             }, 'ul_navbar_superior');
         }
 
-        cargar_fincas_propias();
+        //cargar_fincas_propias();
 
         function cargar_accesos_directos() {
             datos = {};
@@ -1095,7 +1095,7 @@
             }, 'ul_navbar_superior');
         }
 
-        cargar_accesos_directos();
+        //cargar_accesos_directos();
 
         function cargar_utiles() {
             get_jquery('{{ url('cargar_utiles') }}', {}, function(retorno) {
