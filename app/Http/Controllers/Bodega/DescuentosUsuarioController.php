@@ -111,7 +111,7 @@ class DescuentosUsuarioController extends Controller
                     ->where('id_empresa', $det_ped->id_empresa)
                     ->first();
                 $fecha_entrega = $entrega != '' ? $entrega->entrega : '';
-                if ($fecha_entrega >= $primerDiaMes && $fecha_entrega <= $ultimoDiaMes) {
+                if ($fecha_entrega >= $primerDiaMes) {
                     $det_ped->fecha_entrega = $fecha_entrega;
                     $listado[] = $det_ped;
                 }
