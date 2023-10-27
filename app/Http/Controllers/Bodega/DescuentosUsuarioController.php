@@ -51,8 +51,6 @@ class DescuentosUsuarioController extends Controller
 
         $listado = [];
         foreach ($query_pedidos as $det_ped) {
-            if ($det_ped->id_detalle_pedido == 930)
-                dd('ok');
             $entrega = FechaEntrega::All()
                 ->where('desde', '<=', $det_ped->fecha)
                 ->where('hasta', '>=', $det_ped->fecha)
@@ -74,7 +72,8 @@ class DescuentosUsuarioController extends Controller
 
             if (($diferido_fecha_inicial >= $primerDiaMes && $diferido_fecha_inicial <= $ultimoDiaMes) ||
                 ($diferido_fecha_final >= $primerDiaMes && $diferido_fecha_final <= $ultimoDiaMes) ||
-                ($diferido_fecha_inicial <= $primerDiaMes && $diferido_fecha_final >= $ultimoDiaMes)
+                ($diferido_fecha_inicial <= $primerDiaMes && $diferido_fecha_final >= $ultimoDiaMes) ||
+                $diferido_fecha_inicial >= $primerDiaMes
             ) {
                 $rango_diferido = $det_ped->getRangoDiferidoByFecha($fecha_entrega);
                 $pagos_pendientes = [];
