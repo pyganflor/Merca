@@ -51,6 +51,8 @@ class DescuentosUsuarioController extends Controller
 
         $listado = [];
         foreach ($query_pedidos as $det_ped) {
+            if ($det_ped->id_detalle_pedido == 930)
+                dd('ok');
             $entrega = FechaEntrega::All()
                 ->where('desde', '<=', $det_ped->fecha)
                 ->where('hasta', '>=', $det_ped->fecha)
@@ -254,7 +256,7 @@ class DescuentosUsuarioController extends Controller
         $col = 0;
         setValueToCeldaExcel($sheet, $columnas[$col] . $row, 'Descuentos de ' . $usuario->nombre_completo . ' fecha ' . explode(' del ', convertDateToText(hoy()))[0]);
         $sheet->mergeCells('A' . $row . ':G' . $row);
-        
+
         $row++;
         $col = 0;
         setValueToCeldaExcel($sheet, $columnas[$col] . $row, 'Fecha');
