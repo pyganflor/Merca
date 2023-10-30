@@ -76,6 +76,11 @@
                 </th>
                 <th class="padding_lateral_5" style="border-color: #9d9d9d">
                     {{ $producto->nombre }}
+
+                    <button type="button" class="btn btn-xs btn-yura_default pull-right" title="Etiqueta"
+                        onclick="imprimir_pedido('{{ $item->id_pedido_bodega }}')">
+                        <i class="fa fa-fw fa-barcode"></i>
+                    </button>
                 </th>
                 <th class="padding_lateral_5" style="border-color: #9d9d9d">
                     ${{ number_format($subtotal, 2) }}
@@ -129,3 +134,11 @@
         </th>
     </tr>
 </table>
+
+<script>
+    function imprimir_pedido(ped) {
+        $.LoadingOverlay('show');
+        window.open('{{ url('pedido_bodega/imprimir_pedido') }}?pedido=' + ped, '_blank');
+        $.LoadingOverlay('hide');
+    }
+</script>
