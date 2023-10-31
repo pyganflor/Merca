@@ -138,7 +138,7 @@
 <script>
     function imprimir_pedido(ped) {
         $.LoadingOverlay('show');
-        window.open('{{ url('pedido_bodega/imprimir_pedido') }}?pedido=' + ped, '_blank');
+        window.open('{{ url('descuentos_usuario/imprimir_pedido') }}?pedido=' + ped, '_blank');
         $.LoadingOverlay('hide');
     }
 </script>
