@@ -1154,52 +1154,79 @@ class ComandoDev extends Command
         try {
             $url = public_path('storage/file_loads/usuarios.xlsx');
             $document = IOFactory::load($url);
-            $activeSheetData = $document->getActiveSheet()->toArray(null, true, true, true);
 
-            foreach ($activeSheetData as $pos_row => $row) {
-                if ($row['B'] != '' && $pos_row > 1) {
-                    dump('usuario: ' . $pos_row . '/' . count($activeSheetData));
-                    $usuario = Usuario::All()
-                        ->where('username', str_limit(mb_strtolower(espacios($row['C'])), 250))
-                        ->first();
-                    if ($usuario == '') {
-                        dump('NEW');
-                        $fecha_ingreso = $row['D'];
-                        $dias_activo = difFechas(hoy(), $fecha_ingreso)->days;
-                        $aplica = 0;
-                        if ($dias_activo >= 90)
-                            $aplica = 1;
-                        $passw = Hash::make(str_limit(mb_strtoupper(espacios($row['C'])), 250));
+            $ids_usuarios = [];
+            foreach ($document->getAllSheets() as $pos_hoja => $hoja) {
+                dump('hoja: ' . $pos_hoja . '/' . count($document->getAllSheets()));
+                $activeSheetData = $hoja->toArray(null, true, true, true);
+                $nombre_hoja = $hoja->getTitle();
+                $finca = ConfiguracionEmpresa::where('nombre', $nombre_hoja)
+                    ->get()
+                    ->first();
+                if ($finca != '')
+                    foreach ($activeSheetData as $pos_row => $row) {
+                        if ($row['B'] != '' && $pos_row > 1) {
+                            dump('usuario: ' . $pos_row . '/' . count($activeSheetData));
+                            $usuario = Usuario::All()
+                                ->where('username', str_limit(mb_strtolower(espacios($row['C'])), 250))
+                                ->first();
+                            if ($usuario == '') {
+                                dump('NEW');
+                                $fecha_ingreso = $row['D'];
+                                $dias_activo = difFechas(hoy(), $fecha_ingreso)->days;
+                                $aplica = 0;
+                                if ($dias_activo >= 90)
+                                    $aplica = 1;
+                                $passw = Hash::make(str_limit(mb_strtoupper(espacios($row['C'])), 250));
 
-                        $usuario = new Usuario();
-                        $usuario->estado = 'A';
-                        $usuario->id_rol = 23;
-                        $usuario->aplica = $aplica;
-                        $usuario->cupo_disponible = 40;
-                        $usuario->saldo = $aplica ? 40 : 0;
-                        $usuario->password = $passw;
-                        $usuario->nombre_completo = str_limit(mb_strtoupper(espacios($row['B'])), 250);
-                        $usuario->username = str_limit(mb_strtolower(espacios($row['C'])), 250);
-                        $usuario->save();
-                        $usuario = Usuario::All()->last();
+                                $usuario = new Usuario();
+                                $usuario->estado = 'A';
+                                $usuario->id_rol = 23;
+                                $usuario->aplica = $aplica;
+                                $usuario->cupo_disponible = 40;
+                                $usuario->saldo = $aplica ? 40 : 0;
+                                $usuario->password = $passw;
+                                $usuario->nombre_completo = str_limit(mb_strtoupper(espacios($row['B'])), 250);
+                                $usuario->username = str_limit(mb_strtolower(espacios($row['C'])), 250);
+                                $usuario->save();
+                                $usuario->id_usuario = DB::table('usuario')
+                                    ->select(DB::raw('max(id_usuario) as id'))
+                                    ->get()[0]->id;
 
-                        $usuario_finca = new UsuarioFinca();
-                        $usuario_finca->id_usuario = $usuario->id_usuario;
-                        $usuario_finca->id_empresa = 10;
-                        $usuario_finca->save();
-                    } /*else {
-                        $usuario_finca = UsuarioFinca::All()
-                            ->where('id_usuario', $usuario->id_usuario)
-                            ->where('id_empresa', 10)
-                            ->first();
-                        if ($usuario_finca == '') {
-                            $usuario_finca = new UsuarioFinca();
-                            $usuario_finca->id_usuario = $usuario->id_usuario;
-                            $usuario_finca->id_empresa = 10;
-                            $usuario_finca->save();
+                                $usuario_finca = new UsuarioFinca();
+                                $usuario_finca->id_usuario = $usuario->id_usuario;
+                                $usuario_finca->id_empresa = $finca->id_configuracion_empresa;
+                                $usuario_finca->save();
+                            } else {
+                                dump('EXISTE');
+                                $usuario_finca = UsuarioFinca::All()
+                                    ->where('id_usuario', $usuario->id_usuario)
+                                    ->where('id_empresa', $finca->id_configuracion_empresa)
+                                    ->first();
+                                if ($usuario_finca == '') {
+                                    dump('NUEVO EN LA FINCA');
+                                    $usuario_finca = new UsuarioFinca();
+                                    $usuario_finca->id_usuario = $usuario->id_usuario;
+                                    $usuario_finca->id_empresa = $finca->id_configuracion_empresa;
+                                    $usuario_finca->save();
+                                }
+
+                                $usuario->aplica = 1;
+                                $usuario->save();
+
+                                $ids_usuarios[] = $usuario->id_usuario;
+                            }
                         }
-                    }*/
-                }
+                    }
+            }
+            $usuarios_ausentes = Usuario::whereNotIn('id_usuario', $ids_usuarios)
+                ->where('aplica', 1)
+                ->whereNotIn('id_usuario', [1, 2])
+                ->get();
+            foreach ($usuarios_ausentes as $u) {
+                dump('NO APLICA: ' . $u->nombre_completo);
+                $u->aplica = 0;
+                $u->save();
             }
             //unlink($url);
         } catch (\Exception $e) {

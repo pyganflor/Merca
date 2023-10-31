@@ -37,7 +37,7 @@ class YuraController extends Controller
 {
     public function inicio(Request $request)
     {
-        if (in_array(getUsuario(session('id_usuario'))->id_rol, [1, 2])) {  // usuarios Admins
+        if (in_array(getUsuario(session('id_usuario'))->id_rol, [1, 2, 24])) {  // usuarios Admins y RRHH
             $data = [];
             return view('adminlte.inicio_resumen', [
                 'fincas_propias' => getFincasPropias(),
