@@ -1237,7 +1237,34 @@ class ComandoDev extends Command
 
     function caca()
     {
-        $r = Proveedor::where('estado', 1)->get()->last();
-        dd($r);
+        dump('<<<<< ! >>>>> Ejecutando comando:dev "caca" <<<<< ! >>>>>');
+        try {
+            $url = public_path('storage/file_loads/telefonos.xlsx');
+            $document = IOFactory::load($url);
+            $activeSheetData = $document->getActiveSheet()->toArray(null, true, true, true);
+            $no_existen = [];
+            foreach ($activeSheetData as $pos_row => $row) {
+                if ($row['A'] != '' && $pos_row > 1) {
+                    dump('usuario: ' . $pos_row . '/' . count($activeSheetData));
+                    $usuario = Usuario::All()
+                        ->where('username', str_limit(mb_strtolower(espacios($row['A'])), 250))
+                        ->first();
+                    if ($usuario != '') {
+                        dump('EXISTE');
+                        $usuario->telefono = $row['D'] != 'NULL' ? str_limit(mb_strtolower(espacios($row['D'])), 250) : '';
+                        $usuario->correo = str_limit(mb_strtolower(espacios($row['E'])), 250);
+                        $usuario->save();
+                    } else {
+                        dump('******************** NO EXISTE **********************' . $pos_row);
+                        $no_existen[] = $row['A'];
+                    }
+                }
+            }
+            dd($no_existen);
+            //unlink($url);
+        } catch (\Exception $e) {
+            dump('************************* ERROR *************************');
+            dump($e->getMessage());
+        }
     }
 }
