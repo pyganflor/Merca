@@ -172,9 +172,23 @@
                 @endphp
                 @for ($m = $diferido_mes_inicial; $m <= $diferido_mes_final; $m++)
                     @php
-                        $fechaObj = new DateTime($fecha);
-                        $fechaObj->modify('+' . $m . ' month');
-                        $fecha_next = $fechaObj->format('Y-m-d');
+                        $dia_entrega = date('d', strtotime($fecha));
+                        $f = new DateTime($fecha);
+                        $f->modify('first day of +' . $m . ' month');
+                        $f = $f->format('Y-m-d');
+
+                        $f = date('Y', strtotime($f)) . '-' . date('m', strtotime($f)) . '-' . $dia_entrega;
+                        [$ano, $mes, $dia] = explode('-', $f);
+                        $d = 1;
+                        while (!checkdate($mes, $dia, $ano)) {
+                            $f = new DateTime($f);
+                            $f->modify('-' . $d . ' day');
+                            $f = $f->format('Y-m-d');
+                            [$ano, $mes, $dia] = explode('-', $f);
+                            $d++;
+                        }
+
+                        $fecha_next = $f;
                     @endphp
                     <tr style="font-size: 0.6em">
                         <th style="text-align: right; padding-right: 2px" colspan="3">
