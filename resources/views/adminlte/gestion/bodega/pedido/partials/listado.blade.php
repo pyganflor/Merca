@@ -1,4 +1,4 @@
-<div style="overflow-y: scroll; max-height: 700px">
+<div style="overflow-y: scroll; max-height: 700px" class="container">
     <div class="row">
         @php
             $total_costos_armados = 0;
