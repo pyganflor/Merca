@@ -111,9 +111,11 @@
                 <th class="text-center th_yura_green">
                     Producto
                 </th>
-                <th class="text-center th_yura_green {{ !in_array(session('id_usuario'), [1, 2]) ? 'hidden' : '' }}"
-                    style="width: 80px">
+                <th class="text-center th_yura_green" style="width: 80px">
                     Precio
+                </th>
+                <th class="text-center th_yura_green" style="width: 80px">
+                    Descuento
                 </th>
                 <th class="text-center th_yura_green" style="width: 110px">
                     Diferido
@@ -133,6 +135,9 @@
                     $producto = $det->producto;
                     $url_imagen = 'images\productos\*' . $producto->imagen;
                     $url_imagen = str_replace('*', '', $url_imagen);
+
+                    $descuento = porcentaje($det->precio, $producto->precio_venta, 1);
+                    $descuento = 100 - $descuento;
                 @endphp
                 <tr id="tr_producto_selected_{{ $producto->id_producto }}">
                     <td class="text-center" style="border-color: #9d9d9d">
@@ -147,9 +152,18 @@
                         style="border-color: #9d9d9d">
                         <input type="number" id="input_precio_producto_selected_{{ $producto->id_producto }}"
                             style="width: 100%" value="{{ $det->precio }}" class="text-center">
+                        <input type="hidden"
+                            id="input_precio_original_producto_selected_{{ $producto->id_producto }}"
+                            value="{{ $producto->precio_venta }}">
                         <label for="tiene_iva_selected_{{ $producto->id_producto }}" class="mouse-hand">IVA</label>
                         <input type="checkbox" id="tiene_iva_selected_{{ $producto->id_producto }}"
                             {{ $det->iva == 1 ? 'checked' : '' }} onchange="calcular_totales_pedido()">
+                    </th>
+                    <th class="text-center {{ !in_array(session('id_usuario'), [1, 2]) ? 'hidden' : '' }}"
+                        style="border-color: #9d9d9d">
+                        <input type="number" id="input_descuento_producto_selected_{{ $producto->id_producto }}"
+                            style="width: 100%" value="{{ round($descuento) }}" class="text-center"
+                            onchange="aplicar_descuento('{{ $producto->id_producto }}')">
                     </th>
                     <th class="text-center" style="border-color: #9d9d9d">
                         <select id="input_diferido_producto_selected_{{ $producto->id_producto }}"
@@ -304,8 +318,15 @@
                 '<th class="text-center elemento_precio" style="border-color: #9d9d9d">' +
                 '<input type="number" id="input_precio_producto_selected_' + prod + '" ' +
                 'style="width: 100%" value="' + precio_venta + '" class="text-center">' +
+                '<input type="hidden" id="input_precio_original_producto_selected_' + prod + '" readonly ' +
+                'style="width: 100%" value="' + precio_venta + '" class="text-center">' +
                 '<label for="tiene_iva_selected_' + prod + '" class="mouse-hand">IVA</label>' +
                 '<input type="checkbox" id="tiene_iva_selected_' + prod + '">' +
+                '</th>' +
+                '<th class="text-center" style="border-color: #9d9d9d">' +
+                '<input type="number" id="input_descuento_producto_selected_' + prod + '" ' +
+                'style="width: 100%" value="0" class="text-center" min="0" max="100" onchange="aplicar_descuento(' +
+                prod + ')">' +
                 '</th>' +
                 '<th class="text-center elemento_precio" style="border-color: #9d9d9d">' +
                 '<select id="input_diferido_producto_selected_' + prod + '" ' +
@@ -519,5 +540,15 @@
                 listar_reporte();
             });
         })
+    }
+
+    function aplicar_descuento(prod) {
+        precio_venta = $('#input_precio_original_producto_selected_' + prod).val();
+        descuento = $('#input_descuento_producto_selected_' + prod).val();
+        descuento = (descuento * precio_venta) / 100;
+        precio_venta -= descuento;
+        precio_venta = Math.round(precio_venta * 100) / 100;
+        $('#input_precio_producto_selected_' + prod).val(precio_venta);
+        calcular_totales_pedido();
     }
 </script>

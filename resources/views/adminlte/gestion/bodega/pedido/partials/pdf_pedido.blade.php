@@ -173,7 +173,8 @@
             @for ($m = $diferido_mes_inicial; $m <= $diferido_mes_final; $m++)
                 @php
                     $fechaObj = new DateTime($fecha);
-                    $fechaObj->modify('+' . $m . ' month');
+                    $fechaObj->modify('first day of +' . $m . ' month');
+                    //$fechaObj->modify('-1 day');
                     $fecha_next = $fechaObj->format('Y-m-d');
                 @endphp
                 <tr style="font-size: 0.6em">

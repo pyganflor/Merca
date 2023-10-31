@@ -116,6 +116,12 @@
                 <th class="text-center th_yura_green">
                     Producto
                 </th>
+                <th class="text-center th_yura_green" style="width: 70px">
+                    Precio
+                </th>
+                <th class="text-center th_yura_green" style="width: 70px">
+                    Descuento
+                </th>
                 <th class="text-center th_yura_green" style="width: 110px">
                     Diferido
                     <label for="check_diferido_mes_actual" class="mouse-hand check_diferido_mes_actual">
@@ -236,6 +242,17 @@
                 nombre_producto +
                 '</th>' +
                 '<th class="text-center" style="border-color: #9d9d9d">' +
+                '<input type="text" id="input_precio_producto_selected_' + prod + '" readonly ' +
+                'style="width: 100%" value="' + precio_venta + '" class="text-center">' +
+                '<input type="hidden" id="input_precio_original_producto_selected_' + prod + '" readonly ' +
+                'style="width: 100%" value="' + precio_venta + '" class="text-center">' +
+                '</th>' +
+                '<th class="text-center" style="border-color: #9d9d9d">' +
+                '<input type="number" id="input_descuento_producto_selected_' + prod + '" ' +
+                'style="width: 100%" value="0" class="text-center" min="0" max="100" onchange="aplicar_descuento(' +
+                prod + ')">' +
+                '</th>' +
+                '<th class="text-center" style="border-color: #9d9d9d">' +
                 '<select id="input_diferido_producto_selected_' + prod +
                 '" class="input_diferido_producto_selected" style="width: 100%; height: 30px" onchange="calcular_totales_pedido()">' +
                 '<option value="0">Una Cuota</option>' +
@@ -245,8 +262,6 @@
                 '</select>' +
                 '</th>' +
                 '<th class="text-center" style="border-color: #9d9d9d">' +
-                '<input type="hidden" id="input_precio_producto_selected_' + prod + '" ' +
-                'style="width: 100%" value="' + precio_venta + '" class="text-center">' +
                 '<input type="checkbox" id="tiene_iva_selected_' + prod + '" class="hidden">' +
                 '<div class="btn-group" style="margin-top: 0">' +
                 '<button type="button" class="btn btn-sm btn-yura_default" ' +
@@ -412,5 +427,15 @@
         $('#input_saldo_total').val(monto_saldo);
         $('#input_diferido_total').val(monto_diferido);
         $('#input_monto_total').val(monto_total);
+    }
+
+    function aplicar_descuento(prod) {
+        precio_venta = $('#input_precio_original_producto_selected_' + prod).val();
+        descuento = $('#input_descuento_producto_selected_' + prod).val();
+        descuento = (descuento * precio_venta) / 100;
+        precio_venta -= descuento;
+        precio_venta = Math.round(precio_venta * 100) / 100;
+        $('#input_precio_producto_selected_' + prod).val(precio_venta);
+        calcular_totales_pedido();
     }
 </script>
