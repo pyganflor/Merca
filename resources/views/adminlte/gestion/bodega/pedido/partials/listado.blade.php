@@ -34,7 +34,7 @@
                             <i class="fa fa-fw fa-print"></i>
                         </button>
                     </div>
-                    @if ($item->armado == 0 && substr($item->fecha, 0, 7) == substr(hoy(), 0, 7))
+                    @if ($item->armado == 0)
                         <button type="button" class="btn btn-xs btn-yura_danger btn_elimiar_pedido_listado"
                             title="Eliminar Pedido" onclick="delete_pedido('{{ $item->id_pedido_bodega }}')">
                             <i class="fa fa-fw fa-times"></i>
