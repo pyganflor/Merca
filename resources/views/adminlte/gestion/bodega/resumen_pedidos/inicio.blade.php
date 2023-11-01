@@ -73,7 +73,7 @@
                                 Tipo
                             </span>
                             <select class="form-control" id="filtro_tipo" style="width: 100%">
-                                <option value="T">Total Ventas</option>
+                                {{--<option value="T">Total Ventas</option>--}}
                                 <option value="D">Diferidos</option>
                                 <option value="N">NO Diferidos</option>
                             </select>
