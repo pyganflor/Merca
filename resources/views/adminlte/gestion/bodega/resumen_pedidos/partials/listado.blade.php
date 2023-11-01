@@ -61,4 +61,22 @@
             </tr>
         @endforeach
     </tbody>
+    <tr class="tr_fija_bottom_0">
+        <th class="th_yura_green padding_lateral_5" colspan="2">
+            Totales
+        </th>
+        <th class="th_yura_green padding_lateral_5" style="width: 60px">
+            ${{ number_format($monto_subtotal, 2) }}
+        </th>
+        <th class="th_yura_green padding_lateral_5" style="width: 40px">
+            ${{ number_format($monto_total_iva, 2) }}
+        </th>
+        <th class="th_yura_green padding_lateral_5" style="width: 50px">
+            ${{ number_format($monto_total, 2) }}
+        </th>
+        @if ($tipo == 'D')
+            <th class="th_yura_green padding_lateral_5" style="width: 60px">
+            </th>
+        @endif
+    </tr>
 </table>
