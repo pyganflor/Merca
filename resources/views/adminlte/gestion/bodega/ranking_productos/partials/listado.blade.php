@@ -26,7 +26,7 @@
                 Utilidad
             </th>
             <th class="th_yura_green padding_lateral_5" style="width: 80px">
-                Utilidad Ventas
+                Utilidad/Total
             </th>
         </tr>
     </thead>
@@ -41,7 +41,7 @@
             @php
                 $margen_total = $item['monto_total'] - $item['costo_total'];
                 $utilidad_total = porcentaje($margen_total, $item['costo_total'], 1);
-                $utilidad_ventas = porcentaje($margen_total, $total_ventas, 1);
+                $utilidad_ventas = porcentaje($margen_total, $total_margen, 1);
                 $list_fechas = '';
                 foreach ($item['fechas_entregado'] as $f) {
                     $list_fechas .= explode(' del ', convertDateToText($f))[0] . '<br>';
@@ -97,7 +97,7 @@
     @php
         $margen_total = $total_ventas - $total_costos;
         $utilidad_total = porcentaje($margen_total, $total_costos, 1);
-        $utilidad_ventas = porcentaje($margen_total, $total_ventas, 1);
+        $utilidad_ventas = porcentaje($margen_total, $total_margen, 1);
     @endphp
     <tr class="tr_fija_bottom_0">
         <th class="th_yura_green padding_lateral_5">

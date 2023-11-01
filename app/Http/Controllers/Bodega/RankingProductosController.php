@@ -43,6 +43,7 @@ class RankingProductosController extends Controller
             ->get();
 
         $total_ventas = 0;
+        $total_costos = 0;
         $listado = [];
         foreach ($productos as $producto) {
             $detalles_pedido = DetallePedidoBodega::join('pedido_bodega as p', 'p.id_pedido_bodega', '=', 'detalle_pedido_bodega.id_pedido_bodega')
@@ -125,12 +126,16 @@ class RankingProductosController extends Controller
                     'fechas_entregado' => $fechas_entregado,
                 ];
                 $total_ventas += $monto_total;
+                $total_costos += $costo_total;
             }
         }
+        $total_margen = $total_ventas - $total_costos;
 
         return view('adminlte.gestion.bodega.ranking_productos.partials.listado', [
             'listado' => $listado,
             'total_ventas' => $total_ventas,
+            'total_costos' => $total_costos,
+            'total_margen' => $total_margen,
         ]);
     }
 
