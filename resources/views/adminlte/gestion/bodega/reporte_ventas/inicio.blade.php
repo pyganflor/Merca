@@ -40,8 +40,7 @@
                             <span class="input-group-addon bg-yura_dark span-input-group-yura-fixed">
                                 Finca
                             </span>
-                            <select id="filtro_finca" style="width: 100%" class="form-control"
-                                onchange="seleccionar_finca_filtro()">
+                            <select id="filtro_finca" style="width: 100%" class="form-control">
                                 <option value="T">Todas las Fincas</option>
                                 @foreach ($fincas as $f)
                                     <option value="{{ $f->id_empresa }}">
@@ -56,7 +55,8 @@
                             <span class="input-group-addon bg-yura_dark">
                                 Desde
                             </span>
-                            <select id="filtro_desde" style="width: 100%" class="form-control"></select>
+                            <input type="date" id="filtro_desde" style="width: 100%" class="form-control"
+                                value="{{ hoy() }}">
                         </div>
                     </td>
                     <td>
@@ -64,7 +64,8 @@
                             <span class="input-group-addon bg-yura_dark">
                                 Hasta
                             </span>
-                            <select id="filtro_hasta" style="width: 100%" class="form-control"></select>
+                            <input type="date" id="filtro_hasta" style="width: 100%" class="form-control"
+                                value="{{ hoy() }}">
                             <span class="input-group-btn">
                                 <button type="button" class="btn btn-yura_dark" onclick="listar_reporte()">
                                     <i class="fa fa-fw fa-search"></i> Buscar
