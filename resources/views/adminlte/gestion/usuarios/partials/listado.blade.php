@@ -4,6 +4,9 @@
             <thead>
                 <tr class="tr_fija_top_0">
                     <th class="text-center th_yura_green">
+                        #
+                    </th>
+                    <th class="text-center th_yura_green">
                         NOMBRE COMPLETO
                     </th>
                     <th class="text-center th_yura_green">
@@ -29,10 +32,13 @@
                     </th>
                 </tr>
             </thead>
-            @foreach ($listado as $item)
+            @foreach ($listado as $pos => $item)
                 <tr onmouseover="$(this).css('background-color','#add8e6')"
                     onmouseleave="$(this).css('background-color','')" class="{{ $item->estado == 'A' ? '' : 'error' }}"
                     id="row_usuarios_{{ $item->id_usuario }}">
+                    <th style="border-color: #9d9d9d" class="text-center">
+                        {{ $pos + 1 }}
+                    </th>
                     <th style="border-color: #9d9d9d" class="text-center">
                         {{ $item->nombre_completo }}
                     </th>
