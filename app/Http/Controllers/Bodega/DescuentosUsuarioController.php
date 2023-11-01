@@ -57,18 +57,41 @@ class DescuentosUsuarioController extends Controller
                 ->where('id_empresa', $det_ped->id_empresa)
                 ->first();
             $fecha_entrega = $entrega != '' ? $entrega->entrega : '';
+            $dia_entrega = date('d', strtotime($fecha_entrega));
 
             $diferido_selected = $det_ped->diferido;
             $diferido_mes_inicial = $det_ped->diferido_mes_actual ? 0 : 1;
             $diferido_mes_final = $det_ped->diferido_mes_actual ? $diferido_selected - 1 : $diferido_selected;
 
             $diferido_fecha_inicial = new DateTime($fecha_entrega);
-            $diferido_fecha_inicial->modify('+' . $diferido_mes_inicial . ' month');
+            $diferido_fecha_inicial->modify('first day of +' . $diferido_mes_inicial . ' month');
             $diferido_fecha_inicial = $diferido_fecha_inicial->format('Y-m-d');
 
+            $diferido_fecha_inicial = date('Y', strtotime($diferido_fecha_inicial)) . '-' . date('m', strtotime($diferido_fecha_inicial)) . '-' . $dia_entrega;
+            list($ano, $mes, $dia) = explode('-', $diferido_fecha_inicial);
+            $d = 1;
+            while (!checkdate($mes, $dia, $ano)) {
+                $diferido_fecha_inicial = new DateTime($diferido_fecha_inicial);
+                $diferido_fecha_inicial->modify('-' . $d . ' day');
+                $diferido_fecha_inicial = $diferido_fecha_inicial->format('Y-m-d');
+                list($ano, $mes, $dia) = explode('-', $diferido_fecha_inicial);
+                $d++;
+            }
+
             $diferido_fecha_final = new DateTime($fecha_entrega);
-            $diferido_fecha_final->modify('+' . $diferido_mes_final . ' month');
+            $diferido_fecha_final->modify('first day of +' . $diferido_mes_final . ' month');
             $diferido_fecha_final = $diferido_fecha_final->format('Y-m-d');
+
+            $diferido_fecha_final = date('Y', strtotime($diferido_fecha_final)) . '-' . date('m', strtotime($diferido_fecha_final)) . '-' . $dia_entrega;
+            list($ano, $mes, $dia) = explode('-', $diferido_fecha_final);
+            $d = 1;
+            if (!checkdate($mes, $dia, $ano)) {
+                $diferido_fecha_final = new DateTime($diferido_fecha_final);
+                $diferido_fecha_final->modify('-' . $d . ' day');
+                $diferido_fecha_final = $diferido_fecha_final->format('Y-m-d');
+                list($ano, $mes, $dia) = explode('-', $diferido_fecha_final);
+                $d++;
+            }
 
             if (($diferido_fecha_inicial >= $primerDiaMes && $diferido_fecha_inicial <= $ultimoDiaMes) ||
                 ($diferido_fecha_final >= $primerDiaMes && $diferido_fecha_final <= $ultimoDiaMes) ||
@@ -90,7 +113,7 @@ class DescuentosUsuarioController extends Controller
         }
 
         $mes_anterior = new DateTime($hoy);
-        $mes_anterior->modify('-' . 1 . ' month');
+        $mes_anterior->modify('first day of -1 month');
         $mes_anterior = $mes_anterior->format('Y-m-d');
 
         $primerDiaMes = date("Y-m-01", strtotime($mes_anterior));
