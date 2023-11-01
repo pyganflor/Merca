@@ -1,9 +1,18 @@
 <table class="table-bordered" style="width: 100%; border: 1px solid #9d9d9d">
     <tr>
-        <td class="text-center th_yura_green" colspan="7">
-            <b id="html_unidades_restantes_selected">{{ $unidades }}</b> Piezas de <b>{{ $producto->nombre }}</b>
-            restantes a
-            <b>${{ $producto->precio_venta }} / {{ $producto->unidad_medida }}</b>
+        <td class="text-center" colspan="7">
+            <div class="input-group" style="font-size: 1em;">
+                <span class="input-group-addon bg-yura_dark span-input-group-yura-fixed">
+                    <b id="html_unidades_restantes_selected">{{ $unidades }}</b>
+                    Piezas de
+                    <b>{{ $producto->nombre }}</b> restantes a
+                </span>
+                <input type="number" id="precio_venta_selected" style="width: 100%; height: 28px; color: black"
+                    value="{{ $producto->precio_venta }}" class="form-control text-center">
+                <span class="input-group-addon bg-yura_dark">
+                    / {{ $producto->unidad_medida }}
+                </span>
+            </div>
         </td>
     </tr>
     <tr>
@@ -76,7 +85,6 @@
     @endforeach
 </table>
 <input type="hidden" id="id_inventario_selected" value="{{ $inv_bod->id_inventario_bodega }}">
-<input type="hidden" id="precio_venta_selected" value="{{ $producto->precio_venta }}">
 <input type="hidden" id="unidades_restantes_selected" value="{{ $unidades }}">
 
 <script>
