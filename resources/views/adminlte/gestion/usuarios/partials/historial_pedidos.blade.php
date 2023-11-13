@@ -51,11 +51,12 @@
                     }
                     $monto_total += $precio_prod;
                 }
+                $entrega = $pedido->getFechaEntrega();
             @endphp
             <tr onmouseover="$(this).css('background-color','#add8e6')"
                 onmouseleave="$(this).css('background-color','')">
                 <th style="border-color: #9d9d9d" class="padding_lateral_5">
-                    {{ convertDateToText($pedido->getFechaEntrega()) }}
+                    {{ $entrega != '' ? convertDateToText($entrega) : $pedido->fecha . '*' }}
                 </th>
                 <th style="border-color: #9d9d9d" class="padding_lateral_5">
                     {{ $pedido->getFincaNomina->nombre }}

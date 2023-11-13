@@ -39,7 +39,7 @@
         </tr>
         <tr>
             <th style="font-size: 0.7em; text-align: left" colspan="2">
-                Entrega: {{ $fecha }}
+                Entrega: {{ $fecha != '' ? $fecha : $pedido->fecha . '*' }}
             </th>
         </tr>
         <tr>

@@ -72,7 +72,7 @@
             @endphp
             <tr onmouseover="$(this).addClass('bg-yura_dark')" onmouseleave="$(this).removeClass('bg-yura_dark')">
                 <th class="padding_lateral_5" style="border-color: #9d9d9d">
-                    {{ convertDateToText($item->fecha_entrega) }}
+                    {{ $item->fecha_entrega != '' ? convertDateToText($item->fecha_entrega) : $item->fecha . '*' }}
                 </th>
                 <th class="padding_lateral_5" style="border-color: #9d9d9d">
                     {{ $producto->nombre }}
