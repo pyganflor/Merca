@@ -14,25 +14,74 @@
         @endforeach
     </tr>
 
-    {{-- VENTAS --}}
+    {{-- DESCUENTOS DIFERIDOS --}}
     <tr>
-        <th class="padding_lateral_5 bg-yura_dark mouse-hand" onclick="$('.tr_venta_total').toggleClass('hidden')">
-            VENTAS TOTALES <i class="fa fa-fw fa-caret-down pull-right"></i>
+        <th class="padding_lateral_5 bg-yura_dark mouse-hand"
+            onclick="$('.tr_descuento_diferido').toggleClass('hidden')">
+            DESCUENTOS DIFERIDOS <i class="fa fa-fw fa-caret-down pull-right"></i>
         </th>
-        @foreach ($total_ventas as $val)
+        @foreach ($total_descuentos_diferidos as $val)
             <th class="padding_lateral bg-yura_dark">
                 ${{ number_format($val, 2) }}
             </th>
         @endforeach
     </tr>
     @foreach ($listado as $pos => $item)
-        <tr class="tr_venta_total hidden">
+        <tr class="tr_descuento_diferido hidden">
             <th class="padding_lateral_5" style="border-color: #9d9d9d">
                 {{ $item['finca']->nombre }}
             </th>
-            @foreach ($item['valores_ventas'] as $val)
+            @foreach ($item['valores_descuentos_diferidos'] as $val)
                 <th class="padding_lateral" style="border-color: #9d9d9d">
                     ${{ number_format($val, 2) }}
+                </th>
+            @endforeach
+        </tr>
+    @endforeach
+
+    {{-- DESCUENTOS NORMALES --}}
+    <tr>
+        <th class="padding_lateral_5 bg-yura_dark mouse-hand" onclick="$('.tr_descuento_normal').toggleClass('hidden')">
+            DESCUENTOS NORMALES <i class="fa fa-fw fa-caret-down pull-right"></i>
+        </th>
+        @foreach ($total_descuentos_normales as $val)
+            <th class="padding_lateral bg-yura_dark">
+                ${{ number_format($val, 2) }}
+            </th>
+        @endforeach
+    </tr>
+    @foreach ($listado as $pos => $item)
+        <tr class="tr_descuento_normal hidden">
+            <th class="padding_lateral_5" style="border-color: #9d9d9d">
+                {{ $item['finca']->nombre }}
+            </th>
+            @foreach ($item['valores_descuentos_normales'] as $val)
+                <th class="padding_lateral" style="border-color: #9d9d9d">
+                    ${{ number_format($val, 2) }}
+                </th>
+            @endforeach
+        </tr>
+    @endforeach
+
+    {{-- DESCUENTOS TOTALES --}}
+    <tr>
+        <th class="padding_lateral_5 bg-yura_dark mouse-hand" onclick="$('.tr_descuento_total').toggleClass('hidden')">
+            DESCUENTOS TOTALES <i class="fa fa-fw fa-caret-down pull-right"></i>
+        </th>
+        @foreach ($meses as $pos_m => $mes)
+            <th class="padding_lateral bg-yura_dark">
+                ${{ number_format($total_descuentos_diferidos[$pos_m] + $total_descuentos_normales[$pos_m], 2) }}
+            </th>
+        @endforeach
+    </tr>
+    @foreach ($listado as $pos => $item)
+        <tr class="tr_descuento_total hidden">
+            <th class="padding_lateral_5" style="border-color: #9d9d9d">
+                {{ $item['finca']->nombre }}
+            </th>
+            @foreach ($meses as $pos_m => $mes)
+                <th class="padding_lateral" style="border-color: #9d9d9d">
+                    ${{ number_format($item['valores_descuentos_diferidos'][$pos_m] + $item['valores_descuentos_normales'][$pos_m], 2) }}
                 </th>
             @endforeach
         </tr>
@@ -62,25 +111,25 @@
         </tr>
     @endforeach
 
-    {{-- MARGEN TOTAL --}}
+    {{-- FLUJO OPERATIVO --}}
     <tr>
-        <th class="padding_lateral_5 bg-yura_dark mouse-hand" onclick="$('.tr_margen_total').toggleClass('hidden')">
-            MARGEN TOTAL <i class="fa fa-fw fa-caret-down pull-right"></i>
+        <th class="padding_lateral_5 bg-yura_dark mouse-hand" onclick="$('.tr_flujo_operativo').toggleClass('hidden')">
+            FLUJO OPERATIVO <i class="fa fa-fw fa-caret-down pull-right"></i>
         </th>
         @foreach ($meses as $pos_m => $mes)
             <th class="padding_lateral bg-yura_dark">
-                ${{ number_format($total_ventas[$pos_m] - $total_costos[$pos_m], 2) }}
+                ${{ number_format($total_descuentos_diferidos[$pos_m] + $total_descuentos_normales[$pos_m] - $total_costos[$pos_m], 2) }}
             </th>
         @endforeach
     </tr>
     @foreach ($listado as $pos => $item)
-        <tr class="tr_margen_total hidden">
+        <tr class="tr_flujo_operativo hidden">
             <th class="padding_lateral_5" style="border-color: #9d9d9d">
                 {{ $item['finca']->nombre }}
             </th>
             @foreach ($meses as $pos_m => $mes)
                 <th class="padding_lateral" style="border-color: #9d9d9d">
-                    ${{ number_format($item['valores_ventas'][$pos_m] - $item['valores_costos'][$pos_m], 2) }}
+                    ${{ number_format($item['valores_descuentos_diferidos'][$pos_m] + $item['valores_descuentos_normales'][$pos_m] - $item['valores_costos'][$pos_m], 2) }}
                 </th>
             @endforeach
         </tr>
@@ -99,63 +148,15 @@
         @endforeach
     </tr>
 
-    {{-- EBITDA --}}
+    {{-- FLUJO NETO --}}
     <tr>
         <th class="padding_lateral_5 bg-yura_dark">
-            EBITDA
+            FLUJO NETO
         </th>
         @foreach ($meses as $pos_m => $mes)
             <th class="bg-yura_dark">
-                {{-- MARGEN TOTAL - GASTOS ADMINISTRATIVOS --}}
+                {{-- FLUJO OPERATIVO - GASTOS ADMINISTRATIVOS --}}
             </th>
         @endforeach
     </tr>
-
-    {{-- PERSONAL --}}
-    <tr>
-        <th class="padding_lateral_5 bg-yura_dark mouse-hand" onclick="$('.tr_personal_total').toggleClass('hidden')">
-            PERSONAL <i class="fa fa-fw fa-caret-down pull-right"></i>
-        </th>
-        @foreach ($total_personal as $val)
-            <th class="padding_lateral bg-yura_dark">
-                {{ number_format($val) }}
-            </th>
-        @endforeach
-    </tr>
-    @foreach ($listado as $pos => $item)
-        <tr class="tr_personal_total hidden">
-            <th class="padding_lateral_5" style="border-color: #9d9d9d">
-                {{ $item['finca']->nombre }}
-            </th>
-            @foreach ($item['valores_personal'] as $val)
-                <th class="padding_lateral" style="border-color: #9d9d9d">
-                    {{ number_format(count($val)) }}
-                </th>
-            @endforeach
-        </tr>
-    @endforeach
-
-    {{-- COMPRA x PERSONA --}}
-    <tr>
-        <th class="padding_lateral_5 bg-yura_dark mouse-hand" onclick="$('.tr_compra_x_persona').toggleClass('hidden')">
-            COMPRA x PERSONA <i class="fa fa-fw fa-caret-down pull-right"></i>
-        </th>
-        @foreach ($meses as $pos_m => $mes)
-            <th class="padding_lateral bg-yura_dark">
-                ${{ $total_personal[$pos_m] > 0 ? number_format($total_ventas[$pos_m] / $total_personal[$pos_m], 2) : 0 }}
-            </th>
-        @endforeach
-    </tr>
-    @foreach ($listado as $pos => $item)
-        <tr class="tr_compra_x_persona hidden">
-            <th class="padding_lateral_5" style="border-color: #9d9d9d">
-                {{ $item['finca']->nombre }}
-            </th>
-            @foreach ($meses as $pos_m => $mes)
-                <th class="padding_lateral" style="border-color: #9d9d9d">
-                    ${{ count($item['valores_personal'][$pos_m]) > 0 ? number_format($item['valores_ventas'][$pos_m] / count($item['valores_personal'][$pos_m]), 2) : 0 }}
-                </th>
-            @endforeach
-        </tr>
-    @endforeach
 </table>
