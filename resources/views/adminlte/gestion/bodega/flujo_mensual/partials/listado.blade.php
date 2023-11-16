@@ -21,7 +21,7 @@
             DESCUENTOS DIFERIDOS <i class="fa fa-fw fa-caret-down pull-right"></i>
         </th>
         @foreach ($total_descuentos_diferidos as $val)
-            <th class="padding_lateral bg-yura_dark">
+            <th class="padding_lateral_5 bg-yura_dark">
                 ${{ number_format($val, 2) }}
             </th>
         @endforeach
@@ -32,7 +32,7 @@
                 {{ $item['finca']->nombre }}
             </th>
             @foreach ($item['valores_descuentos_diferidos'] as $val)
-                <th class="padding_lateral" style="border-color: #9d9d9d">
+                <th class="padding_lateral_5" style="border-color: #9d9d9d">
                     ${{ number_format($val, 2) }}
                 </th>
             @endforeach
@@ -45,7 +45,7 @@
             DESCUENTOS NORMALES <i class="fa fa-fw fa-caret-down pull-right"></i>
         </th>
         @foreach ($total_descuentos_normales as $val)
-            <th class="padding_lateral bg-yura_dark">
+            <th class="padding_lateral_5 bg-yura_dark">
                 ${{ number_format($val, 2) }}
             </th>
         @endforeach
@@ -56,7 +56,7 @@
                 {{ $item['finca']->nombre }}
             </th>
             @foreach ($item['valores_descuentos_normales'] as $val)
-                <th class="padding_lateral" style="border-color: #9d9d9d">
+                <th class="padding_lateral_5" style="border-color: #9d9d9d">
                     ${{ number_format($val, 2) }}
                 </th>
             @endforeach
@@ -69,7 +69,7 @@
             DESCUENTOS TOTALES <i class="fa fa-fw fa-caret-down pull-right"></i>
         </th>
         @foreach ($meses as $pos_m => $mes)
-            <th class="padding_lateral bg-yura_dark">
+            <th class="padding_lateral_5 bg-yura_dark">
                 ${{ number_format($total_descuentos_diferidos[$pos_m] + $total_descuentos_normales[$pos_m], 2) }}
             </th>
         @endforeach
@@ -80,7 +80,7 @@
                 {{ $item['finca']->nombre }}
             </th>
             @foreach ($meses as $pos_m => $mes)
-                <th class="padding_lateral" style="border-color: #9d9d9d">
+                <th class="padding_lateral_5" style="border-color: #9d9d9d">
                     ${{ number_format($item['valores_descuentos_diferidos'][$pos_m] + $item['valores_descuentos_normales'][$pos_m], 2) }}
                 </th>
             @endforeach
@@ -93,7 +93,7 @@
             COSTOS TOTALES <i class="fa fa-fw fa-caret-down pull-right"></i>
         </th>
         @foreach ($total_costos as $val)
-            <th class="padding_lateral bg-yura_dark">
+            <th class="padding_lateral_5 bg-yura_dark">
                 ${{ number_format($val, 2) }}
             </th>
         @endforeach
@@ -104,7 +104,7 @@
                 {{ $item['finca']->nombre }}
             </th>
             @foreach ($item['valores_costos'] as $val)
-                <th class="padding_lateral" style="border-color: #9d9d9d">
+                <th class="padding_lateral_5" style="border-color: #9d9d9d">
                     ${{ number_format($val, 2) }}
                 </th>
             @endforeach
@@ -117,7 +117,7 @@
             FLUJO OPERATIVO <i class="fa fa-fw fa-caret-down pull-right"></i>
         </th>
         @foreach ($meses as $pos_m => $mes)
-            <th class="padding_lateral bg-yura_dark">
+            <th class="padding_lateral_5 bg-yura_dark">
                 ${{ number_format($total_descuentos_diferidos[$pos_m] + $total_descuentos_normales[$pos_m] - $total_costos[$pos_m], 2) }}
             </th>
         @endforeach
@@ -128,7 +128,7 @@
                 {{ $item['finca']->nombre }}
             </th>
             @foreach ($meses as $pos_m => $mes)
-                <th class="padding_lateral" style="border-color: #9d9d9d">
+                <th class="padding_lateral_5" style="border-color: #9d9d9d">
                     ${{ number_format($item['valores_descuentos_diferidos'][$pos_m] + $item['valores_descuentos_normales'][$pos_m] - $item['valores_costos'][$pos_m], 2) }}
                 </th>
             @endforeach
@@ -145,8 +145,8 @@
                 $valor = $ga != '' ? $ga->ga : '';
             @endphp
             <th class="bg-yura_dark">
-                <input type="number" style="width: 100%" id="gasto_admin_{{ $pos_m }}"
-                    class="bg-yura_dark" value="{{ $valor }}"
+                <input type="number" style="width: 100%" id="gasto_admin_{{ $pos_m }}" class="bg-yura_dark"
+                    value="{{ $valor }}"
                     onchange="update_ga('{{ $meses[$pos_m]['mes'] }}', '{{ $meses[$pos_m]['anno'] }}', $(this).val())">
             </th>
         @endforeach
@@ -162,7 +162,7 @@
                 $flujo_operativo = $total_descuentos_diferidos[$pos_m] + $total_descuentos_normales[$pos_m] - $total_costos[$pos_m];
                 $ga = $gastos_administrativos[$pos_m] != '' ? $gastos_administrativos[$pos_m]->ga : 0;
             @endphp
-            <th class="bg-yura_dark">
+            <th class="padding_lateral_5 bg-yura_dark">
                 ${{ number_format($flujo_operativo - $ga, 2) }}
             </th>
         @endforeach
