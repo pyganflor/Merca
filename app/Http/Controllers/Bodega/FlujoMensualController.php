@@ -24,26 +24,10 @@ class FlujoMensualController extends Controller
             ->where('uf.id_usuario', session('id_usuario'))
             ->orderBy('emp.nombre')
             ->get();
-
-        $pedidos = PedidoBodega::where('armado', 1)
-            ->orderBy('fecha')
-            ->get();
-        $meses = [];
-        foreach ($pedidos as $ped) {
-            $entrega = $ped->getFechaEntrega();
-            $mes = [
-                'anno' => substr($entrega, 0, 4),
-                'mes' => substr($entrega, 5, 2),
-            ];
-            if (!in_array($mes, $meses)) {
-                $meses[] = $mes;
-            }
-        }
         return view('adminlte.gestion.bodega.flujo_mensual.inicio', [
             'url' => $request->getRequestUri(),
             'submenu' => Submenu::Where('url', '=', substr($request->getRequestUri(), 1))->get()[0],
             'fincas' => $fincas,
-            'meses' => $meses,
         ]);
     }
 
@@ -61,17 +45,21 @@ class FlujoMensualController extends Controller
         $pedidos = PedidoBodega::where('armado', 1)
             ->orderBy('fecha')
             ->get();
+        $mes_desde = new DateTime($request->desde);
+        $mes_desde = $mes_desde->format('Y-m');
+        $mes_hasta = new DateTime($request->hasta);
+        $mes_hasta = $mes_hasta->format('Y-m');
         $meses = [];
-        foreach ($pedidos as $ped) {
-            $entrega = $ped->getFechaEntrega();
+        $f = $mes_desde . '-01';
+        while ($f <= $mes_hasta . '-01') {
             $mes = [
-                'anno' => substr($entrega, 0, 4),
-                'mes' => substr($entrega, 5, 2),
+                'anno' => substr($f, 0, 4),
+                'mes' => substr($f, 5, 2),
             ];
-            if ($mes['anno'] . '-' . $mes['mes'] . '-01' >= $request->desde . '-01' && $mes['anno'] . '-' . $mes['mes'] . '-01' <= $request->hasta . '-01')
-                if (!in_array($mes, $meses)) {
-                    $meses[] = $mes;
-                }
+            if (!in_array($mes, $meses)) {
+                $meses[] = $mes;
+            }
+            $f = opDiasFecha('+', 1, $f);
         }
         $total_costos = [];
         $total_descuentos_diferidos = [];
@@ -101,6 +89,18 @@ class FlujoMensualController extends Controller
                 $fecha = $mes['anno'] . '-' . $mes['mes'] . '-01';
                 $primerDiaMes = date("Y-m-01", strtotime($fecha));
                 $ultimoDiaMes = date("Y-m-t", strtotime($fecha));
+
+                $mes_anterior = new DateTime($fecha);
+                $mes_anterior->modify('first day of -1 month');
+                $mes_anterior = $mes_anterior->format('Y-m-d');
+                $primerDiaMesAnterior = date("Y-m-01", strtotime($mes_anterior));
+                $ultimoDiaMesAnterior = date("Y-m-t", strtotime($mes_anterior));
+
+                $mes_anterior2 = new DateTime($fecha);
+                $mes_anterior2->modify('first day of -2 month');
+                $mes_anterior2 = $mes_anterior2->format('Y-m-d');
+                $primerDiaMesAnterior2 = date("Y-m-01", strtotime($mes_anterior2));
+                $ultimoDiaMesAnterior2 = date("Y-m-t", strtotime($mes_anterior2));
 
                 /* DIFERIDOS */
                 $query_pedidos = DetallePedidoBodega::join('pedido_bodega as p', 'p.id_pedido_bodega', '=', 'detalle_pedido_bodega.id_pedido_bodega')
@@ -187,13 +187,7 @@ class FlujoMensualController extends Controller
                     }
                 }
 
-                $mes_anterior = new DateTime($fecha);
-                $mes_anterior->modify('first day of -1 month');
-                $mes_anterior = $mes_anterior->format('Y-m-d');
-
                 /* NO DIFERIDOS */
-                $primerDiaMesAnterior = date("Y-m-01", strtotime($mes_anterior));
-                $ultimoDiaMesAnterior = date("Y-m-t", strtotime($mes_anterior));
                 $query_pedidos = DetallePedidoBodega::join('pedido_bodega as p', 'p.id_pedido_bodega', '=', 'detalle_pedido_bodega.id_pedido_bodega')
                     ->select('detalle_pedido_bodega.*', 'p.fecha', 'p.id_empresa', 'p.finca_nomina')->distinct()
                     ->where('p.id_empresa', $finca->id_empresa)

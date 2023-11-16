@@ -1,7 +1,7 @@
 <table class="table-bordered" style="width: 100%; border: 1px solid #9d9d9d">
     <tr class="tr_fija_top_0">
         <th class="padding_lateral_5 th_yura_green" style="min-width: 150px">
-            <div style="min-width: 150px">
+            <div style="min-width: 180px">
                 Indicadores x Finca
             </div>
         </th>

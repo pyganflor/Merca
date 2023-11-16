@@ -55,14 +55,8 @@
                             <span class="input-group-addon bg-yura_dark">
                                 Desde
                             </span>
-                            <select id="filtro_desde" style="width: 100%" class="form-control">
-                                @foreach ($meses as $pos => $mes)
-                                    <option value="{{ $mes['anno'] . '-' . $mes['mes'] }}"
-                                        {{ $pos == count($meses) - 1 ? 'selected' : '' }}>
-                                        {{ getMeses()[$mes['mes'] - 1] }} de {{ $mes['anno'] }}
-                                    </option>
-                                @endforeach
-                            </select>
+                            <input type="date" id="filtro_desde" style="width: 100%" class="form-control text-center"
+                                value="{{ hoy() }}">
                         </div>
                     </td>
                     <td>
@@ -70,14 +64,8 @@
                             <span class="input-group-addon bg-yura_dark">
                                 Hasta
                             </span>
-                            <select id="filtro_hasta" style="width: 100%" class="form-control">
-                                @foreach ($meses as $pos => $mes)
-                                    <option value="{{ $mes['anno'] . '-' . $mes['mes'] }}"
-                                        {{ $pos == count($meses) - 1 ? 'selected' : '' }}>
-                                        {{ getMeses()[$mes['mes'] - 1] }} de {{ $mes['anno'] }}
-                                    </option>
-                                @endforeach
-                            </select>
+                            <input type="date" id="filtro_hasta" style="width: 100%" class="form-control text-center"
+                                value="{{ hoy() }}">
                             <span class="input-group-btn">
                                 <button type="button" class="btn btn-yura_dark" onclick="listar_reporte()">
                                     <i class="fa fa-fw fa-search"></i> Buscar
