@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use yura\Http\Controllers\Controller;
 use yura\Modelos\DetallePedidoBodega;
 use yura\Modelos\FechaEntrega;
+use yura\Modelos\OtrosGastos;
 use yura\Modelos\PedidoBodega;
 use yura\Modelos\Submenu;
 
@@ -75,7 +76,13 @@ class PyGController extends Controller
         $total_ventas = [];
         $total_costos = [];
         $total_personal = [];
+        $gastos_administrativos = [];
         foreach ($meses as $m) {
+            $ga = OtrosGastos::where('mes', $m['mes'])
+                ->where('anno', $m['anno'])
+                ->get()
+                ->first();
+            $gastos_administrativos[] = $ga;
             $total_ventas[] = 0;
             $total_costos[] = 0;
             $total_personal[] = 0;
@@ -132,6 +139,7 @@ class PyGController extends Controller
         return view('adminlte.gestion.bodega.pg_bodega.partials.listado', [
             'meses' => $meses,
             'listado' => $listado,
+            'gastos_administrativos' => $gastos_administrativos,
             'total_ventas' => $total_ventas,
             'total_costos' => $total_costos,
             'total_personal' => $total_personal,

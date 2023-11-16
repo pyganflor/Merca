@@ -10,6 +10,7 @@ use yura\Modelos\DetallePedidoBodega;
 use yura\Modelos\PedidoBodega;
 use yura\Modelos\Submenu;
 use yura\Modelos\FechaEntrega;
+use yura\Modelos\OtrosGastos;
 
 class FlujoMensualController extends Controller
 {
@@ -75,7 +76,13 @@ class FlujoMensualController extends Controller
         $total_costos = [];
         $total_descuentos_diferidos = [];
         $total_descuentos_normales = [];
+        $gastos_administrativos = [];
         foreach ($meses as $m) {
+            $ga = OtrosGastos::where('mes', $m['mes'])
+                ->where('anno', $m['anno'])
+                ->get()
+                ->first();
+            $gastos_administrativos[] = $ga;
             $total_costos[] = 0;
             $total_descuentos_diferidos[] = 0;
             $total_descuentos_normales[] = 0;
@@ -262,9 +269,43 @@ class FlujoMensualController extends Controller
         return view('adminlte.gestion.bodega.flujo_mensual.partials.listado', [
             'meses' => $meses,
             'listado' => $listado,
+            'gastos_administrativos' => $gastos_administrativos,
             'total_costos' => $total_costos,
             'total_descuentos_diferidos' => $total_descuentos_diferidos,
             'total_descuentos_normales' => $total_descuentos_normales,
         ]);
+    }
+
+    public function update_ga(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            $model = OtrosGastos::where('mes', $request->mes)
+                ->where('anno', $request->anno)
+                ->get()
+                ->first();
+            if ($model == '') {
+                $model = new OtrosGastos();
+                $model->mes = $request->mes;
+                $model->anno = $request->anno;
+            }
+            $model->ga = $request->valor;
+            $model->save();
+
+            $success = true;
+            $msg = 'Se ha <b>GRABADO</b> el gasto administrativo correctamente';
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            $success = false;
+            $msg = '<div class="alert alert-danger text-center">' .
+                '<p> Ha ocurrido un problema al guardar la informacion al sistema</p>' .
+                '<p>' . $e->getMessage() . ' ' . $e->getFile() . ' ' . $e->getLine() . '</p>'
+                . '</div>';
+        }
+        return [
+            'success' => $success,
+            'mensaje' => $msg,
+        ];
     }
 }

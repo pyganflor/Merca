@@ -140,10 +140,14 @@
         <th class="padding_lateral_5 bg-yura_dark">
             GASTOS ADMINISTRATIVOS
         </th>
-        @foreach ($meses as $pos_m => $mes)
+        @foreach ($gastos_administrativos as $pos_m => $ga)
+            @php
+                $valor = $ga != '' ? $ga->ga : '';
+            @endphp
             <th class="bg-yura_dark">
-                <input type="number" style="width: 100%" value="" id="gasto_admin_{{ $pos_m }}"
-                    class="text-center bg-yura_dark">
+                <input type="number" style="width: 100%" id="gasto_admin_{{ $pos_m }}"
+                    class="bg-yura_dark" value="{{ $valor }}"
+                    onchange="update_ga('{{ $meses[$pos_m]['mes'] }}', '{{ $meses[$pos_m]['anno'] }}', $(this).val())">
             </th>
         @endforeach
     </tr>
@@ -154,9 +158,36 @@
             FLUJO NETO
         </th>
         @foreach ($meses as $pos_m => $mes)
+            @php
+                $flujo_operativo = $total_descuentos_diferidos[$pos_m] + $total_descuentos_normales[$pos_m] - $total_costos[$pos_m];
+                $ga = $gastos_administrativos[$pos_m] != '' ? $gastos_administrativos[$pos_m]->ga : 0;
+            @endphp
             <th class="bg-yura_dark">
-                {{-- FLUJO OPERATIVO - GASTOS ADMINISTRATIVOS --}}
+                ${{ number_format($flujo_operativo - $ga, 2) }}
             </th>
         @endforeach
     </tr>
 </table>
+
+<script>
+    function update_ga(mes, anno, valor) {
+        mensaje = {
+            title: '<i class="fa fa-fw fa-exclamation-triangle"></i> Mensaje de confirmacion',
+            mensaje: '<div class="alert alert-info text-center" style="font-size: 16px">¿Está seguro de <b>GRABAR</b> el gasto administrativo?</div>',
+        };
+        modal_quest('modal_delete_etiqueta', mensaje['mensaje'], mensaje['title'], true, false,
+            '{{ isPC() ? '50%' : '' }}',
+            function() {
+                datos = {
+                    _token: '{{ csrf_token() }}',
+                    mes: mes,
+                    anno: anno,
+                    valor: valor,
+                };
+                post_jquery_m('{{ url('flujo_mensual/update_ga') }}', datos, function(retorno) {
+                    cerrar_modals();
+                    listar_reporte();
+                });
+            });
+    }
+</script>

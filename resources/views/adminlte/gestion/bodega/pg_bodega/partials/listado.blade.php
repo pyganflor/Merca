@@ -91,10 +91,14 @@
         <th class="padding_lateral_5 bg-yura_dark">
             GASTOS ADMINISTRATIVOS
         </th>
-        @foreach ($meses as $pos_m => $mes)
+        @foreach ($gastos_administrativos as $pos_m => $ga)
+            @php
+                $valor = $ga != '' ? $ga->ga : '';
+            @endphp
             <th class="bg-yura_dark">
-                <input type="number" style="width: 100%" value="" id="gasto_admin_{{ $pos_m }}"
-                    class="text-center bg-yura_dark">
+                <input type="number" style="width: 100%" id="gasto_admin_{{ $pos_m }}" class="bg-yura_dark"
+                    value="{{ $valor }}"
+                    onchange="update_ga('{{ $meses[$pos_m]['mes'] }}', '{{ $meses[$pos_m]['anno'] }}', $(this).val())">
             </th>
         @endforeach
     </tr>
@@ -105,8 +109,12 @@
             EBITDA
         </th>
         @foreach ($meses as $pos_m => $mes)
+            @php
+                $margen_total = $total_ventas[$pos_m] - $total_costos[$pos_m];
+                $ga = $gastos_administrativos[$pos_m] != '' ? $gastos_administrativos[$pos_m]->ga : 0;
+            @endphp
             <th class="bg-yura_dark">
-                {{-- MARGEN TOTAL - GASTOS ADMINISTRATIVOS --}}
+                ${{ number_format($margen_total - $ga, 2) }}
             </th>
         @endforeach
     </tr>
