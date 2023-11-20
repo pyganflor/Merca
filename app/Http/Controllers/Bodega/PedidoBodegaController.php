@@ -416,7 +416,9 @@ class PedidoBodegaController extends Controller
                 $pedido->id_empresa = $request->finca;
                 $pedido->diferido_mes_actual = $request->diferido_mes_actual == 'true' ? 1 : 0;
                 $pedido->save();
-                $pedido = PedidoBodega::All()->last();
+                $pedido->id_pedido_bodega = DB::table('pedido_bodega')
+                    ->select(DB::raw('max(id_pedido_bodega) as id'))
+                    ->get()[0]->id;
 
                 $tiene_peso = false;
                 foreach (json_decode($request->detalles) as $det) {
@@ -535,6 +537,11 @@ class PedidoBodegaController extends Controller
     {
         DB::beginTransaction();
         try {
+            $al_contado = false;
+            foreach (json_decode($request->detalles) as $det) {
+                if ($det->diferido == -1)
+                    $al_contado = true;
+            }
             $pedido_delete = PedidoBodega::find($request->ped);
             $usuario = $pedido_delete->usuario;
             $valida_saldo = true;
@@ -562,7 +569,7 @@ class PedidoBodegaController extends Controller
                         $valida_saldo = false;
                     }
             }
-            if ($valida_saldo) {
+            if ($valida_saldo || $al_contado) {
                 $tiene_etiquetas_peso = DB::table('etiqueta_peso as e')
                     ->join('detalle_pedido_bodega as d', 'd.id_detalle_pedido_bodega', '=', 'e.id_detalle_pedido_bodega')
                     ->select('e.id_etiqueta_peso')->distinct()
@@ -761,22 +768,29 @@ class PedidoBodegaController extends Controller
             if ($tiene_peso) {
                 $monto_saldo = $pedido->getTotalMontoDiferido();
                 $usuario = $pedido->usuario;
-                if ($usuario->saldo >= $monto_saldo || in_array($usuario->id_usuario, [1, 2])) {
-                    $usuario->saldo -= $monto_saldo;
-                    $usuario->save();
-                    $pedido->saldo_usuario = $usuario->saldo;
-                    $pedido->save();
-                } else {
-                    DB::rollBack();
-                    $success = false;
-                    $msg = '<div class="alert alert-danger text-center">' .
-                        'El Usuario no tiene cupo disponible (<b>$' . $usuario->saldo . ' actualmente</b>)</div>';
 
-                    return [
-                        'success' => $success,
-                        'mensaje' => $msg,
-                    ];
+                $al_contado = false;
+                foreach ($pedido->detalles as $det) {
+                    if ($det->diferido == -1)
+                        $al_contado = true;
                 }
+                if (!$al_contado)
+                    if ($usuario->saldo >= $monto_saldo || in_array($usuario->id_usuario, [1, 2])) {
+                        $usuario->saldo -= $monto_saldo;
+                        $usuario->save();
+                        $pedido->saldo_usuario = $usuario->saldo;
+                        $pedido->save();
+                    } else {
+                        DB::rollBack();
+                        $success = false;
+                        $msg = '<div class="alert alert-danger text-center">' .
+                            'El Usuario no tiene cupo disponible (<b>$' . $usuario->saldo . ' actualmente</b>)</div>';
+
+                        return [
+                            'success' => $success,
+                            'mensaje' => $msg,
+                        ];
+                    }
             }
 
             $success = true;

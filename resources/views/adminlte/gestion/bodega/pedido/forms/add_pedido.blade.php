@@ -360,6 +360,7 @@
             usuario: $('#form_usuario').val(),
             diferido_mes_actual: $('#check_diferido_mes_actual').prop('checked'),
             monto_saldo: $('#input_saldo_total').val(),
+            diferido: $('#input_all_diferido_producto_selected').val(),
             detalles: JSON.stringify(detalles),
         }
         if (datos['fecha'] != '' && datos['finca'] != '' && datos['usuario'] != '' && detalles.length > 0) {
