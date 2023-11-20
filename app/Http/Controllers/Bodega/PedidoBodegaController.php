@@ -774,7 +774,7 @@ class PedidoBodegaController extends Controller
                     if ($det->diferido == -1)
                         $al_contado = true;
                 }
-                if (!$al_contado)
+                if (!$al_contado) {
                     if ($usuario->saldo >= $monto_saldo || in_array($usuario->id_usuario, [1, 2])) {
                         $usuario->saldo -= $monto_saldo;
                         $usuario->save();
@@ -791,6 +791,7 @@ class PedidoBodegaController extends Controller
                             'mensaje' => $msg,
                         ];
                     }
+                }
             }
 
             $success = true;

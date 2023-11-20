@@ -35,8 +35,7 @@ class FlujoMensualController extends Controller
     {
         $fincas = DB::table('pedido_bodega as p')
             ->join('configuracion_empresa as f', 'f.id_configuracion_empresa', '=', 'p.id_empresa')
-            ->select('f.nombre', 'p.id_empresa')->distinct()
-            ->where('p.armado', 1);
+            ->select('f.nombre', 'p.id_empresa')->distinct();
         if ($request->finca != 'T')
             $fincas = $fincas->where('p.id_empresa', $request->finca);
         $fincas = $fincas->orderBy('f.nombre')
@@ -107,7 +106,6 @@ class FlujoMensualController extends Controller
                     ->select('detalle_pedido_bodega.*', 'p.fecha', 'p.id_empresa', 'p.diferido_mes_actual')->distinct()
                     ->where('p.id_empresa', $finca->id_empresa)
                     ->where('p.estado', 1)
-                    ->where('p.armado', 1)
                     ->where('p.fecha', '<=', $ultimoDiaMes)
                     ->where('detalle_pedido_bodega.diferido', '>', 0)
                     ->get();
@@ -192,7 +190,6 @@ class FlujoMensualController extends Controller
                     ->select('detalle_pedido_bodega.*', 'p.fecha', 'p.id_empresa', 'p.finca_nomina')->distinct()
                     ->where('p.id_empresa', $finca->id_empresa)
                     ->where('p.estado', 1)
-                    ->where('p.armado', 1)
                     ->where('detalle_pedido_bodega.diferido', '!=', -1)
                     ->where('p.fecha', '<=', $ultimoDiaMesAnterior)
                     ->orderBy('p.fecha')
@@ -232,7 +229,6 @@ class FlujoMensualController extends Controller
 
                 /* VENTA Y COSTOS TOTALES */
                 $pedidos = PedidoBodega::where('id_empresa', $finca->id_empresa)
-                    ->where('armado', 1)
                     ->where('estado', 1)
                     ->where('fecha', '<=', $ultimoDiaMes)
                     ->orderBy('fecha')
