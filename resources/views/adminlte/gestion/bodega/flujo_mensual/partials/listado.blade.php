@@ -63,6 +63,30 @@
         </tr>
     @endforeach
 
+    {{-- AL CONTADO --}}
+    <tr>
+        <th class="padding_lateral_5 bg-yura_dark mouse-hand" onclick="$('.tr_al_contado').toggleClass('hidden')">
+            AL CONTADO <i class="fa fa-fw fa-caret-down pull-right"></i>
+        </th>
+        @foreach ($total_al_contado as $val)
+            <th class="padding_lateral_5 bg-yura_dark">
+                ${{ number_format($val, 2) }}
+            </th>
+        @endforeach
+    </tr>
+    @foreach ($listado as $pos => $item)
+        <tr class="tr_al_contado hidden">
+            <th class="padding_lateral_5" style="border-color: #9d9d9d">
+                {{ $item['finca']->nombre }}
+            </th>
+            @foreach ($item['valores_al_contado'] as $val)
+                <th class="padding_lateral_5" style="border-color: #9d9d9d">
+                    ${{ number_format($val, 2) }}
+                </th>
+            @endforeach
+        </tr>
+    @endforeach
+
     {{-- DESCUENTOS TOTALES --}}
     <tr>
         <th class="padding_lateral_5 bg-yura_dark mouse-hand" onclick="$('.tr_descuento_total').toggleClass('hidden')">
@@ -70,7 +94,7 @@
         </th>
         @foreach ($meses as $pos_m => $mes)
             <th class="padding_lateral_5 bg-yura_dark">
-                ${{ number_format($total_descuentos_diferidos[$pos_m] + $total_descuentos_normales[$pos_m], 2) }}
+                ${{ number_format($total_descuentos_diferidos[$pos_m] + $total_descuentos_normales[$pos_m] + $total_al_contado[$pos_m], 2) }}
             </th>
         @endforeach
     </tr>
@@ -118,7 +142,7 @@
         </th>
         @foreach ($meses as $pos_m => $mes)
             <th class="padding_lateral_5 bg-yura_dark">
-                ${{ number_format($total_descuentos_diferidos[$pos_m] + $total_descuentos_normales[$pos_m] - $total_costos[$pos_m], 2) }}
+                ${{ number_format($total_descuentos_diferidos[$pos_m] + $total_descuentos_normales[$pos_m] + $total_al_contado[$pos_m] - $total_costos[$pos_m], 2) }}
             </th>
         @endforeach
     </tr>
@@ -159,7 +183,7 @@
         </th>
         @foreach ($meses as $pos_m => $mes)
             @php
-                $flujo_operativo = $total_descuentos_diferidos[$pos_m] + $total_descuentos_normales[$pos_m] - $total_costos[$pos_m];
+                $flujo_operativo = $total_descuentos_diferidos[$pos_m] + $total_descuentos_normales[$pos_m] + $total_al_contado[$pos_m] - $total_costos[$pos_m];
                 $ga = $gastos_administrativos[$pos_m] != '' ? $gastos_administrativos[$pos_m]->ga : 0;
             @endphp
             <th class="padding_lateral_5 bg-yura_dark">

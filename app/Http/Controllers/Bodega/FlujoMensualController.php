@@ -63,6 +63,7 @@ class FlujoMensualController extends Controller
         $total_costos = [];
         $total_descuentos_diferidos = [];
         $total_descuentos_normales = [];
+        $total_al_contado = [];
         $gastos_administrativos = [];
         foreach ($meses as $m) {
             $ga = OtrosGastos::where('mes', $m['mes'])
@@ -73,6 +74,7 @@ class FlujoMensualController extends Controller
             $total_costos[] = 0;
             $total_descuentos_diferidos[] = 0;
             $total_descuentos_normales[] = 0;
+            $total_al_contado[] = 0;
         }
 
         $listado = [];
@@ -80,10 +82,12 @@ class FlujoMensualController extends Controller
             $valores_costos = [];
             $valores_descuentos_diferidos = [];
             $valores_descuentos_normales = [];
+            $valores_al_contado = [];
             foreach ($meses as $pos_m => $mes) {
                 $monto_costos = 0;
                 $monto_descuento_diferido = 0;
                 $monto_descuento_normal = 0;
+                $monto_al_contado = 0;
 
                 $fecha = $mes['anno'] . '-' . $mes['mes'] . '-01';
                 $primerDiaMes = date("Y-m-01", strtotime($fecha));
@@ -106,7 +110,7 @@ class FlujoMensualController extends Controller
                     ->select('detalle_pedido_bodega.*', 'p.fecha', 'p.id_empresa', 'p.diferido_mes_actual')->distinct()
                     ->where('p.id_empresa', $finca->id_empresa)
                     ->where('p.estado', 1)
-                    ->where('p.fecha', '<=', $ultimoDiaMes)
+                    ->where('p.fecha', '<=', $ultimoDiaMesAnterior)
                     ->where('detalle_pedido_bodega.diferido', '>', 0)
                     ->get();
                 foreach ($query_pedidos as $det_ped) {
@@ -152,9 +156,9 @@ class FlujoMensualController extends Controller
                         $d++;
                     }
 
-                    if (($diferido_fecha_inicial >= $primerDiaMes && $diferido_fecha_inicial <= $ultimoDiaMes) ||
-                        ($diferido_fecha_final >= $primerDiaMes && $diferido_fecha_final <= $ultimoDiaMes) ||
-                        ($diferido_fecha_inicial <= $primerDiaMes && $diferido_fecha_final >= $ultimoDiaMes)
+                    if (($diferido_fecha_inicial >= $primerDiaMesAnterior && $diferido_fecha_inicial <= $ultimoDiaMesAnterior) ||
+                        ($diferido_fecha_final >= $primerDiaMesAnterior && $diferido_fecha_final <= $ultimoDiaMesAnterior) ||
+                        ($diferido_fecha_inicial <= $primerDiaMesAnterior && $diferido_fecha_final >= $ultimoDiaMesAnterior)
                     ) {
                         $producto = $det_ped->producto;
                         $precio_prod = 0;
@@ -178,7 +182,7 @@ class FlujoMensualController extends Controller
 
                         $rango_diferido = $det_ped->getRangoDiferidoByFecha($fecha_entrega);
                         foreach ($rango_diferido as $pos_f => $f) {
-                            if ($f >= $primerDiaMes && $f <= $ultimoDiaMes) {
+                            if ($f >= $primerDiaMesAnterior && $f <= $ultimoDiaMesAnterior) {
                                 $monto_descuento_diferido += $diferido;
                             }
                         }
@@ -191,7 +195,7 @@ class FlujoMensualController extends Controller
                     ->where('p.id_empresa', $finca->id_empresa)
                     ->where('p.estado', 1)
                     ->where('detalle_pedido_bodega.diferido', '!=', -1)
-                    ->where('p.fecha', '<=', $ultimoDiaMesAnterior)
+                    ->where('p.fecha', '<=', $ultimoDiaMesAnterior2)
                     ->orderBy('p.fecha')
                     ->get();
 
@@ -203,7 +207,7 @@ class FlujoMensualController extends Controller
                             ->where('id_empresa', $det_ped->id_empresa)
                             ->first();
                         $fecha_entrega = $entrega != '' ? $entrega->entrega : '';
-                        if ($fecha_entrega >= $primerDiaMesAnterior && $fecha_entrega <= $ultimoDiaMesAnterior) {
+                        if ($fecha_entrega >= $primerDiaMesAnterior2 && $fecha_entrega <= $ultimoDiaMesAnterior2) {
                             $producto = $det_ped->producto;
                             $precio_prod = 0;
                             if ($producto->peso == 1) {
@@ -227,6 +231,46 @@ class FlujoMensualController extends Controller
                     }
                 }
 
+                /* AL CONTADO */
+                $query_pedidos = DetallePedidoBodega::join('pedido_bodega as p', 'p.id_pedido_bodega', '=', 'detalle_pedido_bodega.id_pedido_bodega')
+                    ->select('detalle_pedido_bodega.*', 'p.fecha', 'p.id_empresa', 'p.finca_nomina')->distinct()
+                    ->where('p.id_empresa', $finca->id_empresa)
+                    ->where('p.estado', 1)
+                    ->where('detalle_pedido_bodega.diferido', -1)
+                    ->where('p.fecha', '<=', $ultimoDiaMes)
+                    ->orderBy('p.fecha')
+                    ->get();
+
+                foreach ($query_pedidos as $det_ped) {
+                    $entrega = FechaEntrega::All()
+                        ->where('desde', '<=', $det_ped->fecha)
+                        ->where('hasta', '>=', $det_ped->fecha)
+                        ->where('id_empresa', $det_ped->id_empresa)
+                        ->first();
+                    $fecha_entrega = $entrega != '' ? $entrega->entrega : '';
+                    if ($fecha_entrega >= $primerDiaMes && $fecha_entrega <= $ultimoDiaMes) {
+                        $producto = $det_ped->producto;
+                        $precio_prod = 0;
+                        if ($producto->peso == 1) {
+                            foreach ($det_ped->etiquetas_peso as $e) {
+                                $precio_prod += $e->peso * $e->precio_venta;
+                            }
+                        } else {
+                            $precio_prod = $det_ped->cantidad * $det_ped->precio;
+                        }
+                        $monto_pedido = $precio_prod;
+                        if ($det_ped->iva == true) {
+                            $subtotal = $precio_prod / 1.12;
+                            $iva = ($precio_prod / 1.12) * 0.12;
+                        } else {
+                            $subtotal = $precio_prod;
+                            $iva = 0;
+                        }
+
+                        $monto_al_contado += $monto_pedido;
+                    }
+                }
+
                 /* VENTA Y COSTOS TOTALES */
                 $pedidos = PedidoBodega::where('id_empresa', $finca->id_empresa)
                     ->where('estado', 1)
@@ -244,16 +288,19 @@ class FlujoMensualController extends Controller
                 $valores_costos[] = $monto_costos;
                 $valores_descuentos_diferidos[] = $monto_descuento_diferido;
                 $valores_descuentos_normales[] = $monto_descuento_normal;
+                $valores_al_contado[] = $monto_al_contado;
 
                 $total_costos[$pos_m] += $monto_costos;
                 $total_descuentos_diferidos[$pos_m] += $monto_descuento_diferido;
                 $total_descuentos_normales[$pos_m] += $monto_descuento_normal;
+                $total_al_contado[$pos_m] += $monto_al_contado;
             }
             $listado[] = [
                 'finca' => $finca,
                 'valores_costos' => $valores_costos,
                 'valores_descuentos_diferidos' => $valores_descuentos_diferidos,
                 'valores_descuentos_normales' => $valores_descuentos_normales,
+                'valores_al_contado' => $valores_al_contado,
             ];
         }
         return view('adminlte.gestion.bodega.flujo_mensual.partials.listado', [
@@ -263,6 +310,7 @@ class FlujoMensualController extends Controller
             'total_costos' => $total_costos,
             'total_descuentos_diferidos' => $total_descuentos_diferidos,
             'total_descuentos_normales' => $total_descuentos_normales,
+            'total_al_contado' => $total_al_contado,
         ]);
     }
 
