@@ -30,21 +30,36 @@ use yura\Modelos\Usuario;
 use Validator;
 use Storage as Almacenamiento;
 use yura\Modelos\ConfiguracionEmpresa;
+use yura\Modelos\FechaEntrega;
 use yura\Modelos\Planta;
+use yura\Modelos\UsuarioFinca;
 use yura\Modelos\Variedad;
 
 class YuraController extends Controller
 {
     public function inicio(Request $request)
     {
-        if (in_array(getUsuario(session('id_usuario'))->id_rol, [1, 2, 24])) {  // usuarios Admins y RRHH
+        $usuario = getUsuario(session('id_usuario'));
+        if (in_array($usuario->id_rol, [1, 2, 24])) {  // usuarios Admins y RRHH
             $data = [];
             return view('adminlte.inicio_resumen', [
                 'fincas_propias' => getFincasPropias(),
                 'data' => $data
             ]);
         } else {    // usuarios clientes
-            return 'EN DESARROLLO';
+            $finca = UsuarioFinca::where('id_usuario', $usuario->id_usuario)
+                ->get()
+                ->first();
+            $finca = $finca->empresa;
+            $fecha_entrega = FechaEntrega::where('id_empresa', $finca->id_configuracion_empresa)
+                ->where('hasta', '>=', hoy())
+                ->get()
+                ->first();
+            return view('adminlte.inicio_cliente', [
+                'usuario' => $usuario,
+                'finca' => $finca,
+                'fecha_entrega' => $fecha_entrega,
+            ]);
         }
     }
 
@@ -164,7 +179,7 @@ class YuraController extends Controller
         if (!$valida->fails()) {
             $correo = '' . espacios(strtolower($request->usuario));
             $clave = $this->decrypt(Session::get('key_privada'), $request->h_clave);
-            $usuario = Usuario::All()->where('username', '=', $request->username)->first();
+            $usuario = Usuario::where('username', '=', $request->username)->get()->first();
             $err_usr = true;
             $err_pss = true;
 
