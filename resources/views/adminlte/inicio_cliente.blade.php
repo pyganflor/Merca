@@ -119,7 +119,8 @@
                         <div class="timeline-body text-center">
                             <h3 style="margin-top: 0">
                                 @if ($usuario->aplica == 1)
-                                    <button type="button" class="btn btn-yura_primary btn-block">
+                                    <button type="button" class="btn btn-yura_primary btn-block"
+                                        onclick="cargar_url('pedido_bodega_cliente')">
                                         <i class="fa fa-fw fa-check"></i> COMENZAR
                                     </button>
                                 @else
