@@ -14,7 +14,17 @@
 
     <!-- Main content -->
     <section class="content">
-        ...
+        <div class="row">
+            <div class="col-md-4">
+                A
+            </div>
+            <div class="col-md-4 hidden">
+                B
+            </div>
+            <div class="col-md-4">
+                C
+            </div>
+        </div>
     </section>
 
     <style>

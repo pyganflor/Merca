@@ -2,11 +2,14 @@
     <nav class="navbar navbar-static-top">
         <div class="container">
             <div class="navbar-header">
-                <span class="logo-lg">
-                    <a href="{{ url('') }}">
-                        <img src="{{ url('images/logo_c.png') }}" alt="" width="150px">
-                    </a>
-                </span>
+                <a href="{{ url('') }}" class="navbar-brand">
+                    <span class="logo-lg">
+                        <img src="{{ url('images/logo_c.png') }}" alt="" width="100px">
+                    </span>
+                </a>
+            </div>
+            <div class="navbar-collapse pull-left collapse" id="navbar-collapse" aria-expanded="false" style="height: 1px;">
+                
             </div>
             <div class="navbar-custom-menu">
                 <ul class="nav navbar-nav">

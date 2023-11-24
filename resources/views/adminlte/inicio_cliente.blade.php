@@ -30,8 +30,8 @@
 
 @section('contenido')
     <!-- Content Header (Page header) -->
-    <section class="content-header">
-        <h1>
+    <section class="content-header" style="margin-top: 0">
+        <h1 style="margin-top: 0">
             Bienvenido(a) <b>{{ $usuario->nombre_completo }}</b> a <b>1 TOQUE</b>
         </h1>
     </section>

@@ -20,6 +20,7 @@ class PedidoClienteController extends Controller
             ->orderBy('emp.nombre')
             ->get();
 
+
         return view('adminlte.gestion.bodega.pedido_cliente.inicio', [
             'url' => $request->getRequestUri(),
             'submenu' => Submenu::Where('url', '=', substr($request->getRequestUri(), 1))->get()[0],
