@@ -3,11 +3,11 @@
     <a href="{{ url('') }}" class="logo">
         <!-- mini logo for sidebar mini 50x50 pixels -->
         <span class="logo-mini">
-            <img src="{{ url('images/Logo_Bench_Flow_B.png') }}" alt="" width="50px">
+            <img src="{{ url('images/logo_b.png') }}" alt="" width="40px">
         </span>
         <!-- logo for regular state and mobile devices -->
         <span class="logo-lg">
-            <img src="{{ url('images/Logo_Bench_Flow_verde_negro.png') }}" alt="" width="80px">
+            <img src="{{ url('images/logo_c.png') }}" alt="" width="120px">
         </span>
     </a>
     <!-- Header Navbar: style can be found in header.less -->

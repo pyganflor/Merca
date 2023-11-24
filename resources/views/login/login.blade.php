@@ -20,7 +20,7 @@
     <div class="login-box-body sombra_estandar" style="border-radius: 20px">
         <div class="login-logo">
             <a href="{{ url('') }}">
-                <img src="{{ url('images/Logo_Bench_Flow_verde_negro.png') }}" alt="" width="220px">
+                <img src="{{ url('images/logo_1Toque.png') }}" alt="" width="220px">
             </a>
         </div>
         <p class="login-box-msg">Ingrese sus credenciales para comenzar</p>

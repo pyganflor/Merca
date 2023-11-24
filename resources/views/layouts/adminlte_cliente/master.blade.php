@@ -10,7 +10,7 @@
     <!-- Tell the browser to be responsive to screen width -->
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
 
-    <link href="{{ url('images/Logo_Bench_Flow_B.png') }}" rel="shortcut icon">
+    <link href="{{ url('images/logo_b.png') }}" rel="shortcut icon">
 
     <!-- Bootstrap 3.3.7 -->
     <link rel="stylesheet" href="{{ url('adminlte/bower_components/bootstrap/dist/css/bootstrap.min.css') }}">
@@ -888,7 +888,7 @@
         /* =============== Configuracion de LoadingOverlay ================*/
         $.LoadingOverlaySetup({
             background: "rgba(0, 0, 0, 0.5)",
-            image: "{{ url('images/logo_yura.png') }}",
+            image: "{{ url('images/logo_b.png') }}",
             imageAnimation: "1.5s fadein",
             imageColor: "#ffcc00"
         });

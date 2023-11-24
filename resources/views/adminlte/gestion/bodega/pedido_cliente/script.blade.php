@@ -1,10 +1,4 @@
 <script>
-    $('#vista_actual').val('pedido_bodega');
-    seleccionar_finca_filtro();
-    setTimeout(() => {
-        listar_reporte();
-    }, 1000);
-
     function listar_reporte() {
         datos = {
             entrega: $('#filtro_entrega').val(),

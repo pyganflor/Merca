@@ -2,9 +2,11 @@
     <nav class="navbar navbar-static-top">
         <div class="container">
             <div class="navbar-header">
-                <a href="{{ url('') }}">
-                    <img src="{{ url('images/Logo_Bench_Flow_verde_negro.png') }}" alt="" width="70px">
-                </a>
+                <span class="logo-lg">
+                    <a href="{{ url('') }}">
+                        <img src="{{ url('images/logo_c.png') }}" alt="" width="150px">
+                    </a>
+                </span>
             </div>
             <div class="navbar-custom-menu">
                 <ul class="nav navbar-nav">
