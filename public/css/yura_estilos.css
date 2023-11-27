@@ -417,6 +417,11 @@ table.dataTable thead .sorting_desc_disabled:after {
     padding-right: 10px !important;
 }
 
+.padding_lateral_20 {
+    padding-left: 20px !important;
+    padding-right: 20px !important;
+}
+
 .text-white{
     color:white!important
 }

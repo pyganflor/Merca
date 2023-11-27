@@ -6,6 +6,11 @@
         <th class="text-center th_yura_green" style="width: 60px">
             IMAGEN
         </th>
+        <th class="text-center th_yura_green" style="width: 150px">
+            CATEGORIA
+            <input type="text" style="width: 100%; color: black" class="text-center" placeholder="Nueva"
+                onchange="store_categoria()" id="new_nombre_categoria">
+        </th>
         <th class="text-center th_yura_green" style="width: 60px">
             CODIGO
         </th>
@@ -43,6 +48,15 @@
                 <input type="file" style="width: 100%;" class="text-center bg-yura_dark" id="imagen_new"
                     name="imagen_new" placeholder="Codigo" accept="image/png, image/jpeg">
             </form>
+        </th>
+        <th class="text-center" style="border-color: #9d9d9d">
+            <select id="categoria_new" style="width: 100%; height: 26px;">
+                @foreach ($categorias as $cat)
+                    <option value="{{ $cat->id_categoria_producto }}">
+                        {{ $cat->nombre }}
+                    </option>
+                @endforeach
+            </select>
         </th>
         <th class="text-center" style="border-color: #9d9d9d">
             <input type="text" style="width: 100%" class="text-center bg-yura_dark" id="codigo_new" name="codigo_new"
@@ -95,6 +109,16 @@
                 </form>
             </th>
             <th class="text-center" style="border-color: #9d9d9d; vertical-align: top">
+                <select id="categoria_{{ $item->id_producto }}" style="width: 100%; height: 26px;">
+                    @foreach ($categorias as $cat)
+                        <option value="{{ $cat->id_categoria_producto }}"
+                            {{ $cat->id_categoria_producto == $item->id_categoria_producto ? 'selected' : '' }}>
+                            {{ $cat->nombre }}
+                        </option>
+                    @endforeach
+                </select>
+            </th>
+            <th class="text-center" style="border-color: #9d9d9d; vertical-align: top">
                 <input type="text" style="width: 100%" class="text-center" id="codigo_{{ $item->id_producto }}"
                     value="{{ $item->codigo }}" required>
             </th>
@@ -144,6 +168,7 @@
             $.LoadingOverlay('show');
             formulario = $('#form_add_producto');
             var formData = new FormData(formulario[0]);
+            formData.append('categoria', $('#categoria_new').val());
             formData.append('codigo', $('#codigo_new').val());
             formData.append('nombre', $('#nombre_new').val());
             formData.append('precio_venta', $('#precio_venta_new').val());
@@ -186,6 +211,7 @@
             $.LoadingOverlay('show');
             formulario = $('#form_edit_producto_' + id);
             var formData = new FormData(formulario[0]);
+            formData.append('categoria', $('#categoria_' + id).val());
             formData.append('codigo', $('#codigo_' + id).val());
             formData.append('nombre', $('#nombre_' + id).val());
             formData.append('precio_venta', $('#precio_venta_' + id).val());

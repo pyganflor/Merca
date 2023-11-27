@@ -6,6 +6,7 @@
     $pedido = $datos['pedido'];
     $fecha = $pedido->getFechaEntrega();
     $tipos_pago = [
+        '' => 'Una Cuota',
         '-1' => 'Al Contado',
         '0' => 'Una Cuota',
         '2' => 'Diferido a 2 Meses',

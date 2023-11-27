@@ -731,7 +731,7 @@ function convertDatetimeToText($fecha)
     $anno = substr($fecha, 0, 4);
     $hora = substr($fecha, 11, 5);
 
-    return $dia . ' de ' . getMeses(TP_COMPLETO, FR_ARREGLO)[intval($mes - 1)] . ' del ' . $anno . ' a las ' . $hora;
+    return $dia . ' de ' . getMeses(TP_ABREVIADO, FR_ARREGLO)[intval($mes - 1)] . ' del ' . $anno . ' a las ' . $hora;
 }
 
 function convertDateToText($fecha)

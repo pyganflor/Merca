@@ -62,8 +62,12 @@ class ProductosController extends Controller
                 ->where('peso', 0)
                 ->orderBy('orden')
                 ->get();
+            $categorias = CategoriaProducto::where('estado', 1)
+                ->orderBy('nombre')
+                ->get();
             return view('adminlte.gestion.bodega.productos.partials.listado_combos', [
                 'listado' => $listado,
+                'categorias' => $categorias,
             ]);
         }
         if ($request->tipo == 'P') { //productos de peso
@@ -221,6 +225,7 @@ class ProductosController extends Controller
         ]);
         if (!$valida->fails()) {
             $model = new Producto();
+            $model->id_categoria_producto = $request->categoria;
             $model->codigo = espacios(mb_strtoupper($request->codigo));
             $model->nombre = espacios(mb_strtoupper($request->nombre));
             $model->unidad_medida = mb_strtoupper($request->unidad_medida);
@@ -477,6 +482,7 @@ class ProductosController extends Controller
                         . '</div>';
                 } else {
                     $model = Producto::find($request->id);
+                    $model->id_categoria_producto = $request->categoria;
                     $model->codigo = $request->codigo;
                     $model->nombre = espacios(mb_strtoupper($request->nombre));
                     $model->precio_venta = $request->precio_venta;
