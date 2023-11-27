@@ -123,8 +123,11 @@ class ComandoDev extends Command
         if ($comando == 'importar_usuarios') {
             $this->importar_usuarios();
         }
-        if ($comando == 'caca') {
-            $this->caca();
+        if ($comando == 'actualizar_telefonos') {
+            $this->actualizar_telefonos();
+        }
+        if ($comando == 'actualizar_usuarios') {
+            $this->actualizar_usuarios();
         }
 
         $time_duration = difFechas(date('Y-m-d H:i:s'), $ini)->h . ':' . difFechas(date('Y-m-d H:i:s'), $ini)->m . ':' . difFechas(date('Y-m-d H:i:s'), $ini)->s;
@@ -1000,7 +1003,7 @@ class ComandoDev extends Command
 
     function importar_ciclos()
     {
-        dump('<<<<< ! >>>>> Ejecutando comando:dev "caca" <<<<< ! >>>>>');
+        dump('<<<<< ! >>>>> Ejecutando comando:dev "importar_ciclos" <<<<< ! >>>>>');
         try {
             $url = public_path('storage/pdf_loads/ciclos.xlsx');
             $document = IOFactory::load($url);
@@ -1077,7 +1080,7 @@ class ComandoDev extends Command
 
     function importar_variedades()
     {
-        dump('<<<<< ! >>>>> Ejecutando comando:dev "caca" <<<<< ! >>>>>');
+        dump('<<<<< ! >>>>> Ejecutando comando:dev "importar_variedades" <<<<< ! >>>>>');
         try {
             $url = public_path('storage/pdf_loads/variedades.xlsx');
             $document = IOFactory::load($url);
@@ -1115,7 +1118,7 @@ class ComandoDev extends Command
 
     function importar_productos()
     {
-        dump('<<<<< ! >>>>> Ejecutando comando:dev "caca" <<<<< ! >>>>>');
+        dump('<<<<< ! >>>>> Ejecutando comando:dev "importar_productos" <<<<< ! >>>>>');
         try {
             $url = public_path('storage/file_loads/productos.xlsx');
             $document = IOFactory::load($url);
@@ -1235,9 +1238,9 @@ class ComandoDev extends Command
         }
     }
 
-    function caca()
+    function actualizar_telefonos()
     {
-        dump('<<<<< ! >>>>> Ejecutando comando:dev "caca" <<<<< ! >>>>>');
+        dump('<<<<< ! >>>>> Ejecutando comando:dev "actualizar_telefonos" <<<<< ! >>>>>');
         try {
             $url = public_path('storage/file_loads/telefonos.xlsx');
             $document = IOFactory::load($url);
@@ -1257,6 +1260,78 @@ class ComandoDev extends Command
                     } else {
                         dump('******************** NO EXISTE **********************' . $pos_row);
                         $no_existen[] = $row['A'];
+                    }
+                }
+            }
+            dd($no_existen);
+            //unlink($url);
+        } catch (\Exception $e) {
+            dump('************************* ERROR *************************');
+            dump($e->getMessage());
+        }
+    }
+
+    function actualizar_usuarios()
+    {
+        dump('<<<<< ! >>>>> Ejecutando comando:dev "actualizar_usuarios" <<<<< ! >>>>>');
+        try {
+            $url = public_path('storage\file_loads\actualizar_usuarios.xlsx');
+            $document = IOFactory::load($url);
+            $no_existen = [];
+            foreach ($document->getAllSheets() as $sheet) {
+                $activeSheetData = $sheet->toArray(null, true, true, true);
+                $finca = ConfiguracionEmpresa::where('nombre', $sheet->getTitle())
+                    ->get()
+                    ->first();
+                $ids_actuales = [];
+                foreach ($activeSheetData as $pos_row => $row) {
+                    if ($row['B'] != '' && $pos_row > 1) {
+                        dump('usuario: ' . $pos_row . '/' . count($activeSheetData));
+                        $usuario = Usuario::where('username', str_limit(mb_strtolower(espacios($row['B'])), 250))
+                            ->get()
+                            ->first();
+                        if ($usuario != '') {
+                            dump('EXISTE');
+                            $usuario->aplica = 1;
+                            //$usuario->saldo = $usuario->saldo > 0 ? $usuario->saldo : 40;
+                            $usuario->save();
+
+                            $user_fincas_del = UsuarioFinca::where('id_usuario', $usuario->id_usuario)
+                                ->delete();
+
+                            $finca_usuario = new UsuarioFinca();
+                            $finca_usuario->id_usuario = $usuario->id_usuario;
+                            $finca_usuario->id_empresa = $finca->id_configuracion_empresa;
+                            $finca_usuario->save();
+                        } else {
+                            dump('******************** NO EXISTE **********************' . $pos_row);
+                            $no_existen[] = $row['A'];
+                            $passw = Hash::make(str_limit(mb_strtoupper(espacios($row['B'])), 250));
+
+                            $usuario = new Usuario();
+                            $usuario->nombre_completo = str_limit(mb_strtoupper(espacios($row['A'])), 250);
+                            $usuario->username = str_limit(mb_strtolower(espacios($row['B'])), 250);
+                            $usuario->estado = 'A';
+                            $usuario->id_rol = 23;
+                            $usuario->aplica = 1;
+                            $usuario->cupo_disponible = 40;
+                            $usuario->saldo = 40;
+                            $usuario->password = $passw;
+                            $usuario->save();
+                            $usuario->id_usuario = DB::table('usuario')
+                                ->select(DB::raw('max(id_usuario) as id'))
+                                ->get()[0]->id;
+                        }
+                        $ids_actuales[] = $usuario->id_usuario;
+                        $usuarios_inactivos = Usuario::join('usuario_finca as uf', 'uf.id_usuario', '=', 'usuario.id_usuario')
+                            ->select('usuario.*')->distinct()
+                            ->where('uf.id_empresa', $finca->id_configuracion_empresa)
+                            ->whereNotIn('uf.id_usuario', $ids_actuales)
+                            ->get();
+                        foreach ($usuarios_inactivos as $u) {
+                            $u->aplica = 0;
+                            $u->save();
+                        }
                     }
                 }
             }
