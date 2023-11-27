@@ -9,27 +9,89 @@
                     Combos de <b>{{ $item['categoria']->nombre }}</b>
                 </a>
             </h4>
-            <span class="pull-right badge">
-                <b style="font-size: 1.1em">{{ count($item['combos']) }}</b> combos totales
-            </span>
+            <div class="box-tools pull-right">
+                <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                    <b style="font-size: 1.1em">{{ count($item['combos']) }}</b> combos totales
+                </button>
+                <input type="text" class="text-center"
+                    onkeydown="filtrar_nombre_combo('{{ $item['categoria']->id_categoria_producto }}')"
+                    id="filtro_nombre_combo_{{ $item['categoria']->id_categoria_producto }}" placeholder="Busqueda">
+                <div class="btn-group">
+                    <button type="button" class="btn btn-box-tool dropdown-toggle" data-toggle="dropdown"
+                        aria-expanded="false">
+                        <i class="fa fa-filter"></i> Filtrar
+                    </button>
+                    <ul class="dropdown-menu" role="menu">
+                        <li>
+                            <a href="javascript:void(0)"
+                                onclick="ordenar_menor_precio_combo('{{ $item['categoria']->id_categoria_producto }}')">
+                                Ordenar por <b>Menor Precio</b>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="javascript:void(0)"
+                                onclick="ordenar_mayor_precio_combo('{{ $item['categoria']->id_categoria_producto }}')">
+                                Ordenar por <b>Mayor Precio</b>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="javascript:void(0)"
+                                onclick="ordenar_menor_nombre_combo('{{ $item['categoria']->id_categoria_producto }}')">
+                                Ordenar por <b>Nombre A-Z</b>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="javascript:void(0)"
+                                onclick="ordenar_mayor_nombre_combo('{{ $item['categoria']->id_categoria_producto }}')">
+                                Ordenar por <b>Nombre Z-A</b>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
         </div>
         <div id="collapse_combos_cat_{{ $item['categoria']->id_categoria_producto }}" class="panel-collapse collapse"
             aria-expanded="false" style="height: 0px;">
-            <div class="box-body">
-                <div class="row">
-                    @foreach ($item['combos'] as $pos_c => $combo)
+            <table>
+                <tr id="tr_combos_{{ $item['categoria']->id_categoria_producto }}">
+                    @foreach ($item['combos'] as $pos_c => $producto)
                         @php
-                            $url_imagen = 'images\productos\*' . $combo->imagen;
+                            $url_imagen = 'images\productos\*' . $producto->imagen;
                             $url_imagen = str_replace('*', '', $url_imagen);
                         @endphp
-                        <div class="col-md-3">
-                            <img src="{{ url($url_imagen) }}" alt="..."
-                                class="img-fluid img-thumbnail imagen_{{ $combo->id_producto }}"
-                                style="border-radius: 16px; width: 190px">
-                        </div>
+                        <td class="padding_lateral_20 text-center td_combos_{{ $item['categoria']->id_categoria_producto }}"
+                            style="width: 150px; vertical-align: top" data-precio="{{ $producto->precio_venta }}"
+                            data-nombre="{{ $producto->nombre }}">
+                            <div style="width: 150px" class="text-center">
+                                <img src="{{ url($url_imagen) }}" alt="..."
+                                    class="img-fluid img-thumbnail imagen_{{ $producto->id_producto }} sombra_pequeña"
+                                    style="border-radius: 16px; max-width: 150px; max-height: 150px">
+                            </div>
+                            <legend class="text-center" style="font-size: 1.1em; margin-bottom: 5px">
+                                {{ $producto->nombre }}
+                            </legend>
+                            <b>
+                                ${{ $producto->precio_venta }}
+                                @if ($producto->tiene_iva == 1)
+                                    <sup><em>incluye IVA</em></sup>
+                                @endif
+                            </b>
+                            <div class="input-group">
+                                <span class="input-group-addon bg-yura_dark span-input-group-yura-fixed">
+                                    <i class="fa fa-fw fa-minus"></i>
+                                </span>
+                                <input type="number" id="input_catalogo_combo_{{ $producto->id_producto }}"
+                                    style="width: 100%" class="text-center form-control input_cantidad">
+                                <span class="input-group-btn">
+                                    <button type="button" class="btn btn-yura_dark" onclick="listar_reporte()">
+                                        <i class="fa fa-fw fa-plus"></i>
+                                    </button>
+                                </span>
+                            </div>
+                        </td>
                     @endforeach
-                </div>
-            </div>
+                </tr>
+            </table>
         </div>
     </div>
     <div class="panel box box-success" style="margin-bottom: 0">

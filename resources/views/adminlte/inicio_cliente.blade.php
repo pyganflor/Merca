@@ -75,7 +75,7 @@
                     </div>
                 </li>
                 <li>
-                    <i class="fa fa-truck bg-yura_primary"></i>
+                    <i class="fa fa-truck fa-flip-horizontal bg-yura_primary"></i>
                     <div class="timeline-item">
                         <h3 class="timeline-header">
                             <b class="text-color_yura">

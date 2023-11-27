@@ -8,7 +8,9 @@
     <!-- Content Header (Page header) -->
     <section class="content-header">
         <h1>
-            Haga su Pedido
+            PROXIMA FECHA de ENTREGA <i class="fa fa-fw fa-truck fa-flip-horizontal text-color_yura"></i>
+            <b>{{ convertDateToText($fecha_entrega->entrega) }}</b> <i class="fa fa-fw fa-truck text-color_yura"></i>
+            en <b>{{ $finca->nombre }}</b>
         </h1>
     </section>
 
