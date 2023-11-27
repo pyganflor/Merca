@@ -51,47 +51,49 @@
             </div>
         </div>
         <div id="collapse_combos_cat_{{ $item['categoria']->id_categoria_producto }}" class="panel-collapse collapse"
-            aria-expanded="false" style="height: 0px;">
-            <table>
-                <tr id="tr_combos_{{ $item['categoria']->id_categoria_producto }}">
-                    @foreach ($item['combos'] as $pos_c => $producto)
-                        @php
-                            $url_imagen = 'images\productos\*' . $producto->imagen;
-                            $url_imagen = str_replace('*', '', $url_imagen);
-                        @endphp
-                        <td class="padding_lateral_20 text-center td_combos_{{ $item['categoria']->id_categoria_producto }}"
-                            style="width: 150px; vertical-align: top" data-precio="{{ $producto->precio_venta }}"
-                            data-nombre="{{ $producto->nombre }}">
-                            <div style="width: 150px" class="text-center">
-                                <img src="{{ url($url_imagen) }}" alt="..."
-                                    class="img-fluid img-thumbnail imagen_{{ $producto->id_producto }} sombra_pequeña"
-                                    style="border-radius: 16px; max-width: 150px; max-height: 150px">
-                            </div>
-                            <legend class="text-center" style="font-size: 1.1em; margin-bottom: 5px">
-                                {{ $producto->nombre }}
-                            </legend>
-                            <b>
-                                ${{ $producto->precio_venta }}
-                                @if ($producto->tiene_iva == 1)
-                                    <sup><em>incluye IVA</em></sup>
-                                @endif
-                            </b>
-                            <div class="input-group">
-                                <span class="input-group-addon bg-yura_dark span-input-group-yura-fixed">
-                                    <i class="fa fa-fw fa-minus"></i>
-                                </span>
-                                <input type="number" id="input_catalogo_combo_{{ $producto->id_producto }}"
-                                    style="width: 100%" class="text-center form-control input_cantidad">
-                                <span class="input-group-btn">
-                                    <button type="button" class="btn btn-yura_dark" onclick="listar_reporte()">
-                                        <i class="fa fa-fw fa-plus"></i>
-                                    </button>
-                                </span>
-                            </div>
-                        </td>
-                    @endforeach
-                </tr>
-            </table>
+            aria-expanded="false">
+            <div class="box-body" style="overflow-x: scroll">
+                <table>
+                    <tr id="tr_combos_{{ $item['categoria']->id_categoria_producto }}">
+                        @foreach ($item['combos'] as $pos_c => $producto)
+                            @php
+                                $url_imagen = 'images\productos\*' . $producto->imagen;
+                                $url_imagen = str_replace('*', '', $url_imagen);
+                            @endphp
+                            <td class="padding_lateral_20 text-center td_combos_{{ $item['categoria']->id_categoria_producto }}"
+                                style="width: 150px; vertical-align: top" data-precio="{{ $producto->precio_venta }}"
+                                data-nombre="{{ $producto->nombre }}">
+                                <div style="width: 150px" class="text-center">
+                                    <img src="{{ url($url_imagen) }}" alt="..."
+                                        class="img-fluid img-thumbnail imagen_{{ $producto->id_producto }} sombra_pequeña"
+                                        style="border-radius: 16px; max-width: 150px; max-height: 150px">
+                                </div>
+                                <legend class="text-center" style="font-size: 1.1em; margin-bottom: 5px">
+                                    {{ $producto->nombre }}
+                                </legend>
+                                <b>
+                                    ${{ $producto->precio_venta }}
+                                    @if ($producto->tiene_iva == 1)
+                                        <sup><em>incluye IVA</em></sup>
+                                    @endif
+                                </b>
+                                <div class="input-group">
+                                    <span class="input-group-addon bg-yura_dark span-input-group-yura-fixed">
+                                        <i class="fa fa-fw fa-minus"></i>
+                                    </span>
+                                    <input type="number" id="input_catalogo_combo_{{ $producto->id_producto }}"
+                                        style="width: 100%" class="text-center form-control input_cantidad">
+                                    <span class="input-group-btn">
+                                        <button type="button" class="btn btn-yura_dark" onclick="listar_reporte()">
+                                            <i class="fa fa-fw fa-plus"></i>
+                                        </button>
+                                    </span>
+                                </div>
+                            </td>
+                        @endforeach
+                    </tr>
+                </table>
+            </div>
         </div>
     </div>
     <div class="panel box box-success" style="margin-bottom: 0">
@@ -146,7 +148,7 @@
         </div>
         <div id="collapse_productos_cat_{{ $item['categoria']->id_categoria_producto }}"
             class="panel-collapse collapse" aria-expanded="false">
-            <div class="box-body" style="overflow-x: scroll; overflow-y: scroll; max-height: 700px">
+            <div class="box-body" style="overflow-x: scroll">
                 <table>
                     <tr id="tr_productos_{{ $item['categoria']->id_categoria_producto }}">
                         @foreach ($item['productos'] as $pos_c => $producto)
