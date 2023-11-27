@@ -31,10 +31,12 @@ class PedidoClienteController extends Controller
         $listado = [];
         foreach ($categorias as $cat) {
             $productos = Producto::where('id_categoria_producto', $cat->id_categoria_producto)
+                ->where('estado', 1)
                 ->where('combo', 0)
                 ->orderBy('nombre')
                 ->get();
             $combos = Producto::where('id_categoria_producto', $cat->id_categoria_producto)
+                ->where('estado', 1)
                 ->where('combo', 1)
                 ->orderBy('nombre')
                 ->get();

@@ -323,10 +323,11 @@ class PedidoBodegaController extends Controller
 
     public function listar_catalogo(Request $request)
     {
-        $listado = Producto::Where(function ($q) use ($request) {
-            $q->Where('nombre', 'like', '%' . mb_strtoupper($request->busqueda) . '%')
-                ->orWhere('codigo', 'like', '%' . mb_strtoupper($request->busqueda) . '%');
-        });
+        $listado = Producto::where('estado', 1)
+            ->Where(function ($q) use ($request) {
+                $q->Where('nombre', 'like', '%' . mb_strtoupper($request->busqueda) . '%')
+                    ->orWhere('codigo', 'like', '%' . mb_strtoupper($request->busqueda) . '%');
+            });
         if ($request->tipo == 'N') {    // productos normales
             $listado = $listado->where('combo', 0)
                 ->where('peso', 0);
