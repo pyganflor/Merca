@@ -1275,7 +1275,7 @@ class ComandoDev extends Command
     {
         dump('<<<<< ! >>>>> Ejecutando comando:dev "actualizar_usuarios" <<<<< ! >>>>>');
         try {
-            $url = public_path('storage\file_loads\actualizar_usuarios.xlsx');
+            $url = public_path('storage/file_loads/actualizar_usuarios.xlsx');
             $document = IOFactory::load($url);
             $no_existen = [];
             foreach ($document->getAllSheets() as $sheet) {
