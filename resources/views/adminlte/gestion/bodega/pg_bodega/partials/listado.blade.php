@@ -86,6 +86,31 @@
         </tr>
     @endforeach
 
+    {{-- % MARGEN --}}
+    <tr>
+        <th class="padding_lateral_5 bg-yura_dark mouse-hand"
+            onclick="$('.tr_porcentaje_margen').toggleClass('hidden')">
+            % MARGEN <i class="fa fa-fw fa-caret-down pull-right"></i>
+        </th>
+        @foreach ($meses as $pos_m => $mes)
+            <th class="padding_lateral bg-yura_dark">
+                {{ porcentaje($total_ventas[$pos_m] - $total_costos[$pos_m], $total_ventas[$pos_m], 1) }}%
+            </th>
+        @endforeach
+    </tr>
+    @foreach ($listado as $pos => $item)
+        <tr class="tr_porcentaje_margen hidden">
+            <th class="padding_lateral_5" style="border-color: #9d9d9d">
+                {{ $item['finca']->nombre }}
+            </th>
+            @foreach ($meses as $pos_m => $mes)
+                <th class="padding_lateral" style="border-color: #9d9d9d">
+                    {{ porcentaje($item['valores_ventas'][$pos_m] - $item['valores_costos'][$pos_m], $item['valores_ventas'][$pos_m], 1) }}%
+                </th>
+            @endforeach
+        </tr>
+    @endforeach
+
     {{-- GASTOS ADMINISTRATIVOS --}}
     <tr>
         <th class="padding_lateral_5 bg-yura_dark">

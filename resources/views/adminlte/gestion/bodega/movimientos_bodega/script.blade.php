@@ -9,6 +9,7 @@
         };
         get_jquery('{{ url('movimientos_bodega/listar_reporte') }}', datos, function(retorno) {
             $('#div_listado').html(retorno);
+            estructura_tabla('table_inventario');
         }, 'div_listado');
     }
 

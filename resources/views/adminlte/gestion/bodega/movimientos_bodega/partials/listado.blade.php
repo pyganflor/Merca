@@ -1,5 +1,5 @@
 <div style="overflow-y: scroll; overflow-x: scroll; height: 700px;">
-    <table class="table-striped table-bordered" style="width: 100%; border: 1px solid #9d9d9d">
+    <table class="table-striped table-bordered" style="width: 100%; border: 1px solid #9d9d9d" id="table_inventario">
         <thead>
             <tr class="tr_fija_top_0">
                 <th class="text-center th_yura_green" style="width: 60px">
