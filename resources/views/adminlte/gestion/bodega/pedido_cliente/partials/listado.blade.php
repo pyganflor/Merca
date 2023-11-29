@@ -1,5 +1,4 @@
 <div class="box-group" id="accordion_cat_{{ $item['categoria']->id_categoria_producto }}">
-    <!-- we are adding the .panel class so bootstrap.js collapse plugin detects it -->
     <div class="panel box box-success" style="margin-bottom: 0">
         <div class="box-header with-border">
             <h4 class="box-title">
@@ -13,7 +12,7 @@
                 <button type="button" class="btn btn-box-tool" data-widget="collapse">
                     <b style="font-size: 1.1em">{{ count($item['combos']) }}</b> combos totales
                 </button>
-                <input type="text" class="text-center"
+                <input type="text" class="text-center input-yura_default"
                     onkeydown="filtrar_nombre_combo('{{ $item['categoria']->id_categoria_producto }}')"
                     id="filtro_nombre_combo_{{ $item['categoria']->id_categoria_producto }}" placeholder="Busqueda">
                 <div class="btn-group">
@@ -62,13 +61,14 @@
                             @endphp
                             <td class="padding_lateral_20 text-center td_combos_{{ $item['categoria']->id_categoria_producto }}"
                                 style="width: 150px; vertical-align: top" data-precio="{{ $producto->precio_venta }}"
-                                data-nombre="{{ $producto->nombre }}">
-                                <div style="width: 150px" class="text-center">
+                                data-nombre="{{ $producto->nombre }}" id="td_producto_{{ $producto->id_producto }}"
+                                data-url="{{ url($url_imagen) }}" data-tiene_iva="{{ $producto->tiene_iva }}">
+                                <div style="width: 150px; height: 150px;" class="text-center">
                                     <img src="{{ url($url_imagen) }}" alt="..."
                                         class="img-fluid img-thumbnail imagen_{{ $producto->id_producto }} sombra_pequeña"
                                         style="border-radius: 16px; max-width: 150px; max-height: 150px">
                                 </div>
-                                <legend class="text-center" style="font-size: 1.1em; margin-bottom: 5px">
+                                <legend class="text-center" style="font-size: 1.1em; margin-bottom: 5px; height: 67px;">
                                     {{ $producto->nombre }}
                                 </legend>
                                 <b>
@@ -78,13 +78,17 @@
                                     @endif
                                 </b>
                                 <div class="input-group">
-                                    <span class="input-group-addon bg-yura_dark span-input-group-yura-fixed">
-                                        <i class="fa fa-fw fa-minus"></i>
-                                    </span>
-                                    <input type="number" id="input_catalogo_combo_{{ $producto->id_producto }}"
-                                        style="width: 100%" class="text-center form-control input_cantidad">
                                     <span class="input-group-btn">
-                                        <button type="button" class="btn btn-yura_dark" onclick="listar_reporte()">
+                                        <button type="button" class="btn btn-yura_dark"
+                                            onclick="quitar_producto('{{ $producto->id_producto }}')">
+                                            <i class="fa fa-fw fa-minus"></i>
+                                        </button>
+                                    </span>
+                                    <input type="number" id="input_catalogo_prod_{{ $producto->id_producto }}"
+                                        readonly style="width: 100%;" class="text-center form-control input_cantidad">
+                                    <span class="input-group-btn">
+                                        <button type="button" class="btn btn-yura_dark"
+                                            onclick="agregar_producto('{{ $producto->id_producto }}')">
                                             <i class="fa fa-fw fa-plus"></i>
                                         </button>
                                     </span>
@@ -109,7 +113,7 @@
                 <button type="button" class="btn btn-box-tool" data-widget="collapse">
                     <b style="font-size: 1.1em">{{ count($item['productos']) }}</b> productos totales
                 </button>
-                <input type="text" class="text-center"
+                <input type="text" class="text-center input-yura_default"
                     onkeydown="filtrar_nombre_prod('{{ $item['categoria']->id_categoria_producto }}')"
                     id="filtro_nombre_prod_{{ $item['categoria']->id_categoria_producto }}" placeholder="Busqueda">
                 <div class="btn-group">
@@ -158,13 +162,15 @@
                             @endphp
                             <td class="padding_lateral_20 text-center td_productos_{{ $item['categoria']->id_categoria_producto }}"
                                 style="width: 150px; vertical-align: top" data-precio="{{ $producto->precio_venta }}"
-                                data-nombre="{{ $producto->nombre }}">
-                                <div style="width: 150px" class="text-center">
+                                data-nombre="{{ $producto->nombre }}" id="td_producto_{{ $producto->id_producto }}"
+                                data-url="{{ url($url_imagen) }}" data-tiene_iva="{{ $producto->tiene_iva }}">
+                                <div style="width: 150px; height: 150px;" class="text-center">
                                     <img src="{{ url($url_imagen) }}" alt="..."
                                         class="img-fluid img-thumbnail imagen_{{ $producto->id_producto }} sombra_pequeña"
                                         style="border-radius: 16px; max-width: 150px; max-height: 150px">
                                 </div>
-                                <legend class="text-center" style="font-size: 1.1em; margin-bottom: 5px">
+                                <legend class="text-center"
+                                    style="font-size: 1.1em; margin-bottom: 5px; height: 67px">
                                     {{ $producto->nombre }}
                                 </legend>
                                 <b>
@@ -174,13 +180,17 @@
                                     @endif
                                 </b>
                                 <div class="input-group">
-                                    <span class="input-group-addon bg-yura_dark span-input-group-yura-fixed">
-                                        <i class="fa fa-fw fa-minus"></i>
+                                    <span class="input-group-btn">
+                                        <button type="button" class="btn btn-yura_dark"
+                                            onclick="quitar_producto('{{ $producto->id_producto }}')">
+                                            <i class="fa fa-fw fa-minus"></i>
+                                        </button>
                                     </span>
                                     <input type="number" id="input_catalogo_prod_{{ $producto->id_producto }}"
-                                        style="width: 100%" class="text-center form-control input_cantidad">
+                                        readonly style="width: 100%;" class="text-center form-control input_cantidad">
                                     <span class="input-group-btn">
-                                        <button type="button" class="btn btn-yura_dark" onclick="listar_reporte()">
+                                        <button type="button" class="btn btn-yura_dark"
+                                            onclick="agregar_producto('{{ $producto->id_producto }}')">
                                             <i class="fa fa-fw fa-plus"></i>
                                         </button>
                                     </span>

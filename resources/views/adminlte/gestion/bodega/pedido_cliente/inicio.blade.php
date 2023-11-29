@@ -8,7 +8,7 @@
     <!-- Content Header (Page header) -->
     <section class="content-header">
         <h1>
-            PROXIMA FECHA de ENTREGA <i class="fa fa-fw fa-truck fa-flip-horizontal text-color_yura"></i>
+            ENTREGA <i class="fa fa-fw fa-truck fa-flip-horizontal text-color_yura"></i>
             <b>{{ convertDateToText($fecha_entrega->entrega) }}</b> <i class="fa fa-fw fa-truck text-color_yura"></i>
             en <b>{{ $finca->nombre }}</b>
         </h1>
@@ -39,7 +39,7 @@
                     </div>
                 @endforeach
                 <div class="tab-pane" id="tab_carrito">
-                    <h1>CARRITO</h1>
+                    @include('adminlte.gestion.bodega.pedido_cliente.forms.carrito')
                 </div>
             </div>
         </div>
