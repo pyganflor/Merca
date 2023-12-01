@@ -13,7 +13,8 @@
                     <b style="font-size: 1.1em">{{ count($item['combos']) }}</b> combos totales
                 </button>
                 <input type="text" class="text-center input-yura_default"
-                    onkeydown="filtrar_nombre_combo('{{ $item['categoria']->id_categoria_producto }}')"
+                    onkeyup="filtrar_nombre_combo('{{ $item['categoria']->id_categoria_producto }}')"
+                    onchange="filtrar_nombre_combo('{{ $item['categoria']->id_categoria_producto }}')"
                     id="filtro_nombre_combo_{{ $item['categoria']->id_categoria_producto }}" placeholder="Busqueda">
                 <div class="btn-group">
                     <button type="button" class="btn btn-box-tool dropdown-toggle" data-toggle="dropdown"
@@ -60,9 +61,11 @@
                                 $url_imagen = str_replace('*', '', $url_imagen);
                             @endphp
                             <td class="padding_lateral_20 text-center td_combos_{{ $item['categoria']->id_categoria_producto }}"
-                                style="width: 150px; vertical-align: top" data-precio="{{ $producto->precio_venta }}"
+                                style="width: 150px; vertical-align: top"
+                                data-precio="{{ $producto->peso == 0 ? $producto->precio_venta : 0 }}"
                                 data-nombre="{{ $producto->nombre }}" id="td_producto_{{ $producto->id_producto }}"
-                                data-url="{{ url($url_imagen) }}" data-tiene_iva="{{ $producto->tiene_iva }}">
+                                data-url="{{ url($url_imagen) }}" data-tiene_iva="{{ $producto->tiene_iva }}"
+                                data-peso="{{ $producto->peso }}">
                                 <div style="width: 150px; height: 150px;" class="text-center">
                                     <img src="{{ url($url_imagen) }}" alt="..."
                                         class="img-fluid img-thumbnail imagen_{{ $producto->id_producto }} sombra_pequeña"
@@ -72,7 +75,7 @@
                                     {{ $producto->nombre }}
                                 </legend>
                                 <b>
-                                    ${{ $producto->precio_venta }}
+                                    ${{ $producto->peso == 0 ? $producto->precio_venta : '?' }}
                                     @if ($producto->tiene_iva == 1)
                                         <sup><em>incluye IVA</em></sup>
                                     @endif
@@ -161,9 +164,11 @@
                                 $url_imagen = str_replace('*', '', $url_imagen);
                             @endphp
                             <td class="padding_lateral_20 text-center td_productos_{{ $item['categoria']->id_categoria_producto }}"
-                                style="width: 150px; vertical-align: top" data-precio="{{ $producto->precio_venta }}"
+                                style="width: 150px; vertical-align: top"
+                                data-precio="{{ $producto->peso == 0 ? $producto->precio_venta : 0 }}"
                                 data-nombre="{{ $producto->nombre }}" id="td_producto_{{ $producto->id_producto }}"
-                                data-url="{{ url($url_imagen) }}" data-tiene_iva="{{ $producto->tiene_iva }}">
+                                data-url="{{ url($url_imagen) }}" data-tiene_iva="{{ $producto->tiene_iva }}"
+                                data-peso="{{ $producto->peso }}">
                                 <div style="width: 150px; height: 150px;" class="text-center">
                                     <img src="{{ url($url_imagen) }}" alt="..."
                                         class="img-fluid img-thumbnail imagen_{{ $producto->id_producto }} sombra_pequeña"
@@ -174,7 +179,7 @@
                                     {{ $producto->nombre }}
                                 </legend>
                                 <b>
-                                    ${{ $producto->precio_venta }}
+                                    ${{ $producto->peso == 0 ? $producto->precio_venta : '?' }}
                                     @if ($producto->tiene_iva == 1)
                                         <sup><em>incluye IVA</em></sup>
                                     @endif

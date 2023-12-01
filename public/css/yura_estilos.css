@@ -219,6 +219,11 @@ table.dataTable thead .sorting_desc_disabled:after {
     background-color: #00B388 !important;
 }
 
+.bg-yura_warning {
+    color: white !important;
+    background-color: #ef6e11 !important;
+}
+
 .bg-yura_danger {
     color: white !important;
     background-color: #d01c62 !important;

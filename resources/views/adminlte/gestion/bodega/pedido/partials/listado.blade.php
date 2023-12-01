@@ -17,6 +17,7 @@
                     $total_costos_pendientes += $costo;
                     $total_venta_pendientes += $venta;
                 }
+                $tieneProductoPeso = $item->tieneProductoPeso();
             @endphp
             <div class="col-md-2 sombra_pequeña col-md-listado {{ $item->armado == 1 ? 'pedido_armado' : 'pedido_sin_armar' }}"
                 onmouseover="$(this).addClass('sombra_primary')" onmouseleave="$(this).removeClass('sombra_primary')"
@@ -28,9 +29,10 @@
                             style="height: 30px; border-radius: 14px 0 0 0">
                             <i class="fa fa-fw fa-eye"></i>
                         </button>
-                        <button type="button" class="btn btn-xs btn-yura_default" title="Imprimir Pedido"
-                            onclick="imprimir_pedido('{{ $item->id_pedido_bodega }}')"
-                            style="height: 30px; border-radius: 0 0 14px 0;">
+                        <button type="button"
+                            class="btn btn-xs {{ $tieneProductoPeso == 0 ? 'btn-yura_default' : 'btn-yura_warning' }}"
+                            title="Imprimir Pedido" onclick="imprimir_pedido('{{ $item->id_pedido_bodega }}')"
+                            style="height: 30px; border-radius: 0 0 14px 0">
                             <i class="fa fa-fw fa-print"></i>
                         </button>
                     </div>

@@ -8,9 +8,10 @@
     <!-- Content Header (Page header) -->
     <section class="content-header">
         <h1>
-            ENTREGA <i class="fa fa-fw fa-truck fa-flip-horizontal text-color_yura"></i>
+            Entrega <i class="fa fa-fw fa-truck fa-flip-horizontal text-color_yura"></i>
             <b>{{ convertDateToText($fecha_entrega->entrega) }}</b> <i class="fa fa-fw fa-truck text-color_yura"></i>
-            en <b>{{ $finca->nombre }}</b>
+            | <b>{{ $finca->nombre }}</b> | saldo: <i class="fa fa-fw fa-money fa-flip-horizontal text-color_yura"></i>
+            <b>${{ round($usuario->saldo, 2) }}</b> <i class="fa fa-fw fa-money text-color_yura"></i>
         </h1>
     </section>
 
@@ -27,7 +28,7 @@
                 @endforeach
                 <li class="pull-right">
                     <a href="#tab_carrito" data-toggle="tab" class="text-muted">
-                        <i class="fa fa-shopping-cart"></i>
+                        <i class="fa fa-fw fa-shopping-cart" style="font-size: 1.3em"></i>
                     </a>
                 </li>
             </ul>
