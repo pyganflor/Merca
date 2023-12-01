@@ -24,9 +24,9 @@
                 </a>
             </h4>
             <div class="box-tools pull-right">
-                <div class="checkbox" style="margin-top: 5px">
+                <div class="checkbox" style="margin-top: 0">
                     <label class="btn btn-box-tool">
-                        <input type="checkbox" id="check_mes_actual"> Pagar a partir del mes actual
+                        <input type="checkbox" id="check_mes_actual" checked disabled> Pagar a partir del mes actual
                     </label>
                 </div>
             </div>

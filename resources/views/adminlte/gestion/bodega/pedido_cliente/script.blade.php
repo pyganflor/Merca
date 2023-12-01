@@ -415,37 +415,38 @@
         monto_saldo = Math.round(monto_saldo * 100) / 100;
 
         saldo_usuario = $('#input_saldo').val();
-        if (saldo_usuario >= monto_saldo) {
-            datos = {
-                _token: '{{ csrf_token() }}',
-                data_productos_no_peso: JSON.stringify(data_productos_no_peso),
-                data_productos_peso: JSON.stringify(data_productos_peso),
-                usuario: $('#input_usuario').val(),
-                finca: $('#input_empresa').val(),
-                monto_saldo: monto_saldo,
-                diferido: diferido,
-                mes_actual: $('#check_mes_actual').prop('checked'),
-            }
-            $.LoadingOverlay('hide');
-            $.post('{{ url('pedido_bodega_cliente/store_pedido') }}', datos, function(retorno) {
-                if (retorno.success) {
-                    alerta_accion(retorno.mensaje, function() {
-                        //imprimir_recibo(retorno.id_pedido);
-                        cargar_url('pedido_bodega_cliente');
-                    });
-                } else {
-                    alerta(retorno.success);
+        if (data_productos_no_peso.length > 0 || data_productos_peso.length > 0)
+            if (saldo_usuario >= monto_saldo) {
+                datos = {
+                    _token: '{{ csrf_token() }}',
+                    data_productos_no_peso: JSON.stringify(data_productos_no_peso),
+                    data_productos_peso: JSON.stringify(data_productos_peso),
+                    usuario: $('#input_usuario').val(),
+                    finca: $('#input_empresa').val(),
+                    monto_saldo: monto_saldo,
+                    diferido: diferido,
+                    mes_actual: $('#check_mes_actual').prop('checked'),
                 }
-            }, 'json').fail(function(retorno) {
-                console.log(retorno);
-                alerta_errores(retorno.responseText);
-            }).always(function() {
                 $.LoadingOverlay('hide');
-            })
-        } else {
-            alerta(
-                '<div class="alert alert-warning text-center"><h3>Su <b>SALDO</b> actual no es suficiente para realizar este pedido</h3></div>'
-            );
-        }
+                $.post('{{ url('pedido_bodega_cliente/store_pedido') }}', datos, function(retorno) {
+                    if (retorno.success) {
+                        alerta_accion(retorno.mensaje, function() {
+                            //imprimir_recibo(retorno.id_pedido);
+                            cargar_url('pedido_bodega_cliente');
+                        });
+                    } else {
+                        alerta(retorno.success);
+                    }
+                }, 'json').fail(function(retorno) {
+                    console.log(retorno);
+                    alerta_errores(retorno.responseText);
+                }).always(function() {
+                    $.LoadingOverlay('hide');
+                })
+            } else {
+                alerta(
+                    '<div class="alert alert-warning text-center"><h3>Su <b>SALDO</b> actual no es suficiente para realizar este pedido</h3></div>'
+                );
+            }
     }
 </script>
