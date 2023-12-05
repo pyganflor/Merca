@@ -1367,8 +1367,8 @@ class ComandoDev extends Command
                             dump('usuario: ' . $pos_row . '/' . count($activeSheetData));
                             $username = espacios($row['C']);
                             $username = str_pad($username, 10, '0', STR_PAD_LEFT);
-                            $usuario = Usuario::All()
-                                ->where('username', $username)
+                            $usuario = Usuario::where('username', $username)
+                                ->get()
                                 ->first();
                             if ($usuario == '') {
                                 dump('NEW');

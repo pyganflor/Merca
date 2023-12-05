@@ -36,12 +36,12 @@ class PedidoClienteController extends Controller
             $productos = Producto::where('id_categoria_producto', $cat->id_categoria_producto)
                 ->where('estado', 1)
                 ->where('combo', 0)
-                ->orderBy('nombre')
+                ->orderBy('orden')
                 ->get();
             $combos = Producto::where('id_categoria_producto', $cat->id_categoria_producto)
                 ->where('estado', 1)
                 ->where('combo', 1)
-                ->orderBy('nombre')
+                ->orderBy('orden')
                 ->get();
             $listado[] = [
                 'categoria' => $cat,
