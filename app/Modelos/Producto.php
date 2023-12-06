@@ -47,4 +47,12 @@ class Producto extends Model
             ->get()[0]->cantidad;
         return round($r, 2);
     }
+
+    public function getDisponibles()
+    {
+        return DB::table('inventario_bodega')
+            ->select(DB::raw('sum(disponibles) as cant'))
+            ->where('id_producto', $this->id_producto)
+            ->get()[0]->cant;
+    }
 }

@@ -29,4 +29,9 @@ class InventarioBodega extends Model
     {
         return $this->hasMany('\yura\Modelos\EtiquetaPeso', 'id_inventario_bodega');
     }
+
+    public function ingreso_bodega()
+    {
+        return $this->belongsTo('\yura\Modelos\IngresoBodega', 'id_ingreso_bodega');
+    }
 }
