@@ -105,6 +105,7 @@ class RegistrosInventarioController extends Controller
         ]);
         if (!$valida->fails()) {
             $inventario = InventarioBodega::find($request->id);
+            $ingreso = $inventario->ingreso_bodega;
             $producto = $inventario->producto;
             $producto->disponibles -= $inventario->disponibles;
             $producto->save();
