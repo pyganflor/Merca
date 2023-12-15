@@ -52,6 +52,21 @@
                             </span>
                             <input type="text" class="form-control text-center" placeholder="Búsqueda"
                                 id="busqueda_usuarios" name="busqueda_usuarios">
+                        </div>
+                    </td>
+                    <td>
+                        <div class="input-group">
+                            <span class="input-group-addon bg-yura_dark">
+                                Finca
+                            </span>
+                            <select class="form-control" id="filtro_finca" name="filtro_finca" onchange="buscar_listado()">
+                                <option value="">Todas</option>
+                                @foreach ($fincas as $f)
+                                    <option value="{{ $f->id_configuracion_empresa }}">
+                                        {{ $f->nombre }}
+                                    </option>
+                                @endforeach
+                            </select>
                             <span class="input-group-btn">
                                 <button type="button" class="btn btn-yura_dark" onclick="buscar_listado()">
                                     <i class="fa fa-fw fa-search"></i>

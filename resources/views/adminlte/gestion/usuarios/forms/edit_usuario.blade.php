@@ -1,6 +1,6 @@
 <form id="form_edit_usuario">
     <div class="row">
-        <div class="col-md-7">
+        <div class="col-md-6">
             <div class="form-group">
                 <label for="nombre_completo">Nombre completo</label>
                 <input type="text" id="nombre_completo" name="nombre_completo" class="form-control" required
@@ -8,11 +8,18 @@
                     value="{{ $usuario->nombre_completo }}">
             </div>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-2">
             <div class="form-group">
                 <label for="cupo_disponible">Cupo Disponible</label>
                 <input type="number" id="cupo_disponible" name="cupo_disponible" class="form-control text-center"
                     required autocomplete="off" placeholder="$50" value="{{ $usuario->cupo_disponible }}">
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="form-group">
+                <label for="saldo">Saldo</label>
+                <input type="number" id="saldo" name="saldo" class="form-control text-center"
+                    required autocomplete="off" placeholder="$50" value="{{ round($usuario->saldo, 2) }}">
             </div>
         </div>
         <div class="col-md-2">
@@ -91,6 +98,7 @@
                 telefono: $('#telefono').val(),
                 id_rol: $('#id_rol').val(),
                 cupo_disponible: $('#cupo_disponible').val(),
+                saldo: $('#saldo').val(),
                 aplica: $('#aplica').val(),
             };
             $.post('{{ url('usuarios/update_usuario') }}', datos, function(retorno) {

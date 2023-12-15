@@ -43,7 +43,7 @@
                         {{ $item->nombre_completo }}
                     </th>
                     <td style="border-color: #9d9d9d" class="text-center">
-                        @foreach (getUsuario($item->id_usuario)->empresas as $uf)
+                        @foreach ($item->empresas as $uf)
                             {{ $uf->empresa->nombre }}
                             <br>
                         @endforeach

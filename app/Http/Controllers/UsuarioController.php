@@ -28,9 +28,11 @@ class UsuarioController extends Controller
 {
     public function inicio(Request $request)
     {
+        $fincas = ConfiguracionEmpresa::orderBy('nombre')->get();
         return view('adminlte.gestion.usuarios.inicio', [
             'url' => $request->getRequestUri(),
             'submenu' => Submenu::Where('url', '=', substr($request->getRequestUri(), 1))->get()[0],
+            'fincas' => $fincas
         ]);
     }
 
@@ -41,18 +43,18 @@ class UsuarioController extends Controller
         $mi_busqueda_toupper = mb_strtoupper($bus);
         $mi_busqueda_tolower = mb_strtolower($bus);
 
-        $listado = DB::table('usuario as u')
-            ->join('rol as r', 'r.id_rol', '=', 'u.id_rol')
-            ->select('u.*', 'r.nombre as rol');
+        $listado = Usuario::join('usuario_finca as uf', 'uf.id_usuario', '=', 'usuario.id_usuario')
+            ->select('usuario.*')->distinct();
 
         if ($request->busqueda != '') $listado = $listado->Where(function ($q) use ($mi_busqueda_toupper, $mi_busqueda_tolower) {
-            $q->Where('u.nombre_completo', 'like', '%' . $mi_busqueda_toupper . '%')
-                ->orWhere('u.correo', 'like', '%' . $mi_busqueda_tolower . '%')
-                ->orWhere('u.username', 'like', '%' . $mi_busqueda_toupper . '%')
-                ->orWhere('r.nombre', 'like', '%' . $mi_busqueda_toupper . '%');
+            $q->Where('usuario.nombre_completo', 'like', '%' . $mi_busqueda_toupper . '%')
+                ->orWhere('usuario.correo', 'like', '%' . $mi_busqueda_tolower . '%')
+                ->orWhere('usuario.username', 'like', '%' . $mi_busqueda_toupper . '%');
         });
+        if ($request->finca != '')
+            $listado = $listado->where('uf.id_empresa', $request->finca);
 
-        $listado = $listado->orderBy('u.nombre_completo', 'asc')->orderBy('r.nombre', 'asc')
+        $listado = $listado->orderBy('usuario.nombre_completo', 'asc')
             ->get();
 
         $datos = [
@@ -296,6 +298,7 @@ class UsuarioController extends Controller
 
                 $model->id_rol = $request->id_rol;
                 $model->cupo_disponible = $request->cupo_disponible;
+                $model->saldo = $request->saldo;
                 $model->aplica = $request->aplica;
                 $model->correo = str_limit(mb_strtolower(espacios($request->correo)), 250);
                 $model->telefono = str_limit(mb_strtolower(espacios($request->telefono)), 250);

@@ -5,6 +5,7 @@
         $.LoadingOverlay('show');
         datos = {
             busqueda: $('#busqueda_usuarios').val().trim(),
+            finca: $('#filtro_finca').val(),
         };
         $.get('{{ url('usuarios/buscar') }}', datos, function(retorno) {
             $('#div_listado_usuarios').html(retorno);
@@ -73,7 +74,7 @@
         $.LoadingOverlay('show');
         $.get('{{ url('usuarios/add') }}', {}, function(retorno) {
             modal_form('modal_add_usuario', retorno, '<i class="fa fa-fw fa-plus"></i> Añadir usuario', true,
-                false, '{{ isPC() ? '60%' : '' }}',
+                false, '{{ isPC() ? '90%' : '' }}',
                 function() {
                     store_usuario();
                     $.LoadingOverlay('hide');
@@ -97,7 +98,7 @@
         };
         $.get('{{ url('usuarios/ver_usuario') }}', datos, function(retorno) {
             modal_view('modal_view_usuario', retorno, '<i class="fa fa-fw fa-eye"></i> Detalles', true, false,
-                '{{ isPC() ? '75%' : '' }}');
+                '{{ isPC() ? '90%' : '' }}');
             $.LoadingOverlay('hide');
         });
         $.LoadingOverlay('hide');
