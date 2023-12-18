@@ -38,6 +38,8 @@
 <script>
     estructura_tabla('table_inventario');
     $('#table_inventario_filter').addClass('hidden');
+    estructura_tabla('table_ingresos');
+    $('#table_ingresos_filter').addClass('hidden');
 
     function update_inventario(id) {
         datos = {
@@ -48,7 +50,7 @@
             precio: $('#precio_' + id).val(),
         }
         post_jquery_m('{{ url('inventario_bodega/update_inventario') }}', datos, function() {
-
+            listar_reporte();
         });
     }
 
