@@ -36,6 +36,9 @@
 </div>
 
 <script>
+    estructura_tabla('table_inventario');
+    $('#table_inventario_filter').addClass('hidden');
+
     function update_inventario(id) {
         datos = {
             _token: '{{ csrf_token() }}',
