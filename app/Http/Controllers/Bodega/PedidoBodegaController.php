@@ -212,19 +212,20 @@ class PedidoBodegaController extends Controller
                             } else {    // producto combo
                                 foreach ($producto->detalles_combo as $item) {
                                     $item_producto = $item->item;
+                                    $cantidad_unidades = $det->cantidad * $item->unidades;
 
-                                    if ($item_producto->disponibles >= $det->cantidad) {
-                                        $item_producto->disponibles -= $det->cantidad;
+                                    if ($item_producto->disponibles >= $cantidad_unidades) {
+                                        $item_producto->disponibles -= $cantidad_unidades;
                                         $models_productos[] = $item_producto;
 
                                         /* SALIDA_BODEGA */
                                         $salida = new SalidaBodega();
                                         $salida->id_producto = $item_producto->id_producto;
                                         $salida->fecha = hoy();
-                                        $salida->cantidad = $det->cantidad;
+                                        $salida->cantidad = $cantidad_unidades;
                                         $salida->save();
                                         $salida = SalidaBodega::All()->last();
-                                        bitacora('salida_bodega', $salida->id_salida_bodega, 'I', 'SALIDA A BODEGA de ' . $det->cantidad . ' UNIDADES de ' . $item_producto->nombre);
+                                        bitacora('salida_bodega', $salida->id_salida_bodega, 'I', 'SALIDA A BODEGA de ' . $cantidad_unidades . ' UNIDADES de ' . $item_producto->nombre);
 
                                         /* SACAR DEL INVENTARIO */
                                         $inventarios = InventarioBodega::where('disponibles', '>', 0)
@@ -233,7 +234,7 @@ class PedidoBodegaController extends Controller
                                             ->orderBy('fecha_registro', 'asc')
                                             ->get();
 
-                                        $meta = $det->cantidad;
+                                        $meta = $cantidad_unidades;
                                         foreach ($inventarios as $model) {
                                             if ($meta >= 0) {
                                                 $disponible = $model->disponibles;
@@ -252,11 +253,14 @@ class PedidoBodegaController extends Controller
 
                                                 bitacora('inventario_bodega', $model->id_inventario_bodega, 'U', 'SACAR de la BODEGA');
 
-                                                $salida_inventario = new SalidaInventarioBodega();
-                                                $salida_inventario->id_salida_bodega = $salida->id_salida_bodega;
-                                                $salida_inventario->id_inventario_bodega = $model->id_inventario_bodega;
-                                                $salida_inventario->cantidad = $usados;
-                                                $salida_inventario->save();
+                                                if ($usados > 0) {
+                                                    $salida_inventario = new SalidaInventarioBodega();
+                                                    $salida_inventario->id_pedido_bodega =  $pedido->id_pedido_bodega;
+                                                    $salida_inventario->id_salida_bodega = $salida->id_salida_bodega;
+                                                    $salida_inventario->id_inventario_bodega = $model->id_inventario_bodega;
+                                                    $salida_inventario->cantidad = $usados;
+                                                    $salida_inventario->save();
+                                                }
                                             }
                                         }
                                     } else {
@@ -698,19 +702,20 @@ class PedidoBodegaController extends Controller
                     } else {    // producto combo
                         foreach ($producto->detalles_combo as $item) {
                             $item_producto = $item->item;
+                            $cantidad_unidades = $det->cantidad * $item->unidades;
 
-                            if ($item_producto->disponibles >= $det->cantidad) {
-                                $item_producto->disponibles -= $det->cantidad;
+                            if ($item_producto->disponibles >= $cantidad_unidades) {
+                                $item_producto->disponibles -= $cantidad_unidades;
                                 $models_productos[] = $item_producto;
 
                                 /* SALIDA_BODEGA */
                                 $salida = new SalidaBodega();
                                 $salida->id_producto = $item_producto->id_producto;
                                 $salida->fecha = hoy();
-                                $salida->cantidad = $det->cantidad;
+                                $salida->cantidad = $cantidad_unidades;
                                 $salida->save();
                                 $salida = SalidaBodega::All()->last();
-                                bitacora('salida_bodega', $salida->id_salida_bodega, 'I', 'SALIDA A BODEGA de ' . $det->cantidad . ' UNIDADES de ' . $item_producto->nombre);
+                                bitacora('salida_bodega', $salida->id_salida_bodega, 'I', 'SALIDA A BODEGA de ' . ($cantidad_unidades) . ' UNIDADES de ' . $item_producto->nombre);
 
                                 /* SACAR DEL INVENTARIO */
                                 $inventarios = InventarioBodega::where('disponibles', '>', 0)
@@ -719,7 +724,7 @@ class PedidoBodegaController extends Controller
                                     ->orderBy('fecha_registro', 'asc')
                                     ->get();
 
-                                $meta = $det->cantidad;
+                                $meta = $cantidad_unidades;
                                 foreach ($inventarios as $model) {
                                     if ($meta >= 0) {
                                         $disponible = $model->disponibles;
@@ -738,11 +743,14 @@ class PedidoBodegaController extends Controller
 
                                         bitacora('inventario_bodega', $model->id_inventario_bodega, 'U', 'SACAR de la BODEGA');
 
-                                        $salida_inventario = new SalidaInventarioBodega();
-                                        $salida_inventario->id_salida_bodega =  $salida->id_salida_bodega;
-                                        $salida_inventario->id_inventario_bodega =  $model->id_inventario_bodega;
-                                        $salida_inventario->cantidad =  $usados;
-                                        $salida_inventario->save();
+                                        if ($usados > 0) {
+                                            $salida_inventario = new SalidaInventarioBodega();
+                                            $salida_inventario->id_pedido_bodega =  $pedido->id_pedido_bodega;
+                                            $salida_inventario->id_salida_bodega =  $salida->id_salida_bodega;
+                                            $salida_inventario->id_inventario_bodega =  $model->id_inventario_bodega;
+                                            $salida_inventario->cantidad =  $usados;
+                                            $salida_inventario->save();
+                                        }
                                     }
                                 }
                             } else {
@@ -841,6 +849,7 @@ class PedidoBodegaController extends Controller
                 ->select('etiqueta_peso.*')->distinct()
                 ->where('d.id_pedido_bodega', $pedido->id_pedido_bodega)
                 ->get();
+
             foreach ($etiquetas_peso as $pos_e => $e) {
                 if ($pos_e == 0 && !in_array($pedido->id_usuario, [1, 2])) {
                     $monto_saldo = $pedido->getTotalMontoDiferido();
