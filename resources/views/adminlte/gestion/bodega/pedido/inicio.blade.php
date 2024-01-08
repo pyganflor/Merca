@@ -54,9 +54,14 @@
                 <td>
                     <div class="input-group">
                         <span class="input-group-addon bg-yura_dark">
-                            Entrega
+                            Desde
                         </span>
-                        <input type="date" id="filtro_entrega" style="width: 100%" class="form-control text-center"
+                        <input type="date" id="filtro_desde" style="width: 100%" class="form-control text-center"
+                            value="{{ hoy() }}">
+                        <span class="input-group-addon bg-yura_dark">
+                            Hasta
+                        </span>
+                        <input type="date" id="filtro_hasta" style="width: 100%" class="form-control text-center"
                             value="{{ hoy() }}">
                         <span class="input-group-btn">
                             <button type="button" class="btn btn-yura_dark" onclick="listar_reporte()" title="Buscar">
@@ -74,7 +79,8 @@
                                 title="Exportar archivo de Compras">
                                 <i class="fa fa-fw fa-file-excel-o"></i>
                             </button>
-                            <button type="button" class="btn btn-yura_default" onclick="imprimir_pedidos_all()" title="Etiquetas">
+                            <button type="button" class="btn btn-yura_default" onclick="imprimir_pedidos_all()"
+                                title="Etiquetas">
                                 <i class="fa fa-fw fa-print"></i>
                             </button>
                             <button type="button" class="btn btn-yura_dark" onclick="modal_contabilidad()"
@@ -92,7 +98,8 @@
                                     </a>
                                 </li>
                                 <li>
-                                    <a class="dropdown-item" href="javascript:void(0)" onclick="imprimir_entregas_peso_all()">
+                                    <a class="dropdown-item" href="javascript:void(0)"
+                                        onclick="imprimir_entregas_peso_all()">
                                         Pollo
                                     </a>
                                 </li>

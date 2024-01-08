@@ -56,7 +56,7 @@ class PedidoBodegaController extends Controller
         $listado = [];
         foreach ($query as $q) {
             $fecha_entrega = $q->getFechaEntrega();
-            if ($fecha_entrega == $request->entrega) {
+            if ($fecha_entrega >= $request->desde && $fecha_entrega <= $request->hasta) {
                 $listado[] = $q;
             }
         }
@@ -915,10 +915,11 @@ class PedidoBodegaController extends Controller
             ->orderBy('id_empresa')
             ->orderBy('id_usuario')
             ->get();
+
         $pedidos = [];
         foreach ($query as $q) {
             $fecha_entrega = $q->getFechaEntrega();
-            if ($fecha_entrega == $request->entrega) {
+            if ($fecha_entrega >= $request->desde && $fecha_entrega <= $request->hasta) {
                 $pedidos[] = $q;
             }
         }
@@ -971,7 +972,7 @@ class PedidoBodegaController extends Controller
 
         $columnas = getColumnasExcel();
         $sheet = $spread->getActiveSheet();
-        $sheet->setTitle('RESUMEN ' . convertDateToText($request->entrega));
+        $sheet->setTitle('RESUMEN');
 
         $row = 1;
         $col = 0;
@@ -1046,7 +1047,7 @@ class PedidoBodegaController extends Controller
         $pedidos = [];
         foreach ($query as $q) {
             $fecha_entrega = $q->getFechaEntrega();
-            if ($fecha_entrega == $request->entrega) {
+            if ($fecha_entrega >= $request->desde && $fecha_entrega <= $request->hasta) {
                 $pedidos[] = $q;
             }
         }
@@ -1076,13 +1077,13 @@ class PedidoBodegaController extends Controller
         $pedidos = [];
         foreach ($query as $q) {
             $fecha_entrega = $q->getFechaEntrega();
-            if ($fecha_entrega == $request->entrega) {
+            if ($fecha_entrega >= $request->desde && $fecha_entrega <= $request->hasta) {
                 $pedidos[] = $q;
             }
         }
         $datos = [
             'pedidos' => $pedidos,
-            'fecha' => $request->entrega,
+            'fecha' => $request->desde . ' a ' . $request->hasta,
             'finca' => getConfiguracionEmpresa($request->finca),
         ];
         return PDF::loadView('adminlte.gestion.bodega.pedido.partials.pdf_entregas_all', compact('datos', 'barCode'))
@@ -1108,13 +1109,13 @@ class PedidoBodegaController extends Controller
         $pedidos = [];
         foreach ($query as $q) {
             $fecha_entrega = $q->getFechaEntrega();
-            if ($fecha_entrega == $request->entrega) {
+            if ($fecha_entrega >= $request->desde && $fecha_entrega <= $request->hasta) {
                 $pedidos[] = $q;
             }
         }
         $datos = [
             'pedidos' => $pedidos,
-            'fecha' => $request->entrega,
+            'fecha' => $request->desde . ' a ' . $request->hasta,
             'finca' => getConfiguracionEmpresa($request->finca),
         ];
         return PDF::loadView('adminlte.gestion.bodega.pedido.partials.pdf_entregas_all', compact('datos', 'barCode'))

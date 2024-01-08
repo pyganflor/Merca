@@ -13,7 +13,7 @@
                 RECIBO DE ENTREGA para "{{ $datos['finca']->nombre }}"
                 <br>
                 <small style="font-size: 0.8em">
-                    {{ convertDateToText($datos['fecha']) }}
+                    {{ $datos['fecha'] }}
                 </small>
             </th>
         </tr>

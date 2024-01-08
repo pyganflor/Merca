@@ -7,7 +7,8 @@
 
     function listar_reporte() {
         datos = {
-            entrega: $('#filtro_entrega').val(),
+            desde: $('#filtro_desde').val(),
+            hasta: $('#filtro_hasta').val(),
             finca: $('#filtro_finca').val(),
         };
         get_jquery('{{ url('pedido_bodega/listar_reporte') }}', datos, function(retorno) {
@@ -65,7 +66,8 @@
 
     function exportar_resumen_pedidos() {
         $.LoadingOverlay('show');
-        window.open('{{ url('pedido_bodega/exportar_resumen_pedidos') }}?entrega=' + $('#filtro_entrega').val() +
+        window.open('{{ url('pedido_bodega/exportar_resumen_pedidos') }}?desde=' + $('#filtro_desde').val() +
+            '&hasta=' + $('#filtro_hasta').val() +
             '&finca=' + $('#filtro_finca').val(), '_blank');
         $.LoadingOverlay('hide');
     }
@@ -78,7 +80,8 @@
 
     function imprimir_pedidos_all() {
         $.LoadingOverlay('show');
-        window.open('{{ url('pedido_bodega/imprimir_pedidos_all') }}?entrega=' + $('#filtro_entrega').val() +
+        window.open('{{ url('pedido_bodega/imprimir_pedidos_all') }}?desde=' + $('#filtro_desde').val() +
+            '&hasta=' + $('#filtro_hasta').val() +
             '&finca=' + $('#filtro_finca').val(), '_blank');
         $.LoadingOverlay('hide');
     }
@@ -86,7 +89,8 @@
     function imprimir_entregas_all() {
         if ($('#filtro_finca').val() != 'T') {
             $.LoadingOverlay('show');
-            window.open('{{ url('pedido_bodega/imprimir_entregas_all') }}?entrega=' + $('#filtro_entrega').val() +
+            window.open('{{ url('pedido_bodega/imprimir_entregas_all') }}?desde=' + $('#filtro_desde').val() +
+                '&hasta=' + $('#filtro_hasta').val() +
                 '&finca=' + $('#filtro_finca').val(), '_blank');
             $.LoadingOverlay('hide');
         }
@@ -95,7 +99,8 @@
     function imprimir_entregas_peso_all() {
         if ($('#filtro_finca').val() != 'T') {
             $.LoadingOverlay('show');
-            window.open('{{ url('pedido_bodega/imprimir_entregas_peso_all') }}?entrega=' + $('#filtro_entrega').val() +
+            window.open('{{ url('pedido_bodega/imprimir_entregas_peso_all') }}?desde=' + $('#filtro_desde').val() +
+                '&hasta=' + $('#filtro_hasta').val() +
                 '&finca=' + $('#filtro_finca').val(), '_blank');
             $.LoadingOverlay('hide');
         }
