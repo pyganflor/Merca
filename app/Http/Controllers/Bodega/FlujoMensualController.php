@@ -61,6 +61,7 @@ class FlujoMensualController extends Controller
             $f = opDiasFecha('+', 1, $f);
         }
         $total_costos = [];
+        $total_otros_costos = [];
         $total_descuentos_diferidos = [];
         $total_descuentos_normales = [];
         $total_al_contado = [];
@@ -72,6 +73,7 @@ class FlujoMensualController extends Controller
                 ->first();
             $gastos_administrativos[] = $ga;
             $total_costos[] = 0;
+            $total_otros_costos[] = 0;
             $total_descuentos_diferidos[] = 0;
             $total_descuentos_normales[] = 0;
             $total_al_contado[] = 0;
@@ -303,11 +305,25 @@ class FlujoMensualController extends Controller
                 'valores_al_contado' => $valores_al_contado,
             ];
         }
+        foreach ($meses as $pos_m => $mes) {
+            $fecha = $mes['anno'] . '-' . $mes['mes'] . '-01';
+            $primerDiaMes = date("Y-m-01", strtotime($fecha));
+            $ultimoDiaMes = date("Y-m-t", strtotime($fecha));
+
+            $monto_costos = DB::table('ingreso_bodega')
+                ->select(DB::raw('sum(precio * cantidad) as cant'))
+                ->where('fecha', '>=', $primerDiaMes)
+                ->where('fecha', '<=', $ultimoDiaMes)
+                ->get()[0]->cant;
+            $total_otros_costos[$pos_m] = $monto_costos;
+        }
+
         return view('adminlte.gestion.bodega.flujo_mensual.partials.listado', [
             'meses' => $meses,
             'listado' => $listado,
             'gastos_administrativos' => $gastos_administrativos,
             'total_costos' => $total_costos,
+            'total_otros_costos' => $total_otros_costos,
             'total_descuentos_diferidos' => $total_descuentos_diferidos,
             'total_descuentos_normales' => $total_descuentos_normales,
             'total_al_contado' => $total_al_contado,

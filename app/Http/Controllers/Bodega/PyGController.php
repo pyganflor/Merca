@@ -74,6 +74,7 @@ class PyGController extends Controller
         }
         $total_ventas = [];
         $total_costos = [];
+        $total_otros_costos = [];
         $total_personal = [];
         $gastos_administrativos = [];
         foreach ($meses as $m) {
@@ -84,7 +85,24 @@ class PyGController extends Controller
             $gastos_administrativos[] = $ga;
             $total_ventas[] = 0;
             $total_costos[] = 0;
+            $total_otros_costos[] = 0;
             $total_personal[] = 0;
+        }
+
+        foreach ($meses as $pos_m => $mes) {
+            $fecha = $mes['anno'] . '-' . $mes['mes'] . '-01';
+            $primerDiaMes = date("Y-m-01", strtotime($fecha));
+            $ultimoDiaMes = date("Y-m-t", strtotime($fecha));
+
+            $monto_costos = DB::table('salida_inventario_bodega as si')
+                ->join('salida_bodega as s', 's.id_salida_bodega', '=', 'si.id_salida_bodega')
+                ->join('inventario_bodega as i', 'i.id_inventario_bodega', '=', 'si.id_inventario_bodega')
+                ->select(DB::raw('sum(i.precio * si.cantidad) as cant'))
+                ->whereNull('si.id_pedido_bodega')
+                ->where('s.fecha', '>=', $primerDiaMes)
+                ->where('s.fecha', '<=', $ultimoDiaMes)
+                ->get()[0]->cant;
+            $total_otros_costos[$pos_m] = $monto_costos;
         }
 
         $listado = [];
@@ -140,6 +158,7 @@ class PyGController extends Controller
             'gastos_administrativos' => $gastos_administrativos,
             'total_ventas' => $total_ventas,
             'total_costos' => $total_costos,
+            'total_otros_costos' => $total_otros_costos,
             'total_personal' => $total_personal,
         ]);
     }

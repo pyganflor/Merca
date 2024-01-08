@@ -112,7 +112,7 @@
     @endforeach
 
     {{-- COSTOS --}}
-    <tr>
+    {{-- <tr>
         <th class="padding_lateral_5 bg-yura_dark mouse-hand" onclick="$('.tr_costo_total').toggleClass('hidden')">
             COSTOS TOTALES <i class="fa fa-fw fa-caret-down pull-right"></i>
         </th>
@@ -133,7 +133,19 @@
                 </th>
             @endforeach
         </tr>
-    @endforeach
+    @endforeach --}}
+
+    {{-- OTROS COSTOS --}}
+    <tr>
+        <th class="padding_lateral_5 bg-yura_dark">
+            COSTOS TOTALES
+        </th>
+        @foreach ($total_otros_costos as $val)
+            <th class="padding_lateral_5 bg-yura_dark">
+                ${{ number_format($val, 2) }}
+            </th>
+        @endforeach
+    </tr>
 
     {{-- FLUJO OPERATIVO --}}
     <tr>
