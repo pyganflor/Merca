@@ -1,46 +1,52 @@
 @php
     $total = 0;
     $colores_array = ['#00b388', '#30bbbb', '#ef6e11', '#d01c62'];
-    foreach ($query as $q) {
-        if ($criterio == 'T') {
-            $total += $q->tallos;
+    foreach ($listado as $q) {
+        if ($criterio == 'V') {
+            $total += $q['venta'];
         }
-        if ($criterio == 'R') {
-            $total += $q->ramos;
+        if ($criterio == 'C') {
+            $total += $q['costo'];
         }
         if ($criterio == 'M') {
-            $total += $q->monto;
+            $total += $q['margen'];
+        }
+        if ($criterio == 'P') {
+            $total += $q['porcentaje_margen'];
         }
     }
 @endphp
 
-@foreach ($query as $pos => $item)
+@foreach ($listado as $pos => $item)
     @php
-        if ($criterio == 'T') {
-            $valor = $item->tallos;
+        if ($criterio == 'V') {
+            $valor = $item['venta'];
         }
-        if ($criterio == 'R') {
-            $valor = $item->ramos;
+        if ($criterio == 'C') {
+            $valor = $item['costo'];
         }
         if ($criterio == 'M') {
-            $valor = $item->monto;
+            $valor = $item['margen'];
+        }
+        if ($criterio == 'P') {
+            $valor = $item['porcentaje_margen'];
         }
     @endphp
     <div class="progress-group">
         <table style="width: 100%">
             <tr>
                 <th>
-                    {{ $item->nombre }} <sup>{{ porcentaje($valor, $total, 1) }}%</sup>
+                    {{ $item['finca']->nombre }} <sup>{{ porcentaje($valor, $total, 1) }}%</sup>
                 </th>
                 <td class="text-right">
-                    {{ number_format($valor) }}
+                    {{ number_format($valor, 2) }}
                 </td>
             </tr>
         </table>
 
         <div class="progress progress-sm">
             <div class="progress-bar"
-                style="width: {{ porcentaje($valor, $total, 1) }}%; background-color: {{ $colores_array[$pos] }}"></div>
+                style="width: {{ porcentaje($valor, $total, 1) }}%; background-color: {{ $colores_array[0] }}"></div>
         </div>
     </div>
 @endforeach

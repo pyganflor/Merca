@@ -9,8 +9,7 @@
             rango: $('#rango').val(),
             desde: $('#filtro_desde').val(),
             hasta: $('#filtro_hasta').val(),
-            variedad: $('#variedad').val(),
-            longitud: $('#filtro_longitud').val(),
+            finca: $('#finca').val(),
             annos: $('#annos').val(),
         };
 

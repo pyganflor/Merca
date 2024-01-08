@@ -2,38 +2,47 @@
     <!-- Tabs within a box -->
     <ul class="nav nav-pills nav-justified">
         <li class="active">
-            <a href="#monto-chart" data-toggle="tab" aria-expanded="true">
-                Ventas
+            <a href="#venta-chart" data-toggle="tab" aria-expanded="true">
+                Venta
             </a>
         </li>
         <li class="">
-            <a href="#tallos-chart" data-toggle="tab" aria-expanded="false">
-                Tallos
+            <a href="#costo-chart" data-toggle="tab" aria-expanded="false">
+                Costo
             </a>
         </li>
         <li class="">
-            <a href="#ramos-chart" data-toggle="tab" aria-expanded="true">
-                Ramos
+            <a href="#margen-chart" data-toggle="tab" aria-expanded="true">
+                Margen
+            </a>
+        </li>
+        <li class="">
+            <a href="#porcentaje_margen-chart" data-toggle="tab" aria-expanded="true">
+                % Margen
             </a>
         </li>
     </ul>
     <div class="tab-content no-padding">
-        <div class="chart tab-pane active" id="monto-chart" style="position: relative">
-            <canvas id="chart_monto" width="100%" height="40" style="margin-top: 5px"></canvas>
+        <div class="chart tab-pane active" id="venta-chart" style="position: relative">
+            <canvas id="chart_venta" width="100%" height="40" style="margin-top: 5px"></canvas>
         </div>
-        <div class="chart tab-pane" id="tallos-chart" style="position: relative">
-            <canvas id="chart_tallos" width="100%" height="40" style="margin-top: 5px"></canvas>
+        <div class="chart tab-pane" id="costo-chart" style="position: relative">
+            <canvas id="chart_costo" width="100%" height="40" style="margin-top: 5px"></canvas>
         </div>
-        <div class="chart tab-pane" id="ramos-chart" style="position: relative">
-            <canvas id="chart_ramos" width="100%" height="40" style="margin-top: 5px"></canvas>
+        <div class="chart tab-pane" id="margen-chart" style="position: relative">
+            <canvas id="chart_margen" width="100%" height="40" style="margin-top: 5px"></canvas>
+        </div>
+        <div class="chart tab-pane" id="porcentaje_margen-chart" style="position: relative">
+            <canvas id="chart_porcentaje_margen" width="100%" height="40" style="margin-top: 5px"></canvas>
         </div>
     </div>
 </div>
 
 <script>
-    construir_char('Tallos', 'chart_tallos');
-    construir_char('Ramos', 'chart_ramos');
-    construir_char('Monto', 'chart_monto');
+    construir_char('Costo', 'chart_costo');
+    construir_char('Margen', 'chart_margen');
+    construir_char('Venta', 'chart_venta');
+    construir_char('% Margen', 'chart_porcentaje_margen');
 
     function construir_char(label, id) {
         labels = [];
@@ -41,18 +50,20 @@
         data_list = [];
         data_tallos = [];
         @for ($i = 0; $i < count($labels); $i++)
-            @if ($rango == 'S')
-                labels.push("{{ $labels[$i]->codigo }}");
+            @if ($rango == 'D')
+                labels.push("{{ $labels[$i]->entrega }}");
             @else
                 labels.push("{{ substr($labels[$i], 0, 10) }}");
             @endif
 
-            if (label == 'Tallos')
-                data_list.push("{{ $data[$i]->tallos }}");
-            if (label == 'Ramos')
-                data_list.push("{{ $data[$i]->ramos }}");
-            if (label == 'Monto')
-                data_list.push("{{ round($data[$i]->monto, 2) }}");
+            if (label == 'Venta')
+                data_list.push("{{ $data[$i]['venta'] }}");
+            if (label == 'Costo')
+                data_list.push("{{ $data[$i]['costo'] }}");
+            if (label == 'Margen')
+                data_list.push("{{ $data[$i]['margen'] }}");
+            if (label == '% Margen')
+                data_list.push("{{ $data[$i]['porcentaje_margen'] }}");
         @endfor
 
         datasets = [{

@@ -86,98 +86,88 @@ class crmBodegaController extends Controller
             $view = 'graficas_rango';
 
             if ($request->rango == 'D') {   // diario
-                $labels = DB::table('pedido')
-                    ->select('fecha_pedido')->distinct()
-                    ->where('estado', 1)
-                    ->where('fecha_pedido', '>=', $request->desde)
-                    ->where('fecha_pedido', '<=', $request->hasta)
-                    ->orderBy('fecha_pedido')
-                    ->get()->pluck('fecha_pedido')->toArray();
-
-                $data = [];
-                foreach ($labels as $l) {
-                    $query = DB::table('pedido as p')
-                        ->join('detalle_pedido as dp', 'dp.id_pedido', '=', 'p.id_pedido')
-                        ->join('caja_frio as c', 'c.id_caja_frio', '=', 'dp.id_caja_frio')
-                        ->join('detalle_caja_frio as dc', 'dc.id_caja_frio', '=', 'c.id_caja_frio')
-                        ->select(
-                            DB::raw('sum(dc.ramos * dc.tallos_x_ramo * dc.precio) as monto'),
-                            DB::raw('sum(dc.ramos) as ramos'),
-                            DB::raw('sum(dc.ramos * dc.tallos_x_ramo) as tallos'),
-                        )
-                        ->where('p.estado', 1)
-                        ->where('p.fecha_pedido', $l);
-                    if ($request->variedad != 'T')
-                        $query = $query->where('dc.id_variedad', $request->variedad);
-                    if ($request->longitud != '')
-                        $query = $query->where('dc.longitud', $request->longitud);
-                    $query = $query->get()[0];
-
-                    $data[] = $query;
-                }
-            } else if ($request->rango == 'M') {   // mensual
-                $labels = DB::table('pedido')
-                    ->select(DB::raw('DISTINCT DATE_FORMAT(fecha_pedido, "%Y-%m") AS mes'))
-                    ->where('estado', 1)
-                    ->where('fecha_pedido', '>=', $request->desde)
-                    ->where('fecha_pedido', '<=', $request->hasta)
-                    ->groupBy('mes', 'fecha_pedido')
-                    ->orderBy('fecha_pedido')
-                    ->get()->pluck('mes')->toArray();
-
-                $data = [];
-                foreach ($labels as $l) {
-                    $query = DB::table('pedido as p')
-                        ->join('detalle_pedido as dp', 'dp.id_pedido', '=', 'p.id_pedido')
-                        ->join('caja_frio as c', 'c.id_caja_frio', '=', 'dp.id_caja_frio')
-                        ->join('detalle_caja_frio as dc', 'dc.id_caja_frio', '=', 'c.id_caja_frio')
-                        ->select(
-                            DB::raw('sum(dc.ramos * dc.tallos_x_ramo * dc.precio) as monto'),
-                            DB::raw('sum(dc.ramos) as ramos'),
-                            DB::raw('sum(dc.ramos * dc.tallos_x_ramo) as tallos'),
-                        )
-                        ->where('p.estado', 1)
-                        ->whereMonth('p.fecha_pedido', date('m', strtotime($l)))
-                        ->whereYear('p.fecha_pedido', '=', date('Y', strtotime($l)));
-                    if ($request->variedad != 'T')
-                        $query = $query->where('dc.id_variedad', $request->variedad);
-                    if ($request->longitud != '')
-                        $query = $query->where('dc.longitud', $request->longitud);
-                    $query = $query->get()[0];
-
-                    $data[] = $query;
-                }
-            } else {    // semanal
-                $labels = DB::table('semana')
-                    ->select('codigo', 'fecha_inicial', 'fecha_final')->distinct()
-                    ->where('fecha_final', '>=', $request->desde)
-                    ->where('fecha_final', '<=', $request->hasta)
-                    ->orderBy('codigo')
+                $labels = DB::table('fecha_entrega')
+                    ->select(
+                        'desde',
+                        'hasta',
+                        'entrega'
+                    )->distinct()
+                    ->where('entrega', '>=', $request->desde)
+                    ->where('entrega', '<=', $request->hasta);
+                if ($request->finca != 'T')
+                    $labels = $labels->where('id_empresa', $request->finca);
+                $labels = $labels->orderBy('entrega')
                     ->get();
 
                 $data = [];
-                foreach ($labels as $pos => $l) {
-                    $query = DB::table('pedido as p')
-                        ->join('detalle_pedido as dp', 'dp.id_pedido', '=', 'p.id_pedido')
-                        ->join('caja_frio as c', 'c.id_caja_frio', '=', 'dp.id_caja_frio')
-                        ->join('detalle_caja_frio as dc', 'dc.id_caja_frio', '=', 'c.id_caja_frio')
-                        ->select(
-                            DB::raw('sum(dc.ramos * dc.tallos_x_ramo * dc.precio) as monto'),
-                            DB::raw('sum(dc.ramos) as ramos'),
-                            DB::raw('sum(dc.ramos * dc.tallos_x_ramo) as tallos'),
-                        )
-                        ->where('p.estado', 1)
-                        ->where('p.fecha_pedido', '>=', $l->fecha_inicial)
-                        ->where('p.fecha_pedido', '<=', $l->fecha_final);
-                    if ($request->variedad != 'T')
-                        $query = $query->where('dc.id_variedad', $request->variedad);
-                    if ($request->longitud != '')
-                        $query = $query->where('dc.longitud', $request->longitud);
-                    $query = $query->get()[0];
+                foreach ($labels as $l) {
+                    $pedidos = PedidoBodega::where('estado', 1)
+                        ->where('fecha', '>=', $l->desde)
+                        ->where('fecha', '<=', $l->hasta);
+                    if ($request->finca != 'T')
+                        $pedidos = $pedidos->where('id_empresa', $request->finca);
+                    $pedidos = $pedidos
+                        ->orderBy('fecha')
+                        ->get();
+                    $total_venta = 0;
+                    $total_costo = 0;
+                    foreach ($pedidos as $pedido) {
+                        $costo = $pedido->getCostos();
+                        $venta = $pedido->getTotalMonto();
+                        $total_venta += $venta;
+                        $total_costo += $costo;
+                    }
 
-                    $data[] = $query;
+                    $data[] = [
+                        'costo' => $total_costo,
+                        'venta' => $total_venta,
+                        'margen' => $total_venta - $total_costo,
+                        'porcentaje_margen' => porcentaje($total_venta - $total_costo, $total_venta, 1),
+                    ];
+                }
+            } else if ($request->rango == 'M') {   // mensual
+                $labels = DB::table('fecha_entrega')
+                    ->select(DB::raw('DISTINCT DATE_FORMAT(entrega, "%Y-%m") AS mes'))
+                    ->where('entrega', '>=', $request->desde)
+                    ->where('entrega', '<=', $request->hasta);
+                if ($request->finca != 'T')
+                    $labels = $labels->where('id_empresa', $request->finca);
+                $labels = $labels->orderBy('entrega')
+                    ->get()->pluck('mes')->toArray();
+
+
+                $data = [];
+                foreach ($labels as $l) {
+                    $fecha = $l . '-01';
+                    $primerDiaMes = date("Y-m-01", strtotime($fecha));
+                    $ultimoDiaMes = date("Y-m-t", strtotime($fecha));
+
+                    /* VENTA Y COSTOS TOTALES */
+                    $pedidos = PedidoBodega::where('estado', 1)
+                        ->where('fecha', '<=', $ultimoDiaMes)
+                        ->orderBy('fecha')
+                        ->get();
+                    $total_costo = 0;
+                    $total_venta = 0;
+                    foreach ($pedidos as $pedido) {
+                        $fecha_entrega = $pedido->getFechaEntrega();
+                        if ($fecha_entrega >= $primerDiaMes && $fecha_entrega <= $ultimoDiaMes) {
+                            $costo = $pedido->getCostos();
+                            $venta = $pedido->getTotalMonto();
+                            $total_costo += $costo;
+                            $total_venta += $venta;
+                        }
+                    }
+
+                    $data[] = [
+                        'costo' => $total_costo,
+                        'venta' => $total_venta,
+                        'margen' => $total_venta - $total_costo,
+                        'porcentaje_margen' => porcentaje($total_venta - $total_costo, $total_venta, 1),
+                    ];
                 }
             }
+
             if ($request->tipo_grafica == 'line') {
                 $tipo_grafica = 'line';
                 $fill_grafica = 'false';
@@ -202,7 +192,7 @@ class crmBodegaController extends Controller
             en_desarrollo();
         }
 
-        return view('adminlte.crm.ventas.partials.' . $view, $datos);
+        return view('adminlte.gestion.bodega.crm.partials.' . $view, $datos);
     }
 
     public function listar_ranking(Request $request)
@@ -261,23 +251,45 @@ class crmBodegaController extends Controller
                     'finca' => $f,
                     'costo' => $costo_finca,
                     'venta' => $venta_finca,
+                    'margen' => $venta_finca - $costo_finca,
+                    'porcentaje_margen' => porcentaje($venta_finca - $costo_finca, $venta_finca, 1),
                 ];
         }
         for ($i = 0; $i < count($listado) - 1; $i++) {
             for ($x = $i + 1; $x < count($listado); $x++) {
                 $item_i = $listado[$i];
                 $item_x = $listado[$x];
-                if ($item_i['venta'] < $item_x['venta']) {
-                    $temp = $item_i;
-                    $listado[$i] = $listado[$x];
-                    $listado[$x] = $temp;
+                if ($request->criterio_ranking == 'V')
+                    if ($item_i['venta'] < $item_x['venta']) {
+                        $temp = $item_i;
+                        $listado[$i] = $listado[$x];
+                        $listado[$x] = $temp;
+                    }
+                if ($request->criterio_ranking == 'C')
+                    if ($item_i['costo'] < $item_x['costo']) {
+                        $temp = $item_i;
+                        $listado[$i] = $listado[$x];
+                        $listado[$x] = $temp;
+                    }
+                if ($request->criterio_ranking == 'M') {
+                    if ($item_i['margen'] < $item_x['margen']) {
+                        $temp = $item_i;
+                        $listado[$i] = $listado[$x];
+                        $listado[$x] = $temp;
+                    }
+                }
+                if ($request->criterio_ranking == 'P') {
+                    if ($item_i['porcentaje_margen'] < $item_x['porcentaje_margen']) {
+                        $temp = $item_i;
+                        $listado[$i] = $listado[$x];
+                        $listado[$x] = $temp;
+                    }
                 }
             }
         }
-        dd($listado);
 
         return view('adminlte.gestion.bodega.crm.partials.listar_ranking', [
-            'query' => $query,
+            'listado' => $listado,
             'criterio' => $request->criterio_ranking,
         ]);
     }
