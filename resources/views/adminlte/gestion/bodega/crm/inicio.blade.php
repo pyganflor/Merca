@@ -98,7 +98,7 @@
                             Finca
                         </span>
                         <select name="finca" id="finca" class="form-control" style="width: 100%">
-                            <option value="T">Todas las Flores</option>
+                            <option value="T">Todas las Fincas</option>
                             @foreach ($fincas as $f)
                                 <option value="{{ $f->id_empresa }}">{{ $f->nombre }}</option>
                             @endforeach
