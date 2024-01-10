@@ -8,8 +8,9 @@
                 @php
                     $total_venta = 0;
                 @endphp
-                @foreach ($indicadores as $item)
+                @for ($i = count($indicadores) - 1; $i > 0; $i--)
                     @php
+                        $item = $indicadores[$i];
                         $total_venta += $item['venta'];
                     @endphp
                     <tr>
@@ -20,7 +21,7 @@
                             ${{ number_format($item['venta'], 2) }}
                         </th>
                     </tr>
-                @endforeach
+                @endfor
             </table>
             <legend style="margin-bottom: 5px; color: white"></legend>
             <p class="text-center" style="margin-bottom: 0px">
@@ -39,8 +40,9 @@
                 @php
                     $total_costo = 0;
                 @endphp
-                @foreach ($indicadores as $item)
+                @for ($i = count($indicadores) - 1; $i > 0; $i--)
                     @php
+                        $item = $indicadores[$i];
                         $total_costo += $item['costo'];
                     @endphp
                     <tr>
@@ -51,7 +53,7 @@
                             ${{ number_format($item['costo'], 2) }}
                         </th>
                     </tr>
-                @endforeach
+                @endfor
             </table>
             <legend style="margin-bottom: 5px; color: white"></legend>
             <p class="text-center" style="margin-bottom: 0px">
@@ -67,8 +69,9 @@
                 <strong>Margen <sup>-4 meses</sup></strong>
             </legend>
             <table style="width: 100%;">
-                @foreach ($indicadores as $item)
+                @for ($i = count($indicadores) - 1; $i > 0; $i--)
                     <tr>
+                        $item = $indicadores[$i];
                         <th style="color: white">
                             {{ getMeses(TP_ABREVIADO)[$item['mes']['mes'] - 1] }}/{{ $item['mes']['anno'] }}
                         </th>
@@ -76,7 +79,7 @@
                             ${{ number_format($item['venta'] - $item['costo'], 2) }}
                         </th>
                     </tr>
-                @endforeach
+                @endfor
             </table>
             <legend style="margin-bottom: 5px; color: white"></legend>
             <p class="text-center" style="margin-bottom: 0px">
@@ -92,8 +95,9 @@
                 <strong>% Margen <sup>-4 meses</sup></strong>
             </legend>
             <table style="width: 100%;">
-                @foreach ($indicadores as $item)
+                @for ($i = count($indicadores) - 1; $i > 0; $i--)
                     <tr>
+                        $item = $indicadores[$i];
                         <th style="color: white">
                             {{ getMeses(TP_ABREVIADO)[$item['mes']['mes'] - 1] }}/{{ $item['mes']['anno'] }}
                         </th>
@@ -101,7 +105,7 @@
                             {{ porcentaje($item['venta'] - $item['costo'], $item['venta'], 1) }}%
                         </th>
                     </tr>
-                @endforeach
+                @endfor
             </table>
             <legend style="margin-bottom: 5px; color: white"></legend>
             <p class="text-center" style="margin-bottom: 0px">
