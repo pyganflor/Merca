@@ -67,7 +67,7 @@
                         <input type="hidden" id="tipo_grafica" value="line">
                         <select name="rango" id="rango" class="form-control">
                             <option value="D">Diario</option>
-                            <option value="M">Mensual</option>
+                            <option value="M" selected>Mensual</option>
                         </select>
                     </div>
                 </td>
