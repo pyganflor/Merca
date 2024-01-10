@@ -71,7 +71,9 @@
             <table style="width: 100%;">
                 @for ($i = count($indicadores) - 1; $i > 0; $i--)
                     <tr>
-                        $item = $indicadores[$i];
+                        @php
+                            $item = $indicadores[$i];
+                        @endphp
                         <th style="color: white">
                             {{ getMeses(TP_ABREVIADO)[$item['mes']['mes'] - 1] }}/{{ $item['mes']['anno'] }}
                         </th>
@@ -97,7 +99,9 @@
             <table style="width: 100%;">
                 @for ($i = count($indicadores) - 1; $i > 0; $i--)
                     <tr>
-                        $item = $indicadores[$i];
+                        @php
+                            $item = $indicadores[$i];
+                        @endphp
                         <th style="color: white">
                             {{ getMeses(TP_ABREVIADO)[$item['mes']['mes'] - 1] }}/{{ $item['mes']['anno'] }}
                         </th>
