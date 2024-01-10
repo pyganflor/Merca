@@ -8,7 +8,7 @@
                 @php
                     $total_venta = 0;
                 @endphp
-                @for ($i = count($indicadores) - 1; $i > 0; $i--)
+                @for ($i = count($indicadores) - 1; $i >= 0; $i--)
                     @php
                         $item = $indicadores[$i];
                         $total_venta += $item['venta'];
@@ -40,7 +40,7 @@
                 @php
                     $total_costo = 0;
                 @endphp
-                @for ($i = count($indicadores) - 1; $i > 0; $i--)
+                @for ($i = count($indicadores) - 1; $i >= 0; $i--)
                     @php
                         $item = $indicadores[$i];
                         $total_costo += $item['costo'];
@@ -69,7 +69,7 @@
                 <strong>Margen <sup>-4 meses</sup></strong>
             </legend>
             <table style="width: 100%;">
-                @for ($i = count($indicadores) - 1; $i > 0; $i--)
+                @for ($i = count($indicadores) - 1; $i >= 0; $i--)
                     <tr>
                         @php
                             $item = $indicadores[$i];
@@ -97,7 +97,7 @@
                 <strong>% Margen <sup>-4 meses</sup></strong>
             </legend>
             <table style="width: 100%;">
-                @for ($i = count($indicadores) - 1; $i > 0; $i--)
+                @for ($i = count($indicadores) - 1; $i >= 0; $i--)
                     <tr>
                         @php
                             $item = $indicadores[$i];
