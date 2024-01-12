@@ -43,8 +43,7 @@ class UsuarioController extends Controller
         $mi_busqueda_toupper = mb_strtoupper($bus);
         $mi_busqueda_tolower = mb_strtolower($bus);
 
-        $listado = Usuario::join('usuario_finca as uf', 'uf.id_usuario', '=', 'usuario.id_usuario')
-            ->select('usuario.*')->distinct();
+        $listado = Usuario::select('usuario.*')->distinct();
 
         if ($request->busqueda != '') $listado = $listado->Where(function ($q) use ($mi_busqueda_toupper, $mi_busqueda_tolower) {
             $q->Where('usuario.nombre_completo', 'like', '%' . $mi_busqueda_toupper . '%')
@@ -52,7 +51,8 @@ class UsuarioController extends Controller
                 ->orWhere('usuario.username', 'like', '%' . $mi_busqueda_toupper . '%');
         });
         if ($request->finca != '')
-            $listado = $listado->where('uf.id_empresa', $request->finca);
+            $listado = $listado->join('usuario_finca as uf', 'uf.id_usuario', '=', 'usuario.id_usuario')
+                ->where('uf.id_empresa', $request->finca);
 
         $listado = $listado->orderBy('usuario.nombre_completo', 'asc')
             ->get();
