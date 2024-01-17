@@ -165,7 +165,7 @@
             </th>
             @foreach ($meses as $pos_m => $mes)
                 <th class="padding_lateral_5" style="border-color: #9d9d9d">
-                    ${{ number_format($item['valores_descuentos_diferidos'][$pos_m] + $item['valores_descuentos_normales'][$pos_m] - $item['valores_costos'][$pos_m], 2) }}
+                    ${{ number_format($item['valores_descuentos_diferidos'][$pos_m] + $item['valores_descuentos_normales'][$pos_m] + $item['valores_al_contado'][$pos_m] - $item['valores_costos'][$pos_m], 2) }}
                 </th>
             @endforeach
         </tr>
