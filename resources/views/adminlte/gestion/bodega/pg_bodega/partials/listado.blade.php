@@ -81,7 +81,7 @@
         </th>
         @foreach ($meses as $pos_m => $mes)
             <th class="padding_lateral bg-yura_dark">
-                ${{ number_format($total_ventas[$pos_m] - $total_costos[$pos_m], 2) }}
+                ${{ number_format($total_ventas[$pos_m] - $total_costos[$pos_m] - $total_otros_costos[$pos_m], 2) }}
             </th>
         @endforeach
     </tr>
@@ -106,7 +106,7 @@
         </th>
         @foreach ($meses as $pos_m => $mes)
             <th class="padding_lateral bg-yura_dark">
-                {{ porcentaje($total_ventas[$pos_m] - $total_costos[$pos_m], $total_ventas[$pos_m], 1) }}%
+                {{ porcentaje($total_ventas[$pos_m] - $total_costos[$pos_m] - $total_otros_costos[$pos_m], $total_ventas[$pos_m], 1) }}%
             </th>
         @endforeach
     </tr>
