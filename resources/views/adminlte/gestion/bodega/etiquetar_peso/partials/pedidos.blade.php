@@ -33,6 +33,8 @@
         </th>
         <th class="text-center bg-yura_dark" style="width: 60px">
             Peso
+            <input type="number" style="width: 100%; color: black" class="text-center"
+                onchange="set_all_peso($(this).val())">
         </th>
         <th class="padding_lateral_5 bg-yura_dark">
             Opciones
@@ -63,7 +65,7 @@
                     id="usados_{{ $item['det_ped']->id_detalle_pedido_bodega }}">
             </td>
             <td style="border-color: #9d9d9d">
-                <input type="text" style="width: 100%" class="text-center"
+                <input type="text" style="width: 100%" class="text-center set_all_peso"
                     id="peso_{{ $item['det_ped']->id_detalle_pedido_bodega }}" min="0">
             </td>
             <td class="text-center" style="border-color: #9d9d9d">
@@ -159,5 +161,14 @@
                 true, false, '{{ isPC() ? '75%' : '' }}',
                 function() {});
         });
+    }
+
+    function set_all_peso(valor) {
+        set_all_peso = $('.set_all_peso');
+        for (i = 0; i < set_all_peso.length; i++) {
+            if (set_all_peso[i].value == '') {
+                set_all_peso[i].value = valor;
+            }
+        }
     }
 </script>

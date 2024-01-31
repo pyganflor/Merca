@@ -147,7 +147,7 @@
         </th>
         @foreach ($meses as $pos_m => $mes)
             @php
-                $margen_total = $total_ventas[$pos_m] - $total_costos[$pos_m];
+                $margen_total = $total_ventas[$pos_m] - $total_costos[$pos_m] - $total_otros_costos[$pos_m];
                 $ga = $gastos_administrativos[$pos_m] != '' ? $gastos_administrativos[$pos_m]->ga : 0;
             @endphp
             <th class="bg-yura_dark">
