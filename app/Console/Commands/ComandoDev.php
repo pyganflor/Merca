@@ -1278,7 +1278,7 @@ class ComandoDev extends Command
     {
         dump('<<<<< ! >>>>> Ejecutando comando:dev "actualizar_usuarios" <<<<< ! >>>>>');
         try {
-            $url = public_path('storage/file_loads/actualizar_usuarios.xlsx');
+            $url = public_path('storage/file_loads/actualizar_usuarios.xls');
             $document = IOFactory::load($url);
             $no_existen = [];
             foreach ($document->getAllSheets() as $sheet) {
@@ -1306,6 +1306,8 @@ class ComandoDev extends Command
                             $finca_usuario->id_usuario = $usuario->id_usuario;
                             $finca_usuario->id_empresa = $finca->id_configuracion_empresa;
                             $finca_usuario->save();
+
+                            $ids_actuales[] = $usuario->id_usuario;
                         } else {
                             dump('******************** NO EXISTE **********************' . $pos_row);
                             $no_existen[] = $row['A'];
@@ -1324,18 +1326,22 @@ class ComandoDev extends Command
                             $usuario->id_usuario = DB::table('usuario')
                                 ->select(DB::raw('max(id_usuario) as id'))
                                 ->get()[0]->id;
-                        }
-                        $ids_actuales[] = $usuario->id_usuario;
-                        $usuarios_inactivos = Usuario::join('usuario_finca as uf', 'uf.id_usuario', '=', 'usuario.id_usuario')
-                            ->select('usuario.*')->distinct()
-                            ->where('uf.id_empresa', $finca->id_configuracion_empresa)
-                            ->whereNotIn('uf.id_usuario', $ids_actuales)
-                            ->get();
-                        foreach ($usuarios_inactivos as $u) {
-                            $u->aplica = 0;
-                            $u->save();
+
+                            $finca_usuario = new UsuarioFinca();
+                            $finca_usuario->id_usuario = $usuario->id_usuario;
+                            $finca_usuario->id_empresa = $finca->id_configuracion_empresa;
+                            $finca_usuario->save();
                         }
                     }
+                }
+                $usuarios_inactivos = Usuario::join('usuario_finca as uf', 'uf.id_usuario', '=', 'usuario.id_usuario')
+                    ->select('usuario.*')->distinct()
+                    ->where('uf.id_empresa', $finca->id_configuracion_empresa)
+                    ->whereNotIn('uf.id_usuario', $ids_actuales)
+                    ->get();
+                foreach ($usuarios_inactivos as $u) {
+                    $u->aplica = 0;
+                    $u->save();
                 }
             }
             dd($no_existen);
