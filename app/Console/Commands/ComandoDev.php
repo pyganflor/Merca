@@ -1331,6 +1331,7 @@ class ComandoDev extends Command
                             $finca_usuario->id_usuario = $usuario->id_usuario;
                             $finca_usuario->id_empresa = $finca->id_configuracion_empresa;
                             $finca_usuario->save();
+                            $ids_actuales[] = $usuario->id_usuario;
                         }
                     }
                 }
