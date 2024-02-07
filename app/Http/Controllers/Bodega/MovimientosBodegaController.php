@@ -143,16 +143,18 @@ class MovimientosBodegaController extends Controller
                     $producto->save();
                     bitacora('producto', $producto->id_producto, 'U', 'SALIDA DE BODEGA de ' . $d->unidades . ' UNIDADES');
 
-                    /* SALIDA_BODEGA */
-                    $salida = new SalidaBodega();
-                    $salida->id_producto = $d->id_prod;
-                    $salida->fecha = $request->fecha;
-                    $salida->cantidad = $d->unidades;
-                    $salida->save();
-                    $salida->id_salida_bodega = DB::table('salida_bodega')
-                        ->select(DB::raw('max(id_salida_bodega) as id'))
-                        ->get()[0]->id;
-                    bitacora('salida_bodega', $salida->id_salida_bodega, 'I', 'SALIDA A BODEGA de ' . $d->unidades . ' UNIDADES de ' . $producto->nombre);
+                    if ($request->registrar == 1) {
+                        /* SALIDA_BODEGA */
+                        $salida = new SalidaBodega();
+                        $salida->id_producto = $d->id_prod;
+                        $salida->fecha = $request->fecha;
+                        $salida->cantidad = $d->unidades;
+                        $salida->save();
+                        $salida->id_salida_bodega = DB::table('salida_bodega')
+                            ->select(DB::raw('max(id_salida_bodega) as id'))
+                            ->get()[0]->id;
+                        bitacora('salida_bodega', $salida->id_salida_bodega, 'I', 'SALIDA A BODEGA de ' . $d->unidades . ' UNIDADES de ' . $producto->nombre);
+                    }
 
                     /* SACAR DEL INVENTARIO */
                     $inventarios = InventarioBodega::where('disponibles', '>', 0)
@@ -180,11 +182,13 @@ class MovimientosBodegaController extends Controller
 
                             bitacora('inventario_bodega', $model->id_inventario_bodega, 'U', 'SACAR de la BODEGA');
 
-                            $salida_inventario = new SalidaInventarioBodega();
-                            $salida_inventario->id_salida_bodega =  $salida->id_salida_bodega;
-                            $salida_inventario->id_inventario_bodega =  $model->id_inventario_bodega;
-                            $salida_inventario->cantidad = $usados;
-                            $salida_inventario->save();
+                            if ($request->registrar == 1) {
+                                $salida_inventario = new SalidaInventarioBodega();
+                                $salida_inventario->id_salida_bodega =  $salida->id_salida_bodega;
+                                $salida_inventario->id_inventario_bodega =  $model->id_inventario_bodega;
+                                $salida_inventario->cantidad = $usados;
+                                $salida_inventario->save();
+                            }
                         }
                     }
                 } else {

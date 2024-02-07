@@ -174,7 +174,19 @@
         if (data.length > 0) {
             mensaje = {
                 title: '<i class="fa fa-fw fa-exclamation-triangle"></i> Mensaje de Confirmacion',
-                mensaje: '<div class="alert alert-info text-center" style="font-size: 16px">¿Está seguro de <b>GRABAR</b> las salidas?</div>',
+                mensaje: "<div class='alert alert-info text-center' style='font-size: 16px'>¿Está seguro de <b>GRABAR</b> las salidas?</div>" +
+                    "<div class='alert alert-info text-center' style='font-size: 1.5em'>¿Desea <b>REGISTRAR</b> como <b>COSTO</b>?" +
+                    "<div class='row'>" +
+                    "<div class='col-md-6'>" +
+                    "<label class='mouse-hand' for='radio_registrar0'>No</label>" +
+                    "<input type='radio' name='radio_registrar' id='radio_registrar0' value='0' style='width: 20px; height: 20px'>" +
+                    "</div>" +
+                    "<div class='col-md-6'>" +
+                    "<input type='radio' name='radio_registrar' id='radio_registrar1' value='1' style='width: 20px; height: 20px' checked>" +
+                    "<label class='mouse-hand' for='radio_registrar1'>Si</label>" +
+                    "</div>" +
+                    "</div>" +
+                    "</div>",
             };
             modal_quest('modal_store_salidas', mensaje['mensaje'], mensaje['title'], true, false,
                 '{{ isPC() ? '50%' : '' }}',
@@ -183,6 +195,7 @@
                         _token: '{{ csrf_token() }}',
                         data: JSON.stringify(data),
                         fecha: $('#fecha_salida').val(),
+                        registrar: $('#radio_registrar1').prop('checked') == true ? 1 : 0,
                     };
                     post_jquery_m('{{ url('movimientos_bodega/store_salidas') }}', datos, function() {
                         cerrar_modals();
