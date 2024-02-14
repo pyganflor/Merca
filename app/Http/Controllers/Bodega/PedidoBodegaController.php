@@ -987,6 +987,8 @@ class PedidoBodegaController extends Controller
         setValueToCeldaExcel($sheet, $columnas[$col] . $row, 'Pedido');
         $col++;
         setValueToCeldaExcel($sheet, $columnas[$col] . $row, 'Compra');
+        $col++;
+        setValueToCeldaExcel($sheet, $columnas[$col] . $row, 'Stock Mín.');
         setBgToCeldaExcel($sheet, 'A' . $row . ':' . $columnas[$col] . $row, '00B388');
         setColorTextToCeldaExcel($sheet, 'A' . $row . ':' . $columnas[$col] . $row, 'FFFFFF');
 
@@ -1005,13 +1007,23 @@ class PedidoBodegaController extends Controller
             setValueToCeldaExcel($sheet, $columnas[$col] . $row, getConfiguracionEmpresa($r['finca'])->nombre);
             setBgToCeldaExcel($sheet, $columnas[$col] . $row, '5a7177');
             setColorTextToCeldaExcel($sheet, $columnas[$col] . $row, 'FFFFFF');
+            setBgToCeldaExcel($sheet, $columnas[$col] . $row, '5a7177');
+            setColorTextToCeldaExcel($sheet, $columnas[$col] . $row, 'FFFFFF');
             $col++;
             setValueToCeldaExcel($sheet, $columnas[$col] . $row, $r['producto']->disponibles);
             $col++;
             setValueToCeldaExcel($sheet, $columnas[$col] . $row, $r['cantidad']);
             $saldo = $r['producto']->disponibles - $r['cantidad'];
+            if ($saldo >= 0) {
+                if ($saldo < $r['producto']->stock_minimo)
+                    $saldo = $r['producto']->stock_minimo - $saldo;
+            } else {
+                $saldo = abs($saldo) + $r['producto']->stock_minimo;
+            }
             $col++;
-            setValueToCeldaExcel($sheet, $columnas[$col] . $row, $saldo < 0 ? abs($saldo) : 0);
+            setValueToCeldaExcel($sheet, $columnas[$col] . $row, $saldo);
+            $col++;
+            setValueToCeldaExcel($sheet, $columnas[$col] . $row, $r['producto']->stock_minimo);
         }
 
         setTextCenterToCeldaExcel($sheet, 'A1:' . $columnas[$col] . $row);

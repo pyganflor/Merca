@@ -62,7 +62,7 @@
                                         {{ $item->codigo }}
                                         <input type="hidden" id="codigo_{{ $item->id_producto }}"
                                             value="{{ $item->codigo }}">
-                                        {{--<select id="proveedor_{{ $item->id_producto }}" style="display: none">
+                                        {{-- <select id="proveedor_{{ $item->id_producto }}" style="display: none">
                                             <option value="">Ninguno</option>
                                             @foreach ($proveedores as $prov)
                                                 <option value="{{ $prov->id_proveedor }}"
@@ -70,7 +70,7 @@
                                                     {{ $prov->nombre }}
                                                 </option>
                                             @endforeach
-                                        </select>--}}
+                                        </select> --}}
                                         <input type="hidden" class="tr_productos" value="{{ $item->id_producto }}">
                                     </th>
                                     <th class="padding_lateral_5" style="border-color: #9d9d9d">
@@ -102,7 +102,7 @@
                 </button>
             </td>
             <td style="min-width: 350px; width: 550px; vertical-align: top; overflow-y: scroll">
-                <table class="table-bordered" style="width: 100%; border: 1px solid #9d9d9d" id="table_add_ingresos">
+                <table class="table-bordered" style="width: 100%; border: 1px solid #9d9d9d">
                     <tr class="tr_fija_top_0">
                         <th class="text-center bg-yura_dark">
                             CODIGO
@@ -115,6 +115,19 @@
                         </th>
                         <th class="text-center bg-yura_dark" style="width: 60px !important">
                             PRECIO
+                        </th>
+                        <th class="text-center bg-yura_dark" style="width: 60px !important">
+                        </th>
+                    </tr>
+                    <tbody id="table_add_ingresos"></tbody>
+                    <tr>
+                        <th class="padding_lateral_5 text-right bg-yura_dark" colspan="2">
+                            TOTALES
+                        </th>
+                        <th class="text-center bg-yura_dark" style="width: 60px !important"
+                            id="th_total_unidades_ingreso">
+                        </th>
+                        <th class="text-center bg-yura_dark" style="width: 60px !important" id="th_total_monto_ingreso">
                         </th>
                         <th class="text-center bg-yura_dark" style="width: 60px !important">
                         </th>
@@ -148,11 +161,11 @@
                         '</th>' +
                         '<td class="text-center" style="border-color: #9d9d9d">' +
                         '<input type="number" style="width: 100%" class="text-center"' +
-                        'id="unidades_seleccionado_' + id_prod + '" min="0" value="' + unidades + '">' +
+                        'id="unidades_seleccionado_' + id_prod + '" min="0" value="' + unidades + '" onchange="calcular_totales_ingreso()">' +
                         '</td>' +
                         '<td class="text-center" style="border-color: #9d9d9d">' +
                         '<input type="number" style="width: 100%" class="text-center"' +
-                        'id="precio_seleccionado_' + id_prod + '" min="0" value="' + precio + '">' +
+                        'id="precio_seleccionado_' + id_prod + '" min="0" value="' + precio + '" onchange="calcular_totales_ingreso()">' +
                         '</td>' +
                         '<td class="text-center" style="border-color: #9d9d9d">' +
                         '<button type="button" class="btn btn-xs btn-yura_danger" onclick="quitar_fila(' + id_prod +
@@ -164,10 +177,12 @@
 
             }
         }
+        calcular_totales_ingreso();
     }
 
     function quitar_fila(id_prod) {
         $('#tr_add_ingreso_' + id_prod).remove();
+        calcular_totales_ingreso();
     }
 
     function store_ingresos() {
@@ -205,5 +220,20 @@
                     });
                 });
         }
+    }
+
+    function calcular_totales_ingreso() {
+        id_producto_seleccionado = $('.id_producto_seleccionado');
+        total_unidades = 0;
+        total_monto = 0;
+        for (i = 0; i < id_producto_seleccionado.length; i++) {
+            id_prod = id_producto_seleccionado[i].value;
+            unidades = parseInt($('#unidades_seleccionado_' + id_prod).val());
+            precio = parseFloat($('#precio_seleccionado_' + id_prod).val());
+            total_unidades += unidades;
+            total_monto += unidades * precio;
+        }
+        $('#th_total_unidades_ingreso').html(total_unidades);
+        $('#th_total_monto_ingreso').html(total_monto);
     }
 </script>
