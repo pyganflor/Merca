@@ -969,6 +969,23 @@ class PedidoBodegaController extends Controller
                 }
             }
         }
+        $acumulados = [];
+        foreach ($listado as $pos_i => $item) {
+            $pos_e = -1;
+            foreach ($acumulados as $pos_a => $acum) {
+                if ($acum['producto']->id_producto == $item['producto']->id_producto) {
+                    $pos_e = $pos_a;
+                }
+            }
+            if ($pos_e == -1) {
+                $acumulados[] = [
+                    'producto' => $item['producto'],
+                    'cantidad' => $item['cantidad']
+                ];
+            } else {
+                $acumulados[$pos_e]['cantidad'] += $item['cantidad'];
+            }
+        }
 
         $columnas = getColumnasExcel();
         $sheet = $spread->getActiveSheet();
@@ -1007,6 +1024,56 @@ class PedidoBodegaController extends Controller
             setValueToCeldaExcel($sheet, $columnas[$col] . $row, getConfiguracionEmpresa($r['finca'])->nombre);
             setBgToCeldaExcel($sheet, $columnas[$col] . $row, '5a7177');
             setColorTextToCeldaExcel($sheet, $columnas[$col] . $row, 'FFFFFF');
+            $col++;
+            setValueToCeldaExcel($sheet, $columnas[$col] . $row, $r['producto']->disponibles);
+            $col++;
+            setValueToCeldaExcel($sheet, $columnas[$col] . $row, $r['cantidad']);
+            $saldo = $r['producto']->disponibles - $r['cantidad'];
+            if ($saldo >= 0) {
+                if ($saldo < $r['producto']->stock_minimo)
+                    $saldo = $r['producto']->stock_minimo - $saldo;
+            } else {
+                $saldo = abs($saldo) + $r['producto']->stock_minimo;
+            }
+            $col++;
+            setValueToCeldaExcel($sheet, $columnas[$col] . $row, $saldo);
+            $col++;
+            setValueToCeldaExcel($sheet, $columnas[$col] . $row, $r['producto']->stock_minimo);
+        }
+
+        setTextCenterToCeldaExcel($sheet, 'A1:' . $columnas[$col] . $row);
+        setBorderToCeldaExcel($sheet, 'A1:' . $columnas[$col] . $row);
+
+        for ($i = 0; $i <= $col; $i++)
+            $sheet->getColumnDimension($columnas[$i])->setAutoSize(true);
+
+        /* HOJA de RESUMEN por PRODUCTOS */
+        $sheet = $spread->createSheet()->setTitle('RESUMEN por PRODUCTOS');
+        $row = 1;
+        $col = 0;
+        setValueToCeldaExcel($sheet, $columnas[$col] . $row, 'Proveedor');
+        $col++;
+        setValueToCeldaExcel($sheet, $columnas[$col] . $row, 'Producto');
+        $col++;
+        setValueToCeldaExcel($sheet, $columnas[$col] . $row, 'Inventario');
+        $col++;
+        setValueToCeldaExcel($sheet, $columnas[$col] . $row, 'Pedido');
+        $col++;
+        setValueToCeldaExcel($sheet, $columnas[$col] . $row, 'Compra');
+        $col++;
+        setValueToCeldaExcel($sheet, $columnas[$col] . $row, 'Stock Mín.');
+        setBgToCeldaExcel($sheet, 'A' . $row . ':' . $columnas[$col] . $row, '00B388');
+        setColorTextToCeldaExcel($sheet, 'A' . $row . ':' . $columnas[$col] . $row, 'FFFFFF');
+
+        foreach ($acumulados as $r) {
+            $proveedor = Proveedor::find($r['producto']->id_proveedor);
+            $row++;
+            $col = 0;
+            setValueToCeldaExcel($sheet, $columnas[$col] . $row, $proveedor != '' ? $proveedor->nombre : '');
+            setBgToCeldaExcel($sheet, $columnas[$col] . $row, '5a7177');
+            setColorTextToCeldaExcel($sheet, $columnas[$col] . $row, 'FFFFFF');
+            $col++;
+            setValueToCeldaExcel($sheet, $columnas[$col] . $row, $r['producto']->nombre);
             setBgToCeldaExcel($sheet, $columnas[$col] . $row, '5a7177');
             setColorTextToCeldaExcel($sheet, $columnas[$col] . $row, 'FFFFFF');
             $col++;

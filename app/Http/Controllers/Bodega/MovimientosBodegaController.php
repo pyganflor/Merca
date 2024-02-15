@@ -182,7 +182,7 @@ class MovimientosBodegaController extends Controller
 
                             bitacora('inventario_bodega', $model->id_inventario_bodega, 'U', 'SACAR de la BODEGA');
 
-                            if ($request->registrar == 1) {
+                            if ($request->registrar == 1 && $usados > 0) {
                                 $salida_inventario = new SalidaInventarioBodega();
                                 $salida_inventario->id_salida_bodega =  $salida->id_salida_bodega;
                                 $salida_inventario->id_inventario_bodega =  $model->id_inventario_bodega;
