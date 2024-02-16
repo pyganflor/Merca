@@ -55,4 +55,13 @@ class Producto extends Model
             ->where('id_producto', $this->id_producto)
             ->get()[0]->cant;
     }
+
+    public function getVelorActual()
+    {
+        return DB::table('inventario_bodega')
+            ->select(DB::raw('sum(disponibles * precio) as cant'))
+            ->where('id_producto', $this->id_producto)
+            ->where('disponibles', '>', 0)
+            ->get()[0]->cant;
+    }
 }

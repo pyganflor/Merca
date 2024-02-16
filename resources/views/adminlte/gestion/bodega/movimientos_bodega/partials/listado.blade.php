@@ -20,13 +20,23 @@
                 <th class="text-center th_yura_green" style="width: 120px">
                     Unidades Fisicas
                 </th>
+                <th class="text-center th_yura_green" style="width: 120px">
+                    VALOR ACTUAL
+                </th>
             </tr>
         </thead>
         <tbody>
+            @php
+                $total_unidades = 0;
+                $total_valorActual = 0;
+            @endphp
             @foreach ($listado as $item)
                 @php
                     $url_imagen = 'images\productos\*' . $item->imagen;
                     $url_imagen = str_replace('*', '', $url_imagen);
+                    $getVelorActual = $item->getVelorActual();
+                    $total_unidades += $item->disponibles;
+                    $total_valorActual += $getVelorActual;
                 @endphp
                 <tr id="tr_producto_{{ $item->id_producto }}" class="{{ $item->estado == 0 ? 'error' : '' }}"
                     onmouseover="$(this).addClass('bg-yura_dark')" onmouseleave="$(this).removeClass('bg-yura_dark')">
@@ -51,8 +61,22 @@
                     <th class="text-center" style="border-color: #9d9d9d">
                         {{ $item->disponibles != floor($item->disponibles) ? number_format($item->disponibles, 2) : number_format($item->disponibles) }}
                     </th>
+                    <th class="text-center" style="border-color: #9d9d9d">
+                        ${{ number_format($item->getVelorActual(), 2) }}
+                    </th>
                 </tr>
             @endforeach
         </tbody>
+        <tr class="tr_fija_bottom_0">
+            <th class="padding_lateral_5 text-right th_yura_green" colspan="5">
+                TOTALES
+            </th>
+            <th class="text-center th_yura_green">
+                {{ number_format($total_unidades, 2) }}
+            </th>
+            <th class="text-center th_yura_green">
+                ${{ number_format($total_valorActual, 2) }}
+            </th>
+        </tr>
     </table>
 </div>
