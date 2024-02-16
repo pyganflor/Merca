@@ -1006,6 +1006,8 @@ class PedidoBodegaController extends Controller
         setValueToCeldaExcel($sheet, $columnas[$col] . $row, 'Compra');
         $col++;
         setValueToCeldaExcel($sheet, $columnas[$col] . $row, 'Stock Mín.');
+        $col++;
+        setValueToCeldaExcel($sheet, $columnas[$col] . $row, 'Stock Máx.');
         setBgToCeldaExcel($sheet, 'A' . $row . ':' . $columnas[$col] . $row, '00B388');
         setColorTextToCeldaExcel($sheet, 'A' . $row . ':' . $columnas[$col] . $row, 'FFFFFF');
 
@@ -1031,14 +1033,16 @@ class PedidoBodegaController extends Controller
             $saldo = $r['producto']->disponibles - $r['cantidad'];
             if ($saldo >= 0) {
                 if ($saldo < $r['producto']->stock_minimo)
-                    $saldo = $r['producto']->stock_minimo - $saldo;
+                    $saldo = $r['producto']->stock_maximo - $saldo;
             } else {
-                $saldo = abs($saldo) + $r['producto']->stock_minimo;
+                $saldo = abs($saldo) + $r['producto']->stock_maximo;
             }
             $col++;
             setValueToCeldaExcel($sheet, $columnas[$col] . $row, $saldo);
             $col++;
             setValueToCeldaExcel($sheet, $columnas[$col] . $row, $r['producto']->stock_minimo);
+            $col++;
+            setValueToCeldaExcel($sheet, $columnas[$col] . $row, $r['producto']->stock_maximo);
         }
 
         setTextCenterToCeldaExcel($sheet, 'A1:' . $columnas[$col] . $row);
@@ -1062,6 +1066,8 @@ class PedidoBodegaController extends Controller
         setValueToCeldaExcel($sheet, $columnas[$col] . $row, 'Compra');
         $col++;
         setValueToCeldaExcel($sheet, $columnas[$col] . $row, 'Stock Mín.');
+        $col++;
+        setValueToCeldaExcel($sheet, $columnas[$col] . $row, 'Stock Máx.');
         setBgToCeldaExcel($sheet, 'A' . $row . ':' . $columnas[$col] . $row, '00B388');
         setColorTextToCeldaExcel($sheet, 'A' . $row . ':' . $columnas[$col] . $row, 'FFFFFF');
 
@@ -1083,14 +1089,16 @@ class PedidoBodegaController extends Controller
             $saldo = $r['producto']->disponibles - $r['cantidad'];
             if ($saldo >= 0) {
                 if ($saldo < $r['producto']->stock_minimo)
-                    $saldo = $r['producto']->stock_minimo - $saldo;
+                    $saldo = $r['producto']->stock_maximo - $saldo;
             } else {
-                $saldo = abs($saldo) + $r['producto']->stock_minimo;
+                $saldo = abs($saldo) + $r['producto']->stock_maximo;
             }
             $col++;
             setValueToCeldaExcel($sheet, $columnas[$col] . $row, $saldo);
             $col++;
             setValueToCeldaExcel($sheet, $columnas[$col] . $row, $r['producto']->stock_minimo);
+            $col++;
+            setValueToCeldaExcel($sheet, $columnas[$col] . $row, $r['producto']->stock_maximo);
         }
 
         setTextCenterToCeldaExcel($sheet, 'A1:' . $columnas[$col] . $row);
@@ -1306,54 +1314,104 @@ class PedidoBodegaController extends Controller
                 $usuario = $pedido->usuario;
                 foreach ($pedido->detalles as $pos_det => $det) {
                     $producto = $det->producto;
-
-                    if ($producto->peso == 0) {
-                        $row++;
-                        $col = 0;
-                        setValueToCeldaExcel($sheet, $columnas[$col] . $row, 'FACTURA');
-                        $col++;
-                        setValueToCeldaExcel($sheet, $columnas[$col] . $row, '001');
-                        $col++;
-                        setValueToCeldaExcel($sheet, $columnas[$col] . $row, '002');
-                        $col++;
-                        setValueToCeldaExcel($sheet, $columnas[$col] . $row, str_pad($pedido->factura, 4, '0', STR_PAD_LEFT));
-                        $col++;
-                        setValueToCeldaExcel($sheet, $columnas[$col] . $row, '01');
-                        $col++;
-                        setValueToCeldaExcel($sheet, $columnas[$col] . $row, $fecha_entrega);
-                        $col++;
-                        setValueToCeldaExcel($sheet, $columnas[$col] . $row, $fecha_entrega);
-                        $col++;
-                        setValueToCeldaExcel($sheet, $columnas[$col] . $row, $fecha_entrega);
-                        $col++;
-                        setValueToCeldaExcel($sheet, $columnas[$col] . $row, $det->iva == 1 ? '12.00' : '0.00');
-                        $col++;
-                        setValueToCeldaExcel($sheet, $columnas[$col] . $row, $usuario->username);
-                        $col++;
-                        setValueToCeldaExcel($sheet, $columnas[$col] . $row, $producto->codigo);
-                        $col++;
-                        setValueToCeldaExcel($sheet, $columnas[$col] . $row, $det->cantidad);
-                        $col++;
-                        setValueToCeldaExcel($sheet, $columnas[$col] . $row, round($det->precio, 2));
-                        $col++;
-                        setValueToCeldaExcel($sheet, $columnas[$col] . $row, '0.00');
-                        $col++;
-                        setValueToCeldaExcel($sheet, $columnas[$col] . $row, round($det->precio, 2));
-                        $col++;
-                        setValueToCeldaExcel($sheet, $columnas[$col] . $row, round($det->precio * $det->cantidad, 2));
-                        $col++;
-                        setValueToCeldaExcel($sheet, $columnas[$col] . $row, '0.00');
-                        $col++;
-                        setValueToCeldaExcel($sheet, $columnas[$col] . $row, 'Contado');
-                        $col++;
-                        setValueToCeldaExcel($sheet, $columnas[$col] . $row, 'Transferencia');
-                        $col++;
-                        setValueToCeldaExcel($sheet, $columnas[$col] . $row, 'Vendedor');
-                        $col++;
-                        setValueToCeldaExcel($sheet, $columnas[$col] . $row, '');
-                        $col++;
-                        setValueToCeldaExcel($sheet, $columnas[$col] . $row, $producto->nombre);
-                    } else {
+                    if ($producto->peso == 0) { // NO es de tipo PESO
+                        if ($producto->combo == 0) {    // NO es de tipo COMBO
+                            $row++;
+                            $col = 0;
+                            setValueToCeldaExcel($sheet, $columnas[$col] . $row, 'FACTURA');
+                            $col++;
+                            setValueToCeldaExcel($sheet, $columnas[$col] . $row, '001');
+                            $col++;
+                            setValueToCeldaExcel($sheet, $columnas[$col] . $row, '002');
+                            $col++;
+                            setValueToCeldaExcel($sheet, $columnas[$col] . $row, str_pad($pedido->factura, 4, '0', STR_PAD_LEFT));
+                            $col++;
+                            setValueToCeldaExcel($sheet, $columnas[$col] . $row, '01');
+                            $col++;
+                            setValueToCeldaExcel($sheet, $columnas[$col] . $row, $fecha_entrega);
+                            $col++;
+                            setValueToCeldaExcel($sheet, $columnas[$col] . $row, $fecha_entrega);
+                            $col++;
+                            setValueToCeldaExcel($sheet, $columnas[$col] . $row, $fecha_entrega);
+                            $col++;
+                            setValueToCeldaExcel($sheet, $columnas[$col] . $row, $det->iva == 1 ? '12.00' : '0.00');
+                            $col++;
+                            setValueToCeldaExcel($sheet, $columnas[$col] . $row, $usuario->username);
+                            $col++;
+                            setValueToCeldaExcel($sheet, $columnas[$col] . $row, $producto->codigo);
+                            $col++;
+                            setValueToCeldaExcel($sheet, $columnas[$col] . $row, $det->cantidad);
+                            $col++;
+                            setValueToCeldaExcel($sheet, $columnas[$col] . $row, round($det->precio, 2));
+                            $col++;
+                            setValueToCeldaExcel($sheet, $columnas[$col] . $row, '0.00');
+                            $col++;
+                            setValueToCeldaExcel($sheet, $columnas[$col] . $row, round($det->precio, 2));
+                            $col++;
+                            setValueToCeldaExcel($sheet, $columnas[$col] . $row, round($det->precio * $det->cantidad, 2));
+                            $col++;
+                            setValueToCeldaExcel($sheet, $columnas[$col] . $row, '0.00');
+                            $col++;
+                            setValueToCeldaExcel($sheet, $columnas[$col] . $row, 'Contado');
+                            $col++;
+                            setValueToCeldaExcel($sheet, $columnas[$col] . $row, 'Transferencia');
+                            $col++;
+                            setValueToCeldaExcel($sheet, $columnas[$col] . $row, 'Vendedor');
+                            $col++;
+                            setValueToCeldaExcel($sheet, $columnas[$col] . $row, '');
+                            $col++;
+                            setValueToCeldaExcel($sheet, $columnas[$col] . $row, $producto->nombre);
+                        } else {    // es de tipo COMBO
+                            foreach ($producto->detalles_combo as $det_comb) {
+                                $prod_combo = $det_comb->item;
+                                $row++;
+                                $col = 0;
+                                setValueToCeldaExcel($sheet, $columnas[$col] . $row, 'FACTURA');
+                                $col++;
+                                setValueToCeldaExcel($sheet, $columnas[$col] . $row, '001');
+                                $col++;
+                                setValueToCeldaExcel($sheet, $columnas[$col] . $row, '002');
+                                $col++;
+                                setValueToCeldaExcel($sheet, $columnas[$col] . $row, str_pad($pedido->factura, 4, '0', STR_PAD_LEFT));
+                                $col++;
+                                setValueToCeldaExcel($sheet, $columnas[$col] . $row, '01');
+                                $col++;
+                                setValueToCeldaExcel($sheet, $columnas[$col] . $row, $fecha_entrega);
+                                $col++;
+                                setValueToCeldaExcel($sheet, $columnas[$col] . $row, $fecha_entrega);
+                                $col++;
+                                setValueToCeldaExcel($sheet, $columnas[$col] . $row, $fecha_entrega);
+                                $col++;
+                                setValueToCeldaExcel($sheet, $columnas[$col] . $row, $prod_combo->tiene_iva == 1 ? '12.00' : '0.00');
+                                $col++;
+                                setValueToCeldaExcel($sheet, $columnas[$col] . $row, $usuario->username);
+                                $col++;
+                                setValueToCeldaExcel($sheet, $columnas[$col] . $row, $prod_combo->codigo);
+                                $col++;
+                                setValueToCeldaExcel($sheet, $columnas[$col] . $row, $det->cantidad);
+                                $col++;
+                                setValueToCeldaExcel($sheet, $columnas[$col] . $row, round($det->precio, 2));
+                                $col++;
+                                setValueToCeldaExcel($sheet, $columnas[$col] . $row, '0.00');
+                                $col++;
+                                setValueToCeldaExcel($sheet, $columnas[$col] . $row, round($det->precio, 2));
+                                $col++;
+                                setValueToCeldaExcel($sheet, $columnas[$col] . $row, round($det->precio * $det->cantidad, 2));
+                                $col++;
+                                setValueToCeldaExcel($sheet, $columnas[$col] . $row, '0.00');
+                                $col++;
+                                setValueToCeldaExcel($sheet, $columnas[$col] . $row, 'Contado');
+                                $col++;
+                                setValueToCeldaExcel($sheet, $columnas[$col] . $row, 'Transferencia');
+                                $col++;
+                                setValueToCeldaExcel($sheet, $columnas[$col] . $row, 'Vendedor');
+                                $col++;
+                                setValueToCeldaExcel($sheet, $columnas[$col] . $row, '');
+                                $col++;
+                                setValueToCeldaExcel($sheet, $columnas[$col] . $row, $prod_combo->nombre);
+                            }
+                        }
+                    } else {    // es de tipo PESO
                         foreach ($det->etiquetas_peso as $pos_e => $e) {
                             $row++;
                             $col = 0;

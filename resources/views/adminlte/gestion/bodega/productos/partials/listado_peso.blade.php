@@ -37,6 +37,9 @@
             STOCK MINIMO
         </th>
         <th class="text-center th_yura_green" style="width: 60px">
+            STOCK MAXIMO
+        </th>
+        <th class="text-center th_yura_green" style="width: 60px">
             UNIDADES
         </th>
         <th class="text-center th_yura_green">
@@ -111,6 +114,10 @@
         <th class="text-center" style="border-color: #9d9d9d">
             <input type="number" style="width: 100%" class="text-center bg-yura_dark" required min="0"
                 id="stock_minimo_new" name="stock_minimo_new" placeholder="0">
+        </th>
+        <th class="text-center" style="border-color: #9d9d9d">
+            <input type="number" style="width: 100%" class="text-center bg-yura_dark" required min="0"
+                id="stock_maximo_new" name="stock_maximo_new" placeholder="0">
         </th>
         <th class="text-center" style="border-color: #9d9d9d">
             <input type="number" style="width: 100%" class="text-center bg-yura_dark" required min="0"
@@ -199,6 +206,10 @@
             </th>
             <th class="text-center" style="border-color: #9d9d9d; vertical-align: top">
                 <input type="number" style="width: 100%" class="text-center" required min="0"
+                    id="stock_maximo_{{ $item->id_producto }}" value="{{ $item->stock_maximo }}">
+            </th>
+            <th class="text-center" style="border-color: #9d9d9d; vertical-align: top">
+                <input type="number" style="width: 100%" class="text-center" required min="0"
                     id="conversion_{{ $item->id_producto }}" value="{{ $item->conversion }}">
             </th>
             <th class="text-center" style="border-color: #9d9d9d; vertical-align: top">
@@ -246,6 +257,7 @@
             formData.append('nombre', $('#nombre_new').val());
             formData.append('unidad_medida', $('#unidad_medida_new').val());
             formData.append('stock_minimo', $('#stock_minimo_new').val());
+            formData.append('stock_maximo', $('#stock_maximo_new').val());
             formData.append('conversion', $('#conversion_new').val());
             formData.append('precio_compra', $('#precio_compra_new').val());
             formData.append('precio_venta', $('#precio_venta_new').val());
@@ -295,6 +307,7 @@
             formData.append('nombre', $('#nombre_' + id).val());
             formData.append('unidad_medida', $('#unidad_medida_' + id).val());
             formData.append('stock_minimo', $('#stock_minimo_' + id).val());
+            formData.append('stock_maximo', $('#stock_maximo_' + id).val());
             formData.append('conversion', $('#conversion_' + id).val());
             formData.append('precio_compra', $('#precio_compra_' + id).val());
             formData.append('precio_venta', $('#precio_venta_' + id).val());

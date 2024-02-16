@@ -103,6 +103,7 @@ class ProductosController extends Controller
             'codigo' => 'required|max:500|unique:producto',
             'unidad_medida' => 'required',
             'stock_minimo' => 'required',
+            'stock_maximo' => 'required',
             'disponibles' => 'required',
             'conversion' => 'required',
             'precio_compra' => 'required',
@@ -116,6 +117,7 @@ class ProductosController extends Controller
             'codigo.unique' => 'El codigo ya existe',
             'codigo.max' => 'El codigo es muy grande',
             'stock_minimo.required' => 'El stock minimo es obligatorio',
+            'stock_maximo.required' => 'El stock maximo es obligatorio',
             'disponibles.required' => 'Los disponibles son obligatorios',
             'conversion.required' => 'La conversion es obligatoria',
             'precio_compra.required' => 'El precio de compra es obligatorio',
@@ -129,6 +131,7 @@ class ProductosController extends Controller
             $model->nombre = espacios(mb_strtoupper($request->nombre));
             $model->unidad_medida = mb_strtoupper($request->unidad_medida);
             $model->stock_minimo = $request->stock_minimo;
+            $model->stock_maximo = $request->stock_maximo;
             $model->disponibles = 0;
             $model->conversion = $request->conversion;
             $model->precio = $request->precio_compra;
@@ -316,6 +319,7 @@ class ProductosController extends Controller
             'codigo' => 'required|max:500',
             'unidad_medida' => 'required',
             'stock_minimo' => 'required',
+            'stock_maximo' => 'required',
             'conversion' => 'required',
             'precio_compra' => 'required',
             'precio_venta' => 'required',
@@ -326,6 +330,7 @@ class ProductosController extends Controller
             'codigo.max' => 'El codigo es muy grande',
             'unidad_medida.required' => 'La unidad de medida es obligatoria',
             'stock_minimo.required' => 'El stock minimo es obligatorio',
+            'stock_maximo.required' => 'El stock maximo es obligatorio',
             'conversion.required' => 'La conversion es obligatoria',
             'precio_compra.required' => 'El precio de compra es obligatorio',
             'precio_venta.required' => 'El precio de venta es obligatorio',
@@ -359,6 +364,7 @@ class ProductosController extends Controller
                     $model->codigo = $request->codigo;
                     $model->nombre = espacios(mb_strtoupper($request->nombre));
                     $model->stock_minimo = $request->stock_minimo;
+                    $model->stock_maximo = $request->stock_maximo;
                     $model->unidad_medida = $request->unidad_medida;
                     $model->conversion = $request->conversion;
                     $model->precio = $request->precio_compra;
