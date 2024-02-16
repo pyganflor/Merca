@@ -1034,6 +1034,8 @@ class PedidoBodegaController extends Controller
             if ($saldo >= 0) {
                 if ($saldo < $r['producto']->stock_minimo)
                     $saldo = $r['producto']->stock_maximo - $saldo;
+                else
+                    $saldo = 0;
             } else {
                 $saldo = abs($saldo) + $r['producto']->stock_maximo;
             }
@@ -1090,6 +1092,8 @@ class PedidoBodegaController extends Controller
             if ($saldo >= 0) {
                 if ($saldo < $r['producto']->stock_minimo)
                     $saldo = $r['producto']->stock_maximo - $saldo;
+                else
+                    $saldo = 0;
             } else {
                 $saldo = abs($saldo) + $r['producto']->stock_maximo;
             }
