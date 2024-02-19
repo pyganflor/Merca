@@ -414,8 +414,30 @@ class PedidoBodegaController extends Controller
                     $al_contado = true;
             }
             if ($usuario->saldo >= $request->monto_saldo || $al_contado || in_array($request->usuario, [1, 2])) {
+                if ($request->fecha_entrega == 1) {
+                    /* BUSCAR FECHA DE ENTREGA */
+                    $last_fecha_entrega = FechaEntrega::where('id_empresa', $request->finca)
+                        ->where('entrega', $request->fecha)
+                        ->get()
+                        ->first();
+                    if ($last_fecha_entrega != '') {
+                        $fecha = $last_fecha_entrega->hasta;
+                    } else {
+                        DB::rollBack();
+                        $success = false;
+                        $msg = '<div class="alert alert-danger text-center">' .
+                            'NO EXISTE LA FECHA DE ENTREGA PARA LA FINCA</div>';
+                        return [
+                            'success' => $success,
+                            'mensaje' => $msg,
+                        ];
+                    }
+                } else {
+                    $fecha = $request->fecha;
+                }
+
                 $pedido = new PedidoBodega();
-                $pedido->fecha = $request->fecha;
+                $pedido->fecha = $fecha;
                 $pedido->id_usuario = $request->usuario;
                 $pedido->finca_nomina = $request->finca_nomina;
                 $pedido->id_empresa = $request->finca;

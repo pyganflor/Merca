@@ -3,11 +3,20 @@
         <tr>
             <td class="text-center" style="border-color: #9d9d9d; min-width: 220px">
                 <div class="input-group">
-                    <span class="input-group-addon bg-yura_dark span-input-group-yura-fixed">
+                    <span class="input-group-addon bg-yura_dark" style="border-radius: 16px 0 0 0;">
                         Fecha
                     </span>
-                    <input type="date" id="form_fecha" style="width: 100%" class="text-center form-control"
+                    <input type="date" id="form_fecha" style="width: 100%; border-radius: 0 16px 0 0;" class="text-center form-control"
                         value="{{ hoy() }}" min="{{ hoy() }}">
+                </div>
+                <div class="input-group">
+                    <span class="input-group-addon bg-yura_dark" style="border-radius: 0 0 0 16px;">
+                        Usar como ENTREGA
+                    </span>
+                    <select id="form_fecha_entrega" style="width: 100%; border-radius: 0 0 19px 0;" class="text-center form-control">
+                        <option value="0">No</option>
+                        <option value="1">Si</option>
+                    </select>
                 </div>
             </td>
             <td class="text-center" style="border-color: #9d9d9d; min-width: 260px">
@@ -354,6 +363,7 @@
         datos = {
             _token: '{{ csrf_token() }}',
             fecha: $('#form_fecha').val(),
+            fecha_entrega: $('#form_fecha_entrega').val(),
             finca_nomina: $('#form_finca_nomina').val(),
             finca: $('#form_finca').val(),
             usuario: $('#form_usuario').val(),
