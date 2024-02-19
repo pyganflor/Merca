@@ -149,27 +149,15 @@
 
     {{-- FLUJO OPERATIVO --}}
     <tr>
-        <th class="padding_lateral_5 bg-yura_dark mouse-hand" onclick="$('.tr_flujo_operativo').toggleClass('hidden')">
-            FLUJO OPERATIVO <i class="fa fa-fw fa-caret-down pull-right"></i>
+        <th class="padding_lateral_5 bg-yura_dark">
+            FLUJO OPERATIVO
         </th>
         @foreach ($meses as $pos_m => $mes)
             <th class="padding_lateral_5 bg-yura_dark">
-                ${{ number_format($total_descuentos_diferidos[$pos_m] + $total_descuentos_normales[$pos_m] + $total_al_contado[$pos_m] - $total_costos[$pos_m], 2) }}
+                ${{ number_format($total_descuentos_diferidos[$pos_m] + $total_descuentos_normales[$pos_m] + $total_al_contado[$pos_m] - $total_otros_costos[$pos_m], 2) }}
             </th>
         @endforeach
     </tr>
-    @foreach ($listado as $pos => $item)
-        <tr class="tr_flujo_operativo hidden">
-            <th class="padding_lateral_5" style="border-color: #9d9d9d">
-                {{ $item['finca']->nombre }}
-            </th>
-            @foreach ($meses as $pos_m => $mes)
-                <th class="padding_lateral_5" style="border-color: #9d9d9d">
-                    ${{ number_format($item['valores_descuentos_diferidos'][$pos_m] + $item['valores_descuentos_normales'][$pos_m] + $item['valores_al_contado'][$pos_m] - $item['valores_costos'][$pos_m], 2) }}
-                </th>
-            @endforeach
-        </tr>
-    @endforeach
 
     {{-- GASTOS ADMINISTRATIVOS --}}
     <tr>
@@ -187,7 +175,6 @@
             </th>
         @endforeach
     </tr>
-
     {{-- FLUJO NETO --}}
     <tr>
         <th class="padding_lateral_5 bg-yura_dark">
@@ -195,11 +182,31 @@
         </th>
         @foreach ($meses as $pos_m => $mes)
             @php
-                $flujo_operativo = $total_descuentos_diferidos[$pos_m] + $total_descuentos_normales[$pos_m] + $total_al_contado[$pos_m] - $total_costos[$pos_m];
+                $flujo_operativo = $total_descuentos_diferidos[$pos_m] + $total_descuentos_normales[$pos_m] + $total_al_contado[$pos_m] - $total_otros_costos[$pos_m];
                 $ga = $gastos_administrativos[$pos_m] != '' ? $gastos_administrativos[$pos_m]->ga : 0;
             @endphp
             <th class="padding_lateral_5 bg-yura_dark">
                 ${{ number_format($flujo_operativo - $ga, 2) }}
+            </th>
+        @endforeach
+    </tr>
+
+    {{-- FLUJO ACUMULADO --}}
+    <tr>
+        <th class="padding_lateral_5 bg-yura_dark">
+            FLUJO ACUMULADO
+        </th>
+        @foreach ($meses as $pos_m => $mes)
+            @php
+                $flujo_acum = 0;
+                for ($i = 0; $i <= $pos_m; $i++) {
+                    $flujo_operativo = $total_descuentos_diferidos[$i] + $total_descuentos_normales[$i] + $total_al_contado[$i] - $total_otros_costos[$i];
+                    $ga = $gastos_administrativos[$i] != '' ? $gastos_administrativos[$i]->ga : 0;
+                    $flujo_acum += $flujo_operativo - $ga;
+                }
+            @endphp
+            <th class="padding_lateral_5 bg-yura_dark">
+                ${{ number_format($flujo_acum, 2) }}
             </th>
         @endforeach
     </tr>
