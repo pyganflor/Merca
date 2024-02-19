@@ -187,7 +187,7 @@
         </th>
         @foreach ($meses as $pos_m => $mes)
             <th class="padding_lateral bg-yura_dark">
-                ${{ $total_personal[$pos_m] > 0 ? number_format($total_ventas[$pos_m] / $total_personal[$pos_m], 2) : 0 }}
+                ${{ $total_personal[$pos_m] > 0 ? number_format($total_ventas_personal[$pos_m] / $total_personal[$pos_m], 2) : 0 }}
             </th>
         @endforeach
     </tr>

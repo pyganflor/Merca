@@ -51,7 +51,7 @@ class PyGController extends Controller
     {
         $fincas = DB::table('pedido_bodega as p')
             ->join('configuracion_empresa as f', 'f.id_configuracion_empresa', '=', 'p.id_empresa')
-            ->select('f.nombre', 'p.id_empresa')->distinct();
+            ->select('f.nombre', 'p.id_empresa', 'f.usar_personal')->distinct();
         if ($request->finca != 'T')
             $fincas = $fincas->where('p.id_empresa', $request->finca);
         $fincas = $fincas->orderBy('f.nombre')
@@ -73,6 +73,7 @@ class PyGController extends Controller
                 }
         }
         $total_ventas = [];
+        $total_ventas_personal = [];
         $total_costos = [];
         $total_otros_costos = [];
         $total_personal = [];
@@ -84,6 +85,7 @@ class PyGController extends Controller
                 ->first();
             $gastos_administrativos[] = $ga;
             $total_ventas[] = 0;
+            $total_ventas_personal[] = 0;
             $total_costos[] = 0;
             $total_otros_costos[] = 0;
             $total_personal[] = 0;
@@ -132,8 +134,9 @@ class PyGController extends Controller
                         $venta = $pedido->getTotalMonto();
                         $monto_costos += $costo;
                         $monto_ventas += $venta;
-                        if (!in_array($pedido->id_usuario, $personas))
-                            $personas[] = $pedido->id_usuario;
+                        if ($finca->usar_personal == 1)
+                            if (!in_array($pedido->id_usuario, $personas))
+                                $personas[] = $pedido->id_usuario;
                     }
                 }
 
@@ -142,6 +145,7 @@ class PyGController extends Controller
                 $valores_personal[] = $personas;
 
                 $total_ventas[$pos_m] += $monto_ventas;
+                $total_ventas_personal[$pos_m] += $finca->usar_personal ? $monto_ventas : 0;
                 $total_costos[$pos_m] += $monto_costos;
                 $total_personal[$pos_m] += count($personas);
             }
@@ -157,6 +161,7 @@ class PyGController extends Controller
             'listado' => $listado,
             'gastos_administrativos' => $gastos_administrativos,
             'total_ventas' => $total_ventas,
+            'total_ventas_personal' => $total_ventas_personal,
             'total_costos' => $total_costos,
             'total_otros_costos' => $total_otros_costos,
             'total_personal' => $total_personal,

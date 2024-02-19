@@ -95,6 +95,7 @@ class FincasController extends Controller
         if (!$valida->fails()) {
             $model = new ConfiguracionEmpresa();
             $model->nombre = str_limit(espacios($request->nombre), 300);
+            $model->usar_personal = $request->usar_personal == 'true' ? 1 : 0;
 
             if ($model->save()) {
                 $model = ConfiguracionEmpresa::All()->last();
@@ -135,6 +136,7 @@ class FincasController extends Controller
         $finca = ConfiguracionEmpresa::find($request->id);
         $finca->nombre = $request->nombre;
         $finca->id_super_finca = $request->super_finca;
+        $finca->usar_personal = $request->usar_personal == 'true' ? 1 : 0;
         $finca->save();
         return [
             'success' => true,

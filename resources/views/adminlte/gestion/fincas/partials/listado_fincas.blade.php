@@ -2,7 +2,7 @@
     id="table_fincas">
     <thead>
         <tr>
-            <th class="text-center bg-yura_dark" style="border-radius: 18px 18px 0 0" colspan="3">
+            <th class="text-center bg-yura_dark" style="border-radius: 18px 18px 0 0" colspan="4">
                 Fincas
             </th>
         </tr>
@@ -12,6 +12,9 @@
             </th>
             <th class="th_yura_green" style="padding-left: 5px">
                 Empresa
+            </th>
+            <th class="th_yura_green" style="padding-left: 5px">
+                Usar PERSONAL
             </th>
             <th class="text-center th_yura_green" style="width: 80px">
                 <div class="btn-group">
@@ -35,6 +38,9 @@
                         </option>
                     @endforeach
                 </select>
+            </td>
+            <td style="border-color: #9d9d9d;">
+                <input type="checkbox" id="usar_personal_new" style="width: 100%" class="text-center" checked>
             </td>
             <td class="text-center" style="border-color: #9d9d9d">
                 <div class="btn-group">
@@ -65,6 +71,10 @@
                         @endforeach
                     </select>
                 </td>
+                <td style="border-color: #9d9d9d;">
+                    <input type="checkbox" id="usar_personal_{{ $item->id_configuracion_empresa }}" style="width: 100%"
+                        class="text-center" {{ $item->usar_personal == 1 ? 'checked' : '' }}>
+                </td>
                 <td class="text-center" style="border-color: #9d9d9d">
                     <div class="btn-group">
                         <button type="button" class="btn btn-yura_primary btn-xs" title="Modificar"
@@ -89,6 +99,7 @@
             id: id,
             nombre: $('#nombre_finca_' + id).val(),
             super_finca: $('#id_super_finca_' + id).val(),
+            usar_personal: $('#usar_personal_' + id).prop('checked'),
         };
         post_jquery_m('{{ url('fincas/update_finca') }}', datos, function() {}, 'tr_finca_' + id);
     }
@@ -119,6 +130,7 @@
             _token: '{{ csrf_token() }}',
             nombre: $('#nombre_finca_new').val(),
             super_finca: $('#id_super_finca_new').val(),
+            usar_personal: $('#usar_personal_new').prop('checked'),
         };
         post_jquery_m('{{ url('fincas/store_finca') }}', datos, function() {
             listar_fincas();
