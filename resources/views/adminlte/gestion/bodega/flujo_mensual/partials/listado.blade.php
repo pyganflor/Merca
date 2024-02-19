@@ -203,6 +203,18 @@
             </th>
         @endforeach
     </tr>
+
+    {{-- VALOR INVENTARIO --}}
+    <tr>
+        <th class="padding_lateral_5 bg-yura_dark">
+            VALOR INVENTARIO
+        </th>
+        @foreach ($valores_inventario as $pos_m => $val)
+            <th class="padding_lateral_5 bg-yura_dark">
+                ${{ number_format($val, 2) }}
+            </th>
+        @endforeach
+    </tr>
 </table>
 
 <script>

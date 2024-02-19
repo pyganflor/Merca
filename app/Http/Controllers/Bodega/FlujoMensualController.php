@@ -10,6 +10,7 @@ use yura\Modelos\DetallePedidoBodega;
 use yura\Modelos\PedidoBodega;
 use yura\Modelos\Submenu;
 use yura\Modelos\FechaEntrega;
+use yura\Modelos\MesHistorico;
 use yura\Modelos\OtrosGastos;
 
 class FlujoMensualController extends Controller
@@ -66,6 +67,7 @@ class FlujoMensualController extends Controller
         $total_descuentos_normales = [];
         $total_al_contado = [];
         $gastos_administrativos = [];
+        $valores_inventario = [];
         foreach ($meses as $m) {
             $ga = OtrosGastos::where('mes', $m['mes'])
                 ->where('anno', $m['anno'])
@@ -316,6 +318,12 @@ class FlujoMensualController extends Controller
                 ->where('fecha', '<=', $ultimoDiaMes)
                 ->get()[0]->cant;
             $total_otros_costos[$pos_m] = $monto_costos;
+            $mes_historico = MesHistorico::where('anno', $mes['anno'])
+                ->where('mes', $mes['mes'])
+                ->get()
+                ->first();
+            $valor_inventario = $mes_historico != '' ? $mes_historico->valor_inventario : 0;
+            $valores_inventario[$pos_m] = $valor_inventario;
         }
 
         return view('adminlte.gestion.bodega.flujo_mensual.partials.listado', [
@@ -327,6 +335,7 @@ class FlujoMensualController extends Controller
             'total_descuentos_diferidos' => $total_descuentos_diferidos,
             'total_descuentos_normales' => $total_descuentos_normales,
             'total_al_contado' => $total_al_contado,
+            'valores_inventario' => $valores_inventario,
         ]);
     }
 
