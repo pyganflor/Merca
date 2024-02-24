@@ -1174,26 +1174,35 @@ class ComandoDev extends Command
                         if ($row['B'] != '' && $pos_row > 1) {
                             dump('usuario: ' . $pos_row . '/' . count($activeSheetData));
                             $usuario = Usuario::All()
-                                ->where('username', str_limit(mb_strtolower(espacios($row['C'])), 250))
+                                ->where('username', str_limit(mb_strtolower(espacios($row['A'])), 250))
                                 ->first();
                             if ($usuario == '') {
                                 dump('NEW');
-                                $fecha_ingreso = $row['D'];
+                                $dia = explode('/', $row['E'])[1];
+                                $dia = strlen($dia) == 1 ? '0' . $dia : $dia;
+                                $mes = explode('/', $row['E'])[0];
+                                $mes = strlen($mes) == 1 ? '0' . $mes : $mes;
+                                $anno = explode('/', $row['E'])[2];
+                                $fecha_ingreso = $anno . '-' . $mes . '-' . $dia;
                                 $dias_activo = difFechas(hoy(), $fecha_ingreso)->days;
                                 $aplica = 0;
-                                if ($dias_activo >= 90)
+                                if ($dias_activo >= 90 && $row['F'] > 0)
                                     $aplica = 1;
-                                $passw = Hash::make(str_limit(mb_strtoupper(espacios($row['C'])), 250));
+                                $passw = Hash::make(str_limit(mb_strtoupper(espacios($row['A'])), 250));
+                                if ($pos_hoja == 0)
+                                    $nombre_completo = espacios(mb_strtoupper(espacios($row['B'])) . ' ' . mb_strtoupper(espacios($row['C'])));
+                                else
+                                    $nombre_completo = mb_strtoupper(espacios($row['B']));
 
                                 $usuario = new Usuario();
                                 $usuario->estado = 'A';
                                 $usuario->id_rol = 23;
                                 $usuario->aplica = $aplica;
-                                $usuario->cupo_disponible = 40;
-                                $usuario->saldo = $aplica ? 40 : 0;
+                                $usuario->cupo_disponible = $row['F'];
+                                $usuario->saldo = $aplica ? $row['F'] : 0;
                                 $usuario->password = $passw;
-                                $usuario->nombre_completo = str_limit(mb_strtoupper(espacios($row['B'])), 250);
-                                $usuario->username = str_limit(mb_strtolower(espacios($row['C'])), 250);
+                                $usuario->nombre_completo = $nombre_completo;
+                                $usuario->username = str_limit(mb_strtolower(espacios($row['A'])), 250);
                                 $usuario->save();
                                 $usuario->id_usuario = DB::table('usuario')
                                     ->select(DB::raw('max(id_usuario) as id'))
@@ -1205,6 +1214,7 @@ class ComandoDev extends Command
                                 $usuario_finca->save();
                             } else {
                                 dump('EXISTE');
+                                /*dd($row);
                                 $usuario_finca = UsuarioFinca::All()
                                     ->where('id_usuario', $usuario->id_usuario)
                                     ->where('id_empresa', $finca->id_configuracion_empresa)
@@ -1220,12 +1230,12 @@ class ComandoDev extends Command
                                 $usuario->aplica = 1;
                                 $usuario->save();
 
-                                $ids_usuarios[] = $usuario->id_usuario;
+                                $ids_usuarios[] = $usuario->id_usuario;*/
                             }
                         }
                     }
             }
-            $usuarios_ausentes = Usuario::whereNotIn('id_usuario', $ids_usuarios)
+            /*$usuarios_ausentes = Usuario::whereNotIn('id_usuario', $ids_usuarios)
                 ->where('aplica', 1)
                 ->whereNotIn('id_usuario', [1, 2])
                 ->get();
@@ -1233,7 +1243,7 @@ class ComandoDev extends Command
                 dump('NO APLICA: ' . $u->nombre_completo);
                 $u->aplica = 0;
                 $u->save();
-            }
+            }*/
             //unlink($url);
         } catch (\Exception $e) {
             dump('************************* ERROR *************************');
